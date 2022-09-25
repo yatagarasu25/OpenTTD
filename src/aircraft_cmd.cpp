@@ -436,8 +436,7 @@ static void CheckIfAircraftNeedsService(Aircraft *v)
 Money Aircraft::GetRunningCost() const
 {
 	const Engine *e = this->GetEngine();
-	uint cost_factor = GetVehicleProperty(this, PROP_AIRCRAFT_RUNNING_COST_FACTOR, e->u.air.running_cost);
-	return GetPrice(PR_RUNNING_AIRCRAFT, cost_factor, e->GetGRF());
+	return e->GetRunningCost();
 }
 
 void Aircraft::OnNewDay()

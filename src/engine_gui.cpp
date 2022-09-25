@@ -175,7 +175,7 @@ static StringID GetTrainEngineInfoString(const Engine *e)
 	SetDParam(1, e->GetDisplayWeight());
 	SetDParam(7, e->GetDisplayMaxTractiveEffort());
 
-	SetDParam(4, e->GetRunningCost());
+	SetDParam(4, e->GetDisplayRunningCost());
 
 	uint capacity = GetTotalCapacityOfArticulatedParts(e->index);
 	if (capacity != 0) {
@@ -205,10 +205,10 @@ static StringID GetAircraftEngineInfoString(const Engine *e)
 	if (mail_capacity > 0) {
 		SetDParam(i++, CT_MAIL);
 		SetDParam(i++, mail_capacity);
-		SetDParam(i++, e->GetRunningCost());
+		SetDParam(i++, e->GetDisplayRunningCost());
 		return range > 0 ? STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_RANGE_CAP_CAP_RUNCOST : STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_CAP_CAP_RUNCOST;
 	} else {
-		SetDParam(i++, e->GetRunningCost());
+		SetDParam(i++, e->GetDisplayRunningCost());
 		return range > 0 ? STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_RANGE_CAP_RUNCOST : STR_ENGINE_PREVIEW_COST_MAX_SPEED_TYPE_CAP_RUNCOST;
 	}
 }
@@ -225,7 +225,7 @@ static StringID GetRoadVehEngineInfoString(const Engine *e)
 		} else {
 			SetDParam(2, CT_INVALID);
 		}
-		SetDParam(4, e->GetRunningCost());
+		SetDParam(4, e->GetDisplayRunningCost());
 		return STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAP_RUNCOST;
 	} else {
 		SetDParam(0, e->GetCost());
@@ -234,7 +234,7 @@ static StringID GetRoadVehEngineInfoString(const Engine *e)
 		SetDParam(1, e->GetDisplayWeight());
 		SetDParam(7, e->GetDisplayMaxTractiveEffort());
 
-		SetDParam(4, e->GetRunningCost());
+		SetDParam(4, e->GetDisplayRunningCost());
 
 		uint capacity = GetTotalCapacityOfArticulatedParts(e->index);
 		if (capacity != 0) {
@@ -253,7 +253,7 @@ static StringID GetShipEngineInfoString(const Engine *e)
 	SetDParam(1, e->GetDisplayMaxSpeed());
 	SetDParam(2, e->GetDefaultCargoType());
 	SetDParam(3, e->GetDisplayDefaultCapacity());
-	SetDParam(4, e->GetRunningCost());
+	SetDParam(4, e->GetDisplayRunningCost());
 	return STR_ENGINE_PREVIEW_COST_MAX_SPEED_CAP_RUNCOST;
 }
 

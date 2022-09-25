@@ -1261,6 +1261,42 @@ STR_CONFIG_SETTING_DISASTERS_HELPTEXT                           :Toggle disaster
 STR_CONFIG_SETTING_CITY_APPROVAL                                :Local authority attitude: {STRING2}
 STR_CONFIG_SETTING_CITY_APPROVAL_HELPTEXT                       :Choose how much noise and environmental damage by companies affect their town rating and further construction actions in the town
 
+STR_CONFIG_SETTING_ROADVEH_COST_MULTIPLIER                      :Road vehicle cost: {STRING2}
+STR_CONFIG_SETTING_ROADVEH_COST_MULTIPLIER_HELPTEXT             :Road vehicle cost multiplier
+
+STR_CONFIG_SETTING_WAGON_COST_MULTIPLIER                        :Wagon cost: {STRING2}
+STR_CONFIG_SETTING_WAGON_COST_MULTIPLIER_HELPTEXT               :Wagon cost multiplier
+
+STR_CONFIG_SETTING_TRAIN_COST_MULTIPLIER                        :Train cost: {STRING2}
+STR_CONFIG_SETTING_TRAIN_COST_MULTIPLIER_HELPTEXT               :Train cost multiplier
+
+STR_CONFIG_SETTING_SHIP_COST_MULTIPLIER                         :Ship cost: {STRING2}
+STR_CONFIG_SETTING_SHIP_COST_MULTIPLIER_HELPTEXT                :Ship cost multiplier
+
+STR_CONFIG_SETTING_AIRCRAFT_COST_MULTIPLIER                     :Aircraft cost: {STRING2}
+STR_CONFIG_SETTING_AIRCRAFT_COST_MULTIPLIER_HELPTEXT            :Aircraft cost multiplier
+
+STR_CONFIG_SETTING_ROADVEH_RUNNING_COST_MULTIPLIER              :Road vehicle running cost: {STRING2}
+STR_CONFIG_SETTING_ROADVEH_RUNNING_COST_MULTIPLIER_HELPTEXT     :Road vehicle running cost multiplier
+
+STR_CONFIG_SETTING_TRAIN_STEAM_RUNNING_COST_MULTIPLIER          :Train steam running cost: {STRING2}
+STR_CONFIG_SETTING_TRAIN_STEAM_RUNNING_COST_MULTIPLIER_HELPTEXT :Train steam running cost multiplier
+
+STR_CONFIG_SETTING_TRAIN_DIESEL_RUNNING_COST_MULTIPLIER            :Train diesel running cost: {STRING2}
+STR_CONFIG_SETTING_TRAIN_DIESEL_RUNNING_COST_MULTIPLIER_HELPTEXT   :Train diesel running cost multiplier
+
+STR_CONFIG_SETTING_TRAIN_ELECTRIC_RUNNING_COST_MULTIPLIER          :Train electric running cost: {STRING2}
+STR_CONFIG_SETTING_TRAIN_ELECTRIC_RUNNING_COST_MULTIPLIER_HELPTEXT :Train electric running cost multiplier
+
+STR_CONFIG_SETTING_SHIP_RUNNING_COST_MULTIPLIER                 :Ship running cost: {STRING2}
+STR_CONFIG_SETTING_SHIP_RUNNING_COST_MULTIPLIER_HELPTEXT        :Ship running cost multiplier
+
+STR_CONFIG_SETTING_AIRCRAFT_RUNNING_COST_MULTIPLIER             :Aircraft running cost: {STRING2}
+STR_CONFIG_SETTING_AIRCRAFT_RUNNING_COST_MULTIPLIER_HELPTEXT    :Aircraft running cost multiplier
+
+STR_CONFIG_SETTING_RAIL_BUILD_COST_MULTIPLIER                   :Rail construction cost: {STRING2}
+STR_CONFIG_SETTING_RAIL_BUILD_COST_MULTIPLIER_HELPTEXT          :Rail construction cost multiplier
+
 STR_CONFIG_SETTING_MAP_HEIGHT_LIMIT                             :Map height limit: {STRING2}
 STR_CONFIG_SETTING_MAP_HEIGHT_LIMIT_HELPTEXT                    :Set the maximum height of the map terrain. With "(auto)" a good value will be picked after terrain generation
 STR_CONFIG_SETTING_MAP_HEIGHT_LIMIT_VALUE                       :{NUM}

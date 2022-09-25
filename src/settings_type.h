@@ -90,6 +90,21 @@ struct DifficultySettings {
 	bool   line_reverse_mode;                ///< reversing at stations or not
 	bool   disasters;                        ///< are disasters enabled
 	byte   town_council_tolerance;           ///< minimum required town ratings to be allowed to demolish stuff
+
+	uint16 roadveh_cost_multiplier = 100;                  ///< road vehicle cost multiplier in percents
+	uint16 wagon_cost_multiplier = 100;                    ///< wagon cost multiplier in percents
+	uint16 train_cost_multiplier = 100;                    ///< train cost multiplier in percents
+	uint16 ship_cost_multiplier = 100;                     ///< ship cost multiplier in percents
+	uint16 aircraft_cost_multiplier = 100;                 ///< aircraft cost multiplier in percents
+
+	uint16 roadveh_running_cost_multiplier = 100;          ///< road vehicle running cost multiplier in percents
+	uint16 train_steam_running_cost_multiplier = 100;      ///< wagon steam running cost multiplier in percents
+	uint16 train_diesel_running_cost_multiplier = 100;     ///< train diesel running cost multiplier in percents
+	uint16 train_electric_running_cost_multiplier = 100;   ///< train electric running cost multiplier in percents
+	uint16 ship_running_cost_multiplier = 100;             ///< ship running cost multiplier in percents
+	uint16 aircraft_running_cost_multiplier = 100;         ///< aircraft running cost multiplier in percents
+
+	uint16 rail_build_cost_multiplier = 100;      ///< rail construction multiplier
 };
 
 /** Settings relating to viewport/smallmap scrolling. */

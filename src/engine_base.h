@@ -48,6 +48,7 @@ struct Engine : EnginePool::PoolItem<&_engine_pool> {
 	EngineInfo info;
 
 	union {
+		VehicleInfo v;
 		RailVehicleInfo rail;
 		RoadVehicleInfo road;
 		ShipVehicleInfo ship;
@@ -106,6 +107,7 @@ struct Engine : EnginePool::PoolItem<&_engine_pool> {
 	}
 
 	Money GetRunningCost() const;
+	Money GetDisplayRunningCost() const { return GetRunningCost() >> 8; }
 	Money GetCost() const;
 	uint GetDisplayMaxSpeed() const;
 	uint GetPower() const;

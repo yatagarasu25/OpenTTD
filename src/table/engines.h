@@ -386,7 +386,7 @@ static const EngineInfo _orig_engine_info[] = {
  * Tractive effort coefficient by default is the same as TTDPatch, 0.30*256=76
  * Air drag value depends on the top speed of the vehicle.
  */
-#define RVI(a, b, c, d, e, f, g, h, i, j, k) { a, b, c, j, d, e, f, g, h, k, i, 0, 0, 0, VE_DEFAULT, 0, 76, 0, 0, 0 }
+#define RVI(a, b, c, d, e, f, g, h, i, j, k) { a, c, g, h, b, j, d, e, f, k, i, 0, 0, 0, VE_DEFAULT, 0, 76, 0, 0, 0 }
 #define M RAILVEH_MULTIHEAD
 #define W RAILVEH_WAGON
 #define G RAILVEH_SINGLEHEAD
@@ -563,7 +563,7 @@ static const RailVehicleInfo _orig_rail_vehicle_info[] = {
  * @param f sound effect
  * @param g refittable
  */
-#define SVI(a, b, c, d, e, f, g) { a, b, c, d, e, f, g, VE_DEFAULT, 0, 0 }
+#define SVI(a, b, c, d, e, f, g) { a, b, e, PR_RUNNING_SHIP, c, d, f, g, VE_DEFAULT, 0, 0 }
 static const ShipVehicleInfo _orig_ship_vehicle_info[] = {
 	/*   image_index    capacity                              refittable
 	 *   |    cost_factor    running_cost                     |
@@ -596,7 +596,7 @@ static const ShipVehicleInfo _orig_ship_vehicle_info[] = {
  * @param h mail_capacity (bags)
  * @param i passenger_capacity (persons)
  */
-#define AVI(a, b, c, d, e, f, g, h, i) { a, b, c, d, e, f, (g * 128) / 10, h, i, 0 }
+#define AVI(a, b, c, d, e, f, g, h, i) { a, b, c, PR_RUNNING_AIRCRAFT, d, e, f, (g * 128) / 10, h, i, 0 }
 #define H AIR_HELI
 #define P AIR_CTOL
 #define J AIR_CTOL | AIR_FAST

@@ -1702,6 +1702,18 @@ static SettingsContainer &GetSettingsTree()
 			accounting->Add(new SettingEntry("economy.infrastructure_maintenance"));
 			accounting->Add(new SettingEntry("difficulty.vehicle_costs"));
 			accounting->Add(new SettingEntry("difficulty.construction_cost"));
+			accounting->Add(new SettingEntry("difficulty.roadveh_cost_multiplier"));
+			accounting->Add(new SettingEntry("difficulty.wagon_cost_multiplier"));
+			accounting->Add(new SettingEntry("difficulty.train_cost_multiplier"));
+			accounting->Add(new SettingEntry("difficulty.ship_cost_multiplier"));
+			accounting->Add(new SettingEntry("difficulty.aircraft_cost_multiplier"));
+			accounting->Add(new SettingEntry("difficulty.roadveh_running_cost_multiplier"));
+			accounting->Add(new SettingEntry("difficulty.train_steam_running_cost_multiplier"));
+			accounting->Add(new SettingEntry("difficulty.train_diesel_running_cost_multiplier"));
+			accounting->Add(new SettingEntry("difficulty.train_electric_running_cost_multiplier"));
+			accounting->Add(new SettingEntry("difficulty.ship_running_cost_multiplier"));
+			accounting->Add(new SettingEntry("difficulty.aircraft_running_cost_multiplier"));
+			accounting->Add(new SettingEntry("difficulty.rail_build_cost_multiplier"));
 		}
 
 		SettingsPage *vehicles = main->Add(new SettingsPage(STR_CONFIG_SETTING_VEHICLES));

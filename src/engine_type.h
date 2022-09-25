@@ -38,17 +38,20 @@ enum EngineClass {
 	EC_MAGLEV,   ///< Maglev engine.
 };
 
-/** Information about a rail vehicle. */
-struct RailVehicleInfo {
+struct VehicleInfo {
 	byte image_index;
+	byte cost_factor;
+	byte running_cost;              ///< Running cost of engine;    For multiheaded engines the sum of both running costs.
+	Price running_cost_class;
+};
+
+/** Information about a rail vehicle. */
+struct RailVehicleInfo : public VehicleInfo {
 	RailVehicleTypes railveh_type;
-	byte cost_factor;               ///< Purchase cost factor;      For multiheaded engines the sum of both engine prices.
 	RailType railtype;
 	uint16 max_speed;               ///< Maximum speed (1 unit = 1/1.6 mph = 1 km-ish/h)
 	uint16 power;                   ///< Power of engine (hp);      For multiheaded engines the sum of both engine powers.
 	uint16 weight;                  ///< Weight of vehicle (tons);  For multiheaded engines the weight of each single engine.
-	byte running_cost;              ///< Running cost of engine;    For multiheaded engines the sum of both running costs.
-	Price running_cost_class;
 	EngineClass engclass;           ///< Class of engine for this vehicle
 	byte capacity;                  ///< Cargo capacity of vehicle; For multiheaded engines the capacity of each single engine.
 	byte ai_passenger_only;         ///< Bit value to tell AI that this engine is for passenger use only
@@ -63,12 +66,9 @@ struct RailVehicleInfo {
 };
 
 /** Information about a ship vehicle. */
-struct ShipVehicleInfo {
-	byte image_index;
-	byte cost_factor;
+struct ShipVehicleInfo : public VehicleInfo {
 	uint16 max_speed;      ///< Maximum speed (1 unit = 1/3.2 mph = 0.5 km-ish/h)
 	uint16 capacity;
-	byte running_cost;
 	SoundID sfx;
 	bool old_refittable;   ///< Is ship refittable; only used during initialisation. Later use EngineInfo::refit_mask.
 	byte visual_effect;    ///< Bitstuffed NewGRF visual effect data
@@ -95,10 +95,7 @@ enum AircraftSubTypeBits {
 };
 
 /** Information about a aircraft vehicle. */
-struct AircraftVehicleInfo {
-	byte image_index;
-	byte cost_factor;
-	byte running_cost;
+struct AircraftVehicleInfo : public VehicleInfo {
 	byte subtype;               ///< Type of aircraft. @see AircraftSubTypeBits
 	SoundID sfx;
 	byte acceleration;
@@ -109,11 +106,7 @@ struct AircraftVehicleInfo {
 };
 
 /** Information about a road vehicle. */
-struct RoadVehicleInfo {
-	byte image_index;
-	byte cost_factor;
-	byte running_cost;
-	Price running_cost_class;
+struct RoadVehicleInfo : public VehicleInfo {
 	SoundID sfx;
 	uint16 max_speed;        ///< Maximum speed (1 unit = 1/3.2 mph = 0.5 km-ish/h)
 	byte capacity;

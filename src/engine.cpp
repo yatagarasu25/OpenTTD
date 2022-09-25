@@ -265,23 +265,38 @@ uint Engine::DetermineCapacity(const Vehicle *v, uint16 *mail_capacity) const
 	return capacity;
 }
 
+uint16 GetRunningCostMultiplier(Price price)
+{
+	switch (price)
+	{
+	case PR_RUNNING_TRAIN_STEAM: return _settings_game.difficulty.train_steam_running_cost_multiplier;
+	case PR_RUNNING_TRAIN_DIESEL: return _settings_game.difficulty.train_diesel_running_cost_multiplier;
+	case PR_RUNNING_TRAIN_ELECTRIC: return _settings_game.difficulty.train_electric_running_cost_multiplier;
+	case PR_RUNNING_AIRCRAFT: return _settings_game.difficulty.aircraft_running_cost_multiplier;
+	case PR_RUNNING_ROADVEH: return _settings_game.difficulty.roadveh_running_cost_multiplier;
+	case PR_RUNNING_SHIP: return _settings_game.difficulty.ship_running_cost_multiplier;
+	}
+
+	return 100;
+}
+
 /**
  * Return how much the running costs of this engine are.
  * @return Yearly running cost of the engine.
  */
 Money Engine::GetRunningCost() const
 {
-	Price base_price;
+	Price base_price = this->u.v.running_cost_class;
 	uint cost_factor;
+	uint16 multiplier = GetRunningCostMultiplier(this->u.v.running_cost_class);
+
 	switch (this->type) {
 		case VEH_ROAD:
-			base_price = this->u.road.running_cost_class;
 			if (base_price == INVALID_PRICE) return 0;
 			cost_factor = GetEngineProperty(this->index, PROP_ROADVEH_RUNNING_COST_FACTOR, this->u.road.running_cost);
 			break;
 
 		case VEH_TRAIN:
-			base_price = this->u.rail.running_cost_class;
 			if (base_price == INVALID_PRICE) return 0;
 			cost_factor = GetEngineProperty(this->index, PROP_TRAIN_RUNNING_COST_FACTOR, this->u.rail.running_cost);
 			break;
@@ -299,7 +314,8 @@ Money Engine::GetRunningCost() const
 		default: NOT_REACHED();
 	}
 
-	return GetPrice(base_price, cost_factor, this->GetGRF(), -8);
+	if (multiplier == 0) multiplier = 100;
+	return GetPrice(base_price, cost_factor, this->GetGRF()) * multiplier / 100;
 }
 
 /**
@@ -310,36 +326,43 @@ Money Engine::GetCost() const
 {
 	Price base_price;
 	uint cost_factor;
+	uint16 cost_multiplier = 100;
 	switch (this->type) {
 		case VEH_ROAD:
 			base_price = PR_BUILD_VEHICLE_ROAD;
 			cost_factor = GetEngineProperty(this->index, PROP_ROADVEH_COST_FACTOR, this->u.road.cost_factor);
+			cost_multiplier = _settings_game.difficulty.roadveh_cost_multiplier;
 			break;
 
 		case VEH_TRAIN:
 			if (this->u.rail.railveh_type == RAILVEH_WAGON) {
 				base_price = PR_BUILD_VEHICLE_WAGON;
 				cost_factor = GetEngineProperty(this->index, PROP_TRAIN_COST_FACTOR, this->u.rail.cost_factor);
+				cost_multiplier = _settings_game.difficulty.wagon_cost_multiplier;
 			} else {
 				base_price = PR_BUILD_VEHICLE_TRAIN;
 				cost_factor = GetEngineProperty(this->index, PROP_TRAIN_COST_FACTOR, this->u.rail.cost_factor);
+				cost_multiplier = _settings_game.difficulty.train_cost_multiplier;
 			}
 			break;
 
 		case VEH_SHIP:
 			base_price = PR_BUILD_VEHICLE_SHIP;
 			cost_factor = GetEngineProperty(this->index, PROP_SHIP_COST_FACTOR, this->u.ship.cost_factor);
+			cost_multiplier = _settings_game.difficulty.ship_cost_multiplier;
 			break;
 
 		case VEH_AIRCRAFT:
 			base_price = PR_BUILD_VEHICLE_AIRCRAFT;
 			cost_factor = GetEngineProperty(this->index, PROP_AIRCRAFT_COST_FACTOR, this->u.air.cost_factor);
+			cost_multiplier = _settings_game.difficulty.aircraft_cost_multiplier;
 			break;
 
 		default: NOT_REACHED();
 	}
 
-	return GetPrice(base_price, cost_factor, this->GetGRF(), -8);
+	if (cost_multiplier <= 0) cost_multiplier = 100;
+	return GetPrice(base_price, cost_factor, this->GetGRF(), -8) * cost_multiplier / 100;
 }
 
 /**

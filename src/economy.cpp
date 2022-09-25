@@ -773,7 +773,6 @@ void RecomputePrices()
 		switch (_price_base_specs[i].category) {
 			case PCAT_RUNNING:
 				mod = _settings_game.difficulty.vehicle_costs;
-				break;
 
 			case PCAT_CONSTRUCTION:
 				mod = _settings_game.difficulty.construction_cost;

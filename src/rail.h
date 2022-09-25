@@ -372,7 +372,10 @@ static inline bool Rail90DegTurnDisallowed(RailType rt1, RailType rt2, bool def 
 static inline Money RailBuildCost(RailType railtype)
 {
 	assert(railtype < RAILTYPE_END);
-	return (_price[PR_BUILD_RAIL] * GetRailTypeInfo(railtype)->cost_multiplier) >> 3;
+	return (_price[PR_BUILD_RAIL]
+		* GetRailTypeInfo(railtype)->cost_multiplier
+		* _settings_game.difficulty.rail_build_cost_multiplier / 100)
+		>> 3;
 }
 
 /**
