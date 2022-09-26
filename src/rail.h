@@ -391,7 +391,8 @@ static inline Money RailClearCost(RailType railtype)
 	 * cost.
 	 */
 	assert(railtype < RAILTYPE_END);
-	return std::max(_price[PR_CLEAR_RAIL], -RailBuildCost(railtype) * 3 / 4);
+	return -RailBuildCost(railtype) * _settings_game.difficulty.rail_refund_cost_multiplier / 100
+		+ _price[PR_CLEAR_RAIL];
 }
 
 /**

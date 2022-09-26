@@ -1714,6 +1714,7 @@ static SettingsContainer &GetSettingsTree()
 			accounting->Add(new SettingEntry("difficulty.ship_running_cost_multiplier"));
 			accounting->Add(new SettingEntry("difficulty.aircraft_running_cost_multiplier"));
 			accounting->Add(new SettingEntry("difficulty.rail_build_cost_multiplier"));
+			accounting->Add(new SettingEntry("difficulty.rail_refund_cost_multiplier"));
 		}
 
 		SettingsPage *vehicles = main->Add(new SettingsPage(STR_CONFIG_SETTING_VEHICLES));

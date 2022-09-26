@@ -35,7 +35,7 @@ extern const PriceBaseSpec _price_base_specs[] = {
 	{    200, PCAT_CONSTRUCTION, GSF_END,          INVALID_PRICE         }, ///< PR_CLEAR_ROCKS
 	{    500, PCAT_CONSTRUCTION, GSF_END,          INVALID_PRICE         }, ///< PR_CLEAR_FIELDS
 	{     20, PCAT_CONSTRUCTION, GSF_END,          INVALID_PRICE         }, ///< PR_CLEAR_TREES
-	{    -70, PCAT_CONSTRUCTION, GSF_END,          INVALID_PRICE         }, ///< PR_CLEAR_RAIL
+	{     30, PCAT_CONSTRUCTION, GSF_END,          INVALID_PRICE         }, ///< PR_CLEAR_RAIL
 	{     10, PCAT_CONSTRUCTION, GSF_END,          INVALID_PRICE         }, ///< PR_CLEAR_SIGNALS
 	{     50, PCAT_CONSTRUCTION, GSF_END,          INVALID_PRICE         }, ///< PR_CLEAR_BRIDGE
 	{     80, PCAT_CONSTRUCTION, GSF_END,          INVALID_PRICE         }, ///< PR_CLEAR_DEPOT_TRAIN

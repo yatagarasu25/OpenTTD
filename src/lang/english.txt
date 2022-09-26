@@ -1297,6 +1297,9 @@ STR_CONFIG_SETTING_AIRCRAFT_RUNNING_COST_MULTIPLIER_HELPTEXT    :Aircraft runnin
 STR_CONFIG_SETTING_RAIL_BUILD_COST_MULTIPLIER                   :Rail construction cost: {STRING2}
 STR_CONFIG_SETTING_RAIL_BUILD_COST_MULTIPLIER_HELPTEXT          :Rail construction cost multiplier
 
+STR_CONFIG_SETTING_RAIL_REFUND_COST_MULTIPLIER                  :Rail refund cost: {STRING2}
+STR_CONFIG_SETTING_RAIL_REFUND_COST_MULTIPLIER_HELPTEXT         :Rail refund cost multiplier
+
 STR_CONFIG_SETTING_MAP_HEIGHT_LIMIT                             :Map height limit: {STRING2}
 STR_CONFIG_SETTING_MAP_HEIGHT_LIMIT_HELPTEXT                    :Set the maximum height of the map terrain. With "(auto)" a good value will be picked after terrain generation
 STR_CONFIG_SETTING_MAP_HEIGHT_LIMIT_VALUE                       :{NUM}

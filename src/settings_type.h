@@ -105,6 +105,7 @@ struct DifficultySettings {
 	uint16 aircraft_running_cost_multiplier = 100;         ///< aircraft running cost multiplier in percents
 
 	uint16 rail_build_cost_multiplier = 100;      ///< rail construction multiplier
+	uint16 rail_refund_cost_multiplier = 75;      ///< rail refund multiplier
 };
 
 /** Settings relating to viewport/smallmap scrolling. */

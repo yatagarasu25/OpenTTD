@@ -1581,10 +1581,11 @@ CommandCost RemoveFromRailBaseStation(TileArea ta, std::vector<T *> &affected_st
 		/* If we reached here, the tile is valid so increase the quantity of tiles we will remove */
 		quantity++;
 
+		RailType rt = GetRailType(tile);
 		if (keep_rail || IsStationTileBlocked(tile)) {
 			/* Don't refund the 'steel' of the track when we keep the
 			 *  rail, or when the tile didn't have any rail at all. */
-			total_cost.AddCost(-_price[PR_CLEAR_RAIL]);
+			total_cost.AddCost(-RailClearCost(rt));
 		}
 
 		if (flags & DC_EXEC) {
@@ -1592,7 +1593,6 @@ CommandCost RemoveFromRailBaseStation(TileArea ta, std::vector<T *> &affected_st
 			uint specindex = GetCustomStationSpecIndex(tile);
 			Track track = GetRailStationTrack(tile);
 			Owner owner = GetTileOwner(tile);
-			RailType rt = GetRailType(tile);
 			Train *v = nullptr;
 
 			if (HasStationReservation(tile)) {
