@@ -58,11 +58,17 @@ struct TileMap
 		return _m[i];
 	}
 
+	TileExtended& get_e(const TileIndex& i)
+	{
+		assert(i < size);
+		return _me[i];
+	}
+
 	Tile& raw(const TileIndex& i) { return _m[i]; }
+	TileExtended& raw_e(const TileIndex& i) { return _me[i]; }
 };
 
 extern TileMap tile_map;
-#define _me tile_map._me
 
 /**
  * 'Wraps' the given tile to it is within the map. It does

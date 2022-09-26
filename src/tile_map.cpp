@@ -180,10 +180,10 @@ struct StationTile : public OwnedTile
 	byte section;
 
 	/*
-	SB(_me[t].m6, 2, 1, 0);
-	SB(_me[t].m6, 3, 3, st);
-	_me[t].m7 = 0;
-	_me[t].m8 = 0;
+	SB(tile_map.get_e(t).m6, 2, 1, 0);
+	SB(tile_map.get_e(t).m6, 3, 3, st);
+	tile_map.get_e(t).m7 = 0;
+	tile_map.get_e(t).m8 = 0;
 	*/
 };
 
@@ -198,8 +198,8 @@ void MakeStation(TileIndex t, Owner o, StationID sid, StationType st, byte secti
 	tile_map.get(t).m3 = 0;
 	tile_map.get(t).m4 = 0;
 	tile_map.get(t).m5 = section;
-	SB(_me[t].m6, 2, 1, 0);
-	SB(_me[t].m6, 3, 3, st);
-	_me[t].m7 = 0;
-	_me[t].m8 = 0;
+	SB(tile_map.get_e(t).m6, 2, 1, 0);
+	SB(tile_map.get_e(t).m6, 3, 3, st);
+	tile_map.get_e(t).m7 = 0;
+	tile_map.get_e(t).m8 = 0;
 }

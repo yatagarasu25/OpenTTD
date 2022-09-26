@@ -126,9 +126,9 @@ public:
 		Debug(misc, LANDINFOD_LEVEL, "m3     = {:#x}", tile_map.get(tile).m3);
 		Debug(misc, LANDINFOD_LEVEL, "m4     = {:#x}", tile_map.get(tile).m4);
 		Debug(misc, LANDINFOD_LEVEL, "m5     = {:#x}", tile_map.get(tile).m5);
-		Debug(misc, LANDINFOD_LEVEL, "m6     = {:#x}", _me[tile].m6);
-		Debug(misc, LANDINFOD_LEVEL, "m7     = {:#x}", _me[tile].m7);
-		Debug(misc, LANDINFOD_LEVEL, "m8     = {:#x}", _me[tile].m8);
+		Debug(misc, LANDINFOD_LEVEL, "m6     = {:#x}", tile_map.get_e(tile).m6);
+		Debug(misc, LANDINFOD_LEVEL, "m7     = {:#x}", tile_map.get_e(tile).m7);
+		Debug(misc, LANDINFOD_LEVEL, "m8     = {:#x}", tile_map.get_e(tile).m8);
 #undef LANDINFOD_LEVEL
 	}
 

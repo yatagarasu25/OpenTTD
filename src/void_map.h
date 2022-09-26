@@ -25,8 +25,8 @@ static inline void MakeVoid(TileIndex t)
 	tile_map.get(t).m3 = 0;
 	tile_map.get(t).m4 = 0;
 	tile_map.get(t).m5 = 0;
-	_me[t].m6 = 0;
-	_me[t].m7 = 0;
+	tile_map.get_e(t).m6 = 0;
+	tile_map.get_e(t).m7 = 0;
 }
 
 #endif /* VOID_MAP_H */

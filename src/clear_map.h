@@ -226,7 +226,7 @@ static inline uint GetFence(TileIndex t, DiagDirection side)
 		case DIAGDIR_SE: return GB(tile_map.get(t).m4, 2, 3);
 		case DIAGDIR_SW: return GB(tile_map.get(t).m4, 5, 3);
 		case DIAGDIR_NE: return GB(tile_map.get(t).m3, 5, 3);
-		case DIAGDIR_NW: return GB(_me[t].m6, 2, 3);
+		case DIAGDIR_NW: return GB(tile_map.get_e(t).m6, 2, 3);
 	}
 }
 
@@ -245,7 +245,7 @@ static inline void SetFence(TileIndex t, DiagDirection side, uint h)
 		case DIAGDIR_SE: SB(tile_map.get(t).m4, 2, 3, h); break;
 		case DIAGDIR_SW: SB(tile_map.get(t).m4, 5, 3, h); break;
 		case DIAGDIR_NE: SB(tile_map.get(t).m3, 5, 3, h); break;
-		case DIAGDIR_NW: SB(_me[t].m6, 2, 3, h); break;
+		case DIAGDIR_NW: SB(tile_map.get_e(t).m6, 2, 3, h); break;
 	}
 }
 
@@ -265,9 +265,9 @@ static inline void MakeClear(TileIndex t, ClearGround g, uint density)
 	tile_map.get(t).m3 = 0;
 	tile_map.get(t).m4 = 0 << 5 | 0 << 2;
 	SetClearGroundDensity(t, g, density); // Sets m5
-	_me[t].m6 = 0;
-	_me[t].m7 = 0;
-	_me[t].m8 = 0;
+	tile_map.get_e(t).m6 = 0;
+	tile_map.get_e(t).m7 = 0;
+	tile_map.get_e(t).m8 = 0;
 }
 
 
@@ -286,9 +286,9 @@ static inline void MakeField(TileIndex t, uint field_type, IndustryID industry)
 	tile_map.get(t).m3 = field_type;
 	tile_map.get(t).m4 = 0 << 5 | 0 << 2;
 	SetClearGroundDensity(t, CLEAR_FIELDS, 3);
-	SB(_me[t].m6, 2, 4, 0);
-	_me[t].m7 = 0;
-	_me[t].m8 = 0;
+	SB(tile_map.get_e(t).m6, 2, 4, 0);
+	tile_map.get_e(t).m7 = 0;
+	tile_map.get_e(t).m8 = 0;
 }
 
 /**
