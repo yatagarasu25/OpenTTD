@@ -529,21 +529,7 @@ static inline byte GetStationTileRandomBits(TileIndex t)
  * @param section the StationGfx to be used for this tile
  * @param wc The water class of the station
  */
-static inline void MakeStation(TileIndex t, Owner o, StationID sid, StationType st, byte section, WaterClass wc = WATER_CLASS_INVALID)
-{
-	SetTileType(t, MP_STATION);
-	SetTileOwner(t, o);
-	SetWaterClass(t, wc);
-	SetDockingTile(t, false);
-	_m[t].m2 = sid;
-	_m[t].m3 = 0;
-	_m[t].m4 = 0;
-	_m[t].m5 = section;
-	SB(_me[t].m6, 2, 1, 0);
-	SB(_me[t].m6, 3, 3, st);
-	_me[t].m7 = 0;
-	_me[t].m8 = 0;
-}
+void MakeStation(TileIndex t, Owner o, StationID sid, StationType st, byte section, WaterClass wc = WATER_CLASS_INVALID);
 
 /**
  * Make the given tile a rail station tile.

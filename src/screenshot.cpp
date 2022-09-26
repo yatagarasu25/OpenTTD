@@ -744,7 +744,7 @@ void SetupScreenshotViewport(ScreenshotType t, Viewport *vp, uint32 width, uint3
 			vp->zoom = ZOOM_LVL_WORLD_SCREENSHOT;
 
 			TileIndex north_tile = _settings_game.construction.freeform_edges ? TileXY(1, 1) : TileXY(0, 0);
-			TileIndex south_tile = MapSize() - 1;
+			TileIndex south_tile = tile_map.size - 1;
 
 			/* We need to account for a hill or high building at tile 0,0. */
 			int extra_height_top = TilePixelHeight(north_tile) + 150;
@@ -847,13 +847,13 @@ bool MakeHeightmapScreenshot(const char *filename)
 	}
 
 	_heightmap_highest_peak = 0;
-	for (TileIndex tile = 0; tile < MapSize(); tile++) {
+	for (TileIndex tile = 0; tile < tile_map.size; tile++) {
 		uint h = TileHeight(tile);
 		_heightmap_highest_peak = std::max(h, _heightmap_highest_peak);
 	}
 
 	const ScreenshotFormat *sf = _screenshot_formats + _cur_screenshot_format;
-	return sf->proc(filename, HeightmapCallback, nullptr, MapSizeX(), MapSizeY(), 8, palette);
+	return sf->proc(filename, HeightmapCallback, nullptr, tile_map.size_x, tile_map.size_y, 8, palette);
 }
 
 static ScreenshotType _confirmed_screenshot_type; ///< Screenshot type the current query is about to confirm.
@@ -880,8 +880,8 @@ void MakeScreenshotWithConfirm(ScreenshotType t)
 	SetupScreenshotViewport(t, &vp);
 
 	bool heightmap_or_minimap = t == SC_HEIGHTMAP || t == SC_MINIMAP;
-	uint64_t width = (heightmap_or_minimap ? MapSizeX() : vp.width);
-	uint64_t height = (heightmap_or_minimap ? MapSizeY() : vp.height);
+	uint64_t width = (heightmap_or_minimap ? tile_map.size_x : vp.width);
+	uint64_t height = (heightmap_or_minimap ? tile_map.size_y : vp.height);
 
 	if (width * height > 8192 * 8192) {
 		/* Ask for confirmation */
@@ -1041,7 +1041,7 @@ static void MinimapScreenCallback(void *userdata, void *buf, uint y, uint pitch,
 	uint num = (pitch * n);
 	for (uint i = 0; i < num; i++) {
 		uint row = y + (int)(i / pitch);
-		uint col = (MapSizeX() - 1) - (i % pitch);
+		uint col = (tile_map.size_x - 1) - (i % pitch);
 
 		TileIndex tile = TileXY(col, row);
 		Owner o = GetMinimapOwner(tile);
@@ -1063,5 +1063,5 @@ static void MinimapScreenCallback(void *userdata, void *buf, uint y, uint pitch,
 bool MakeMinimapWorldScreenshot()
 {
 	const ScreenshotFormat *sf = _screenshot_formats + _cur_screenshot_format;
-	return sf->proc(MakeScreenshotName(SCREENSHOT_NAME, sf->extension), MinimapScreenCallback, nullptr, MapSizeX(), MapSizeY(), 32, _cur_palette.palette);
+	return sf->proc(MakeScreenshotName(SCREENSHOT_NAME, sf->extension), MinimapScreenCallback, nullptr, tile_map.size_x, tile_map.size_y, 32, _cur_palette.palette);
 }

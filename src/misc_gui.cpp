@@ -119,7 +119,7 @@ public:
 #	define LANDINFOD_LEVEL 1
 #endif
 		Debug(misc, LANDINFOD_LEVEL, "TILE: {:#x} ({},{})", tile, TileX(tile), TileY(tile));
-		Debug(misc, LANDINFOD_LEVEL, "type   = {:#x}", _m[tile].type);
+		Debug(misc, LANDINFOD_LEVEL, "type   = {:#x}", _m[tile]._type);
 		Debug(misc, LANDINFOD_LEVEL, "height = {:#x}", _m[tile].height);
 		Debug(misc, LANDINFOD_LEVEL, "m1     = {:#x}", _m[tile].m1);
 		Debug(misc, LANDINFOD_LEVEL, "m2     = {:#x}", _m[tile].m2);

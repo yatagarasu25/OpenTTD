@@ -44,7 +44,7 @@ static inline bool IsBridgeTile(TileIndex t)
  */
 static inline bool IsBridgeAbove(TileIndex t)
 {
-	return GB(_m[t].type, 2, 2) != 0;
+	return _m[t].above != 0;
 }
 
 /**
@@ -68,7 +68,7 @@ static inline BridgeType GetBridgeType(TileIndex t)
 static inline Axis GetBridgeAxis(TileIndex t)
 {
 	assert(IsBridgeAbove(t));
-	return (Axis)(GB(_m[t].type, 2, 2) - 1);
+	return (Axis)(_m[t].above - 1);
 }
 
 TileIndex GetNorthernBridgeEnd(TileIndex t);
@@ -87,23 +87,12 @@ static inline int GetBridgePixelHeight(TileIndex tile)
 }
 
 /**
- * Remove the bridge over the given axis.
- * @param t the tile to remove the bridge from
- * @param a the axis of the bridge to remove
- */
-static inline void ClearSingleBridgeMiddle(TileIndex t, Axis a)
-{
-	ClrBit(_m[t].type, 2 + a);
-}
-
-/**
  * Removes bridges from the given, that is bridges along the X and Y axis.
  * @param t the tile to remove the bridge from
  */
 static inline void ClearBridgeMiddle(TileIndex t)
 {
-	ClearSingleBridgeMiddle(t, AXIS_X);
-	ClearSingleBridgeMiddle(t, AXIS_Y);
+	_m[t].above = 0;
 }
 
 /**
@@ -113,7 +102,8 @@ static inline void ClearBridgeMiddle(TileIndex t)
  */
 static inline void SetBridgeMiddle(TileIndex t, Axis a)
 {
-	SetBit(_m[t].type, 2 + a);
+	if (a == AXIS_X) _m[t].above_x = 1;
+	else if (a == AXIS_Y) _m[t].above_y = 1;
 }
 
 /**

@@ -697,7 +697,7 @@ static bool TryBuildLightHouse()
 		int h;
 		if (IsTileType(tile, MP_CLEAR) && IsTileFlat(tile, &h) && h <= 2 && !IsBridgeAbove(tile)) {
 			BuildObject(OBJECT_LIGHTHOUSE, tile);
-			assert(tile < MapSize());
+			assert(tile < tile_map.size);
 			return true;
 		}
 		tile += TileOffsByDiagDir(dir);

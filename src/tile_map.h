@@ -24,11 +24,11 @@
  *
  * @param tile The tile to get the height from
  * @return the height of the tile
- * @pre tile < MapSize()
+ * @pre tile < tile_map.size
  */
 static inline uint TileHeight(TileIndex tile)
 {
-	assert(tile < MapSize());
+	assert(tile < tile_map.size);
 	return _m[tile].height;
 }
 
@@ -51,12 +51,12 @@ static inline uint TileHeightOutsideMap(int x, int y)
  *
  * @param tile The tile to change the height
  * @param height The new height value of the tile
- * @pre tile < MapSize()
+ * @pre tile < tile_map.size
  * @pre height <= MAX_TILE_HEIGHT
  */
 static inline void SetTileHeight(TileIndex tile, uint height)
 {
-	assert(tile < MapSize());
+	assert(tile < tile_map.size);
 	assert(height <= MAX_TILE_HEIGHT);
 	_m[tile].height = height;
 }
@@ -91,12 +91,12 @@ static inline uint TilePixelHeightOutsideMap(int x, int y)
  *
  * @param tile The tile to get the TileType
  * @return The tiletype of the tile
- * @pre tile < MapSize()
+ * @pre tile < tile_map.size
  */
 static inline TileType GetTileType(TileIndex tile)
 {
-	assert(tile < MapSize());
-	return (TileType)GB(_m[tile].type, 4, 4);
+	assert(tile < tile_map.size);
+	return (TileType) _m[tile].type;
 }
 
 /**
@@ -104,11 +104,11 @@ static inline TileType GetTileType(TileIndex tile)
  *
  * @param tile The tile to check
  * @return Whether the tile is in the interior of the map
- * @pre tile < MapSize()
+ * @pre tile < tile_map.size
  */
 static inline bool IsInnerTile(TileIndex tile)
 {
-	assert(tile < MapSize());
+	assert(tile < tile_map.size);
 
 	uint x = TileX(tile);
 	uint y = TileY(tile);
@@ -116,26 +116,10 @@ static inline bool IsInnerTile(TileIndex tile)
 	return x < MapMaxX() && y < MapMaxY() && ((x > 0 && y > 0) || !_settings_game.construction.freeform_edges);
 }
 
-/**
- * Set the type of a tile
- *
- * This functions sets the type of a tile. If the type
- * MP_VOID is selected the tile must be at the south-west or
- * south-east edges of the map and vice versa.
- *
- * @param tile The tile to save the new type
- * @param type The type to save
- * @pre tile < MapSize()
- * @pre type MP_VOID <=> tile is on the south-east or south-west edge.
- */
 static inline void SetTileType(TileIndex tile, TileType type)
 {
-	assert(tile < MapSize());
-	/* VOID tiles (and no others) are exactly allowed at the lower left and right
-	 * edges of the map. If _settings_game.construction.freeform_edges is true,
-	 * the upper edges of the map are also VOID tiles. */
-	assert(IsInnerTile(tile) == (type != MP_VOID));
-	SB(_m[tile].type, 4, 4, type);
+	assert(tile < tile_map.size);
+	_m[tile].type = type;
 }
 
 /**
@@ -160,7 +144,7 @@ static inline bool IsTileType(TileIndex tile, TileType type)
  */
 static inline bool IsValidTile(TileIndex tile)
 {
-	return tile < MapSize() && !IsTileType(tile, MP_VOID);
+	return tile < tile_map.size && !IsTileType(tile, MP_VOID);
 }
 
 /**
@@ -220,25 +204,25 @@ static inline bool IsTileOwner(TileIndex tile, Owner owner)
  * Set the tropic zone
  * @param tile the tile to set the zone of
  * @param type the new type
- * @pre tile < MapSize()
+ * @pre tile < tile_map.size
  */
 static inline void SetTropicZone(TileIndex tile, TropicZone type)
 {
-	assert(tile < MapSize());
+	assert(tile < tile_map.size);
 	assert(!IsTileType(tile, MP_VOID) || type == TROPICZONE_NORMAL);
-	SB(_m[tile].type, 0, 2, type);
+	_m[tile].zone = type;
 }
 
 /**
  * Get the tropic zone
  * @param tile the tile to get the zone of
- * @pre tile < MapSize()
+ * @pre tile < tile_map.size
  * @return the zone type
  */
 static inline TropicZone GetTropicZone(TileIndex tile)
 {
-	assert(tile < MapSize());
-	return (TropicZone)GB(_m[tile].type, 0, 2);
+	assert(tile < tile_map.size);
+	return (TropicZone)_m[tile].zone;
 }
 
 /**

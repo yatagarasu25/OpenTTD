@@ -1044,7 +1044,7 @@ static void PlantFarmField(TileIndex tile, IndustryID industry)
 	/* check the amount of bad tiles */
 	int count = 0;
 	for (TileIndex cur_tile : ta) {
-		assert(cur_tile < MapSize());
+		assert(cur_tile < tile_map.size);
 		count += IsSuitableForFarmField(cur_tile, false);
 	}
 	if (count * 2 < ta.w * ta.h) return;
@@ -1056,7 +1056,7 @@ static void PlantFarmField(TileIndex tile, IndustryID industry)
 
 	/* make field */
 	for (TileIndex cur_tile : ta) {
-		assert(cur_tile < MapSize());
+		assert(cur_tile < tile_map.size);
 		if (IsSuitableForFarmField(cur_tile, true)) {
 			MakeField(cur_tile, field_type, industry);
 			SetClearCounter(cur_tile, counter);
@@ -1253,8 +1253,8 @@ static bool CheckScaledDistanceFromEdge(TileIndex tile, uint maxdist)
 	uint maxdist_x = maxdist;
 	uint maxdist_y = maxdist;
 
-	if (MapSizeX() > 256) maxdist_x *= MapSizeX() / 256;
-	if (MapSizeY() > 256) maxdist_y *= MapSizeY() / 256;
+	if (tile_map.size_x > 256) maxdist_x *= tile_map.size_x / 256;
+	if (tile_map.size_y > 256) maxdist_y *= tile_map.size_y / 256;
 
 	if (DistanceFromEdgeDir(tile, DIAGDIR_NE) < maxdist_x) return true;
 	if (DistanceFromEdgeDir(tile, DIAGDIR_NW) < maxdist_y) return true;

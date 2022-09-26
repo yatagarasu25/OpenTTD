@@ -152,3 +152,54 @@ int GetTileMaxZ(TileIndex t)
 		TileHeight(TileXY(x2, y2)), // S corner
 	});
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+#include "station_map.h"
+
+
+struct OwnedTile : public TileCore
+{
+	Owner owner; // 0, 5, owner; !!!
+};
+
+struct StationTile : public OwnedTile
+{
+	StationID sid; // m2
+	uint16 m3m4;
+	byte section;
+
+	/*
+	SB(_me[t].m6, 2, 1, 0);
+	SB(_me[t].m6, 3, 3, st);
+	_me[t].m7 = 0;
+	_me[t].m8 = 0;
+	*/
+};
+
+void MakeStation(TileIndex t, Owner o, StationID sid, StationType st, byte section, WaterClass wc)
+{
+	StationTile& st_ = (StationTile&)(_m[t]);
+	SetTileType(t, MP_STATION);
+	SetTileOwner(t, o);
+	SetWaterClass(t, wc);
+	SetDockingTile(t, false);
+	_m[t].m2 = sid;
+	_m[t].m3 = 0;
+	_m[t].m4 = 0;
+	_m[t].m5 = section;
+	SB(_me[t].m6, 2, 1, 0);
+	SB(_me[t].m6, 3, 3, st);
+	_me[t].m7 = 0;
+	_me[t].m8 = 0;
+}

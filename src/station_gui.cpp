@@ -56,7 +56,7 @@ int DrawStationCoverageAreaText(int left, int right, int top, StationCoverageTyp
 {
 	TileIndex tile = TileVirtXY(_thd.pos.x, _thd.pos.y);
 	CargoTypes cargo_mask = 0;
-	if (_thd.drawstyle == HT_RECT && tile < MapSize()) {
+	if (_thd.drawstyle == HT_RECT && tile < tile_map.size) {
 		CargoArray cargoes;
 		if (supplies) {
 			cargoes = GetProductionAroundTiles(tile, _thd.size.x / TILE_SIZE, _thd.size.y / TILE_SIZE, rad);
@@ -2213,7 +2213,7 @@ static const T *FindStationsNearby(TileArea ta, bool distant_join)
 
 	/* Check the inside, to return, if we sit on another station */
 	for (TileIndex t : ta) {
-		if (t < MapSize() && IsTileType(t, MP_STATION) && T::IsValidID(GetStationIndex(t))) return T::GetByTile(t);
+		if (t < tile_map.size && IsTileType(t, MP_STATION) && T::IsValidID(GetStationIndex(t))) return T::GetByTile(t);
 	}
 
 	/* Look for deleted stations */

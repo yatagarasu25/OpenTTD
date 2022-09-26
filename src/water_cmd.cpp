@@ -438,7 +438,7 @@ bool RiverModifyDesertZone(TileIndex tile, void *)
  */
 CommandCost CmdBuildCanal(DoCommandFlag flags, TileIndex tile, TileIndex start_tile, WaterClass wc, bool diagonal)
 {
-	if (start_tile >= MapSize() || !IsValidWaterClass(wc)) return CMD_ERROR;
+	if (start_tile >= tile_map.size || !IsValidWaterClass(wc)) return CMD_ERROR;
 
 	/* Outside of the editor you can only build canals, not oceans */
 	if (wc != WATER_CLASS_CANAL && _game_mode != GM_EDITOR) return CMD_ERROR;
@@ -1261,7 +1261,7 @@ void ConvertGroundTilesIntoWaterTiles()
 {
 	int z;
 
-	for (TileIndex tile = 0; tile < MapSize(); ++tile) {
+	for (TileIndex tile = 0; tile < tile_map.size; ++tile) {
 		Slope slope = GetTileSlope(tile, &z);
 		if (IsTileType(tile, MP_CLEAR) && z == 0) {
 			/* Make both water for tiles at level 0

@@ -10,13 +10,37 @@
 #ifndef MAP_TYPE_H
 #define MAP_TYPE_H
 
+struct TileCore {
+	union {
+		struct {
+			byte _type;
+		};
+		struct {
+			byte zone : 2;      ///< rainforest/desert (0..1)
+			byte above_x : 1;   ///< bridges (2..3)
+			byte above_y : 1;
+			byte type : 4;     ///< The type (bits 4..7)
+		};
+		struct {
+			byte zone : 2;      ///< rainforest/desert (0..1)
+			byte above : 2;     ///< rainforest/desert (0..1)
+			byte type : 4;     ///< The type (bits 4..7)
+		};
+	};
+	byte   height;      ///< The height of the northern corner.
+
+	void SetType(TileType type)
+	{
+		this->type = type;
+	}
+};
+static_assert(sizeof(TileCore) == 2);
+
 /**
  * Data that is stored per tile. Also used TileExtended for this.
  * Look at docs/landscape.html for the exact meaning of the members.
  */
-struct Tile {
-	byte   type;        ///< The type (bits 4..7), bridges (2..3), rainforest/desert (0..1)
-	byte   height;      ///< The height of the northern corner.
+struct Tile : public TileCore {
 	uint16 m2;          ///< Primarily used for indices to towns, industries and stations
 	byte   m1;          ///< Primarily used for ownership information
 	byte   m3;          ///< General purpose

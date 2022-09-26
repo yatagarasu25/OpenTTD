@@ -276,11 +276,11 @@
 
 	if (tile - from == 1) {
 		if (to - tile == 1) return (GetRailTracks(tile) & RAILTRACK_NE_SW) != 0;
-		if (to - tile == ::MapSizeX()) return (GetRailTracks(tile) & RAILTRACK_NE_SE) != 0;
-	} else if (tile - from == ::MapSizeX()) {
+		if (to - tile == tile_map.size_x) return (GetRailTracks(tile) & RAILTRACK_NE_SE) != 0;
+	} else if (tile - from == tile_map.size_x) {
 		if (tile - to == 1) return (GetRailTracks(tile) & RAILTRACK_NW_NE) != 0;
 		if (to - tile == 1) return (GetRailTracks(tile) & RAILTRACK_NW_SW) != 0;
-		if (to - tile == ::MapSizeX()) return (GetRailTracks(tile) & RAILTRACK_NW_SE) != 0;
+		if (to - tile == tile_map.size_x) return (GetRailTracks(tile) & RAILTRACK_NW_SE) != 0;
 	} else {
 		return (GetRailTracks(tile) & RAILTRACK_SW_SE) != 0;
 	}
@@ -301,7 +301,7 @@ static Track SimulateDrag(TileIndex from, TileIndex tile, TileIndex *to)
 		*to -= Clamp((int)::TileX(*to) - (int)::TileX(tile), -1, 1);
 	} else if (::TileX(from) == ::TileX(*to)) {
 		track = TRACK_Y;
-		*to -= ::MapSizeX() * Clamp((int)::TileY(*to) - (int)::TileY(tile), -1, 1);
+		*to -= tile_map.size_x * Clamp((int)::TileY(*to) - (int)::TileY(tile), -1, 1);
 	} else if (::TileY(from) < ::TileY(tile)) {
 		if (::TileX(*to) < ::TileX(tile)) {
 			track = TRACK_UPPER;
@@ -311,7 +311,7 @@ static Track SimulateDrag(TileIndex from, TileIndex tile, TileIndex *to)
 		if (diag_offset != 0) {
 			*to -= Clamp((int)::TileX(*to) - (int)::TileX(tile), -1, 1);
 		} else {
-			*to -= ::MapSizeX() * Clamp((int)::TileY(*to) - (int)::TileY(tile), -1, 1);
+			*to -= tile_map.size_x * Clamp((int)::TileY(*to) - (int)::TileY(tile), -1, 1);
 		}
 	} else if (::TileY(from) > ::TileY(tile)) {
 		if (::TileX(*to) < ::TileX(tile)) {
@@ -322,7 +322,7 @@ static Track SimulateDrag(TileIndex from, TileIndex tile, TileIndex *to)
 		if (diag_offset != 0) {
 			*to -= Clamp((int)::TileX(*to) - (int)::TileX(tile), -1, 1);
 		} else {
-			*to -= ::MapSizeX() * Clamp((int)::TileY(*to) - (int)::TileY(tile), -1, 1);
+			*to -= tile_map.size_x * Clamp((int)::TileY(*to) - (int)::TileY(tile), -1, 1);
 		}
 	} else if (::TileX(from) < ::TileX(tile)) {
 		if (::TileY(*to) < ::TileY(tile)) {
@@ -333,7 +333,7 @@ static Track SimulateDrag(TileIndex from, TileIndex tile, TileIndex *to)
 		if (diag_offset == 0) {
 			*to -= Clamp((int)::TileX(*to) - (int)::TileX(tile), -1, 1);
 		} else {
-			*to -= ::MapSizeX() * Clamp((int)::TileY(*to) - (int)::TileY(tile), -1, 1);
+			*to -= tile_map.size_x * Clamp((int)::TileY(*to) - (int)::TileY(tile), -1, 1);
 		}
 	} else if (::TileX(from) > ::TileX(tile)) {
 		if (::TileY(*to) < ::TileY(tile)) {
@@ -344,7 +344,7 @@ static Track SimulateDrag(TileIndex from, TileIndex tile, TileIndex *to)
 		if (diag_offset == 0) {
 			*to -= Clamp((int)::TileX(*to) - (int)::TileX(tile), -1, 1);
 		} else {
-			*to -= ::MapSizeX() * Clamp((int)::TileY(*to) - (int)::TileY(tile), -1, 1);
+			*to -= tile_map.size_x * Clamp((int)::TileY(*to) - (int)::TileY(tile), -1, 1);
 		}
 	}
 	return track;

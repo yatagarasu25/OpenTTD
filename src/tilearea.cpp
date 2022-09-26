@@ -20,8 +20,8 @@
  */
 OrthogonalTileArea::OrthogonalTileArea(TileIndex start, TileIndex end)
 {
-	assert(start < MapSize());
-	assert(end < MapSize());
+	assert(start < tile_map.size);
+	assert(end < tile_map.size);
 
 	uint sx = TileX(start);
 	uint sy = TileY(start);
@@ -127,8 +127,8 @@ OrthogonalTileArea &OrthogonalTileArea::Expand(int rad)
 
 	int sx = std::max<int>(x - rad, 0);
 	int sy = std::max<int>(y - rad, 0);
-	int ex = std::min<int>(x + this->w + rad, MapSizeX());
-	int ey = std::min<int>(y + this->h + rad, MapSizeY());
+	int ex = std::min<int>(x + this->w + rad, tile_map.size_x);
+	int ey = std::min<int>(y + this->h + rad, tile_map.size_y);
 
 	this->tile = TileXY(sx, sy);
 	this->w    = ex - sx;
@@ -141,9 +141,9 @@ OrthogonalTileArea &OrthogonalTileArea::Expand(int rad)
  */
 void OrthogonalTileArea::ClampToMap()
 {
-	assert(this->tile < MapSize());
-	this->w = std::min<int>(this->w, MapSizeX() - TileX(this->tile));
-	this->h = std::min<int>(this->h, MapSizeY() - TileY(this->tile));
+	assert(this->tile < tile_map.size);
+	this->w = std::min<int>(this->w, tile_map.size_x - TileX(this->tile));
+	this->h = std::min<int>(this->h, tile_map.size_y - TileY(this->tile));
 }
 
 /**
@@ -171,8 +171,8 @@ OrthogonalTileIterator OrthogonalTileArea::end() const
  */
 DiagonalTileArea::DiagonalTileArea(TileIndex start, TileIndex end) : tile(start)
 {
-	assert(start < MapSize());
-	assert(end < MapSize());
+	assert(start < tile_map.size);
+	assert(end < tile_map.size);
 
 	/* Unfortunately we can't find a new base and make all a and b positive because
 	 * the new base might be a "flattened" corner where there actually is no single
@@ -274,8 +274,8 @@ TileIterator &DiagonalTileIterator::operator++()
 		uint x = this->base_x + (this->a_cur - this->b_cur) / 2;
 		uint y = this->base_y + (this->b_cur + this->a_cur) / 2;
 		/* Prevent wrapping around the map's borders. */
-		this->tile = x >= MapSizeX() || y >= MapSizeY() ? INVALID_TILE : TileXY(x, y);
-	} while (this->tile > MapSize() && this->b_max != this->b_cur);
+		this->tile = x >= tile_map.size_x || y >= tile_map.size_y ? INVALID_TILE : TileXY(x, y);
+	} while (this->tile > tile_map.size && this->b_max != this->b_cur);
 
 	if (this->b_max == this->b_cur) this->tile = INVALID_TILE;
 	return *this;

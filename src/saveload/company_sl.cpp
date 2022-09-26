@@ -106,7 +106,7 @@ void AfterLoadCompanyStats()
 	}
 
 	Company *c;
-	for (TileIndex tile = 0; tile < MapSize(); tile++) {
+	for (TileIndex tile = 0; tile < tile_map.size; tile++) {
 		switch (GetTileType(tile)) {
 			case MP_RAILWAY:
 				c = Company::GetIfValid(GetTileOwner(tile));

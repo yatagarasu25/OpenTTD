@@ -391,7 +391,7 @@ CommandCost CmdPlantTree(DoCommandFlag flags, TileIndex tile, TileIndex start_ti
 	StringID msg = INVALID_STRING_ID;
 	CommandCost cost(EXPENSES_OTHER);
 
-	if (start_tile >= MapSize()) return CMD_ERROR;
+	if (start_tile >= tile_map.size) return CMD_ERROR;
 	/* Check the tree type within the current climate */
 	if (tree_to_plant != TREE_INVALID && !IsInsideBS(tree_to_plant, _tree_base_by_landscape[_settings_game.game_creation.landscape], _tree_count_by_landscape[_settings_game.game_creation.landscape])) return CMD_ERROR;
 

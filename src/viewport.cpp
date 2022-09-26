@@ -1218,7 +1218,7 @@ static void ViewportAddLandscape()
 			tile_info.x = tilecoord.x * TILE_SIZE; // FIXME tile_info should use signed integers
 			tile_info.y = tilecoord.y * TILE_SIZE;
 
-			if (IsInsideBS(tilecoord.x, 0, MapSizeX()) && IsInsideBS(tilecoord.y, 0, MapSizeY())) {
+			if (IsInsideBS(tilecoord.x, 0, tile_map.size_x) && IsInsideBS(tilecoord.y, 0, tile_map.size_y)) {
 				/* This includes the south border at MapMaxX / MapMaxY. When terraforming we still draw tile selections there. */
 				tile_info.tile = TileXY(tilecoord.x, tilecoord.y);
 				tile_type = GetTileType(tile_info.tile);
@@ -2024,11 +2024,11 @@ static void SetSelectionTilesDirty()
 		assert(x_size >= 0);
 		assert(y_size >= 0);
 
-		int x_end = Clamp(x_start + x_size, 0, MapSizeX() * TILE_SIZE - TILE_SIZE);
-		int y_end = Clamp(y_start + y_size, 0, MapSizeY() * TILE_SIZE - TILE_SIZE);
+		int x_end = Clamp(x_start + x_size, 0, tile_map.size_x * TILE_SIZE - TILE_SIZE);
+		int y_end = Clamp(y_start + y_size, 0, tile_map.size_y * TILE_SIZE - TILE_SIZE);
 
-		x_start = Clamp(x_start, 0, MapSizeX() * TILE_SIZE - TILE_SIZE);
-		y_start = Clamp(y_start, 0, MapSizeY() * TILE_SIZE - TILE_SIZE);
+		x_start = Clamp(x_start, 0, tile_map.size_x * TILE_SIZE - TILE_SIZE);
+		y_start = Clamp(y_start, 0, tile_map.size_y * TILE_SIZE - TILE_SIZE);
 
 		/* make sure everything is multiple of TILE_SIZE */
 		assert((x_end | y_end | x_start | y_start) % TILE_SIZE == 0);
@@ -2401,8 +2401,8 @@ bool ScrollWindowTo(int x, int y, int z, Window *w, bool instant)
 {
 	/* The slope cannot be acquired outside of the map, so make sure we are always within the map. */
 	if (z == -1) {
-		if ( x >= 0 && x <= (int)MapSizeX() * (int)TILE_SIZE - 1
-				&& y >= 0 && y <= (int)MapSizeY() * (int)TILE_SIZE - 1) {
+		if ( x >= 0 && x <= (int)tile_map.size_x * (int)TILE_SIZE - 1
+				&& y >= 0 && y <= (int)tile_map.size_y * (int)TILE_SIZE - 1) {
 			z = GetSlopePixelZ(x, y);
 		} else {
 			z = TileHeightOutsideMap(x / (int)TILE_SIZE, y / (int)TILE_SIZE);
@@ -3430,7 +3430,7 @@ Point GetViewportStationMiddle(const Viewport *vp, const Station *st)
 {
 	int x = TileX(st->xy) * TILE_SIZE;
 	int y = TileY(st->xy) * TILE_SIZE;
-	int z = GetSlopePixelZ(Clamp(x, 0, MapSizeX() * TILE_SIZE - 1), Clamp(y, 0, MapSizeY() * TILE_SIZE - 1));
+	int z = GetSlopePixelZ(Clamp(x, 0, tile_map.size_x * TILE_SIZE - 1), Clamp(y, 0, tile_map.size_y * TILE_SIZE - 1));
 
 	Point p = RemapCoords(x, y, z);
 	p.x = UnScaleByZoom(p.x - vp->virtual_left, vp->zoom) + vp->left;

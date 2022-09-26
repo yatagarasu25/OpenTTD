@@ -393,8 +393,8 @@ static void UpdateFreeformEdges(int32 new_value)
 	if (_game_mode == GM_MENU) return;
 
 	if (new_value != 0) {
-		for (uint x = 0; x < MapSizeX(); x++) MakeVoid(TileXY(x, 0));
-		for (uint y = 0; y < MapSizeY(); y++) MakeVoid(TileXY(0, y));
+		for (uint x = 0; x < tile_map.size_x; x++) MakeVoid(TileXY(x, 0));
+		for (uint y = 0; y < tile_map.size_y; y++) MakeVoid(TileXY(0, y));
 	} else {
 		/* Make tiles at the border water again. */
 		for (uint i = 0; i < MapMaxX(); i++) {
@@ -432,7 +432,7 @@ static bool CheckMaxHeightLevel(int32 &new_value)
 
 	/* Check if at least one mountain on the map is higher than the new value.
 	 * If yes, disallow the change. */
-	for (TileIndex t = 0; t < MapSize(); t++) {
+	for (TileIndex t = 0; t < tile_map.size; t++) {
 		if ((int32)TileHeight(t) > new_value) {
 			ShowErrorMessage(STR_CONFIG_SETTING_TOO_HIGH_MOUNTAIN, INVALID_STRING_ID, WL_ERROR);
 			/* Return old, unchanged value */

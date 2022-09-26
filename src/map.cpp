@@ -20,16 +20,22 @@
 extern "C" _CRTIMP void __cdecl _assert(void *, void *, unsigned);
 #endif
 
-uint _map_log_x;     ///< 2^_map_log_x == _map_size_x
-uint _map_log_y;     ///< 2^_map_log_y == _map_size_y
-uint _map_size_x;    ///< Size of the map along the X
-uint _map_size_y;    ///< Size of the map along the Y
-uint _map_size;      ///< The number of tiles on the map
-uint _map_tile_mask; ///< _map_size - 1 (to mask the mapsize)
+TileMap tile_map;
 
-Tile *_m = nullptr;          ///< Tiles of the map
-TileExtended *_me = nullptr; ///< Extended Tiles of the map
+void TileMap::Allocate()
+{
+#undef _m
+#undef _me
 
+	free(_m);
+	free(_me);
+
+	_m = CallocT<Tile>(size);
+	_me = CallocT<TileExtended>(size);
+
+#define _m tile_map._m
+#define _me tile_map._me
+}
 
 /**
  * (Re)allocates a map with the given dimension
@@ -49,18 +55,14 @@ void AllocateMap(uint size_x, uint size_y)
 
 	Debug(map, 1, "Allocating map of size {}x{}", size_x, size_y);
 
-	_map_log_x = FindFirstBit(size_x);
-	_map_log_y = FindFirstBit(size_y);
-	_map_size_x = size_x;
-	_map_size_y = size_y;
-	_map_size = size_x * size_y;
-	_map_tile_mask = _map_size - 1;
+	tile_map.log_x = FindFirstBit(size_x);
+	tile_map.log_y = FindFirstBit(size_y);
+	tile_map.size_x = size_x;
+	tile_map.size_y = size_y;
+	tile_map.size = size_x * size_y;
+	tile_map.tile_mask = tile_map.size - 1;
 
-	free(_m);
-	free(_me);
-
-	_m = CallocT<Tile>(_map_size);
-	_me = CallocT<TileExtended>(_map_size);
+	tile_map.Allocate();
 }
 
 
@@ -74,13 +76,13 @@ TileIndex TileAdd(TileIndex tile, TileIndexDiff add,
 	uint y;
 
 	dx = add & MapMaxX();
-	if (dx >= (int)MapSizeX() / 2) dx -= MapSizeX();
-	dy = (add - dx) / (int)MapSizeX();
+	if (dx >= (int)tile_map.size_x / 2) dx -= tile_map.size_x;
+	dy = (add - dx) / (int)tile_map.size_x;
 
 	x = TileX(tile) + dx;
 	y = TileY(tile) + dy;
 
-	if (x >= MapSizeX() || y >= MapSizeY()) {
+	if (x >= tile_map.size_x || y >= tile_map.size_y) {
 		char buf[512];
 
 		seprintf(buf, lastof(buf), "TILE_ADD(%s) when adding 0x%.4X and 0x%.4X failed",
@@ -218,8 +220,8 @@ uint DistanceFromEdge(TileIndex tile)
 {
 	const uint xl = TileX(tile);
 	const uint yl = TileY(tile);
-	const uint xh = MapSizeX() - 1 - xl;
-	const uint yh = MapSizeY() - 1 - yl;
+	const uint xh = tile_map.size_x - 1 - xl;
+	const uint yh = tile_map.size_y - 1 - yl;
 	const uint minl = std::min(xl, yl);
 	const uint minh = std::min(xh, yh);
 	return std::min(minl, minh);
@@ -307,7 +309,7 @@ bool CircularTileSearch(TileIndex *tile, uint radius, uint w, uint h, TestTileOn
 		for (DiagDirection dir = DIAGDIR_BEGIN; dir < DIAGDIR_END; dir++) {
 			/* Is the tile within the map? */
 			for (uint j = extent[dir] + n * 2 + 1; j != 0; j--) {
-				if (x < MapSizeX() && y < MapSizeY()) {
+				if (x < tile_map.size_x && y < tile_map.size_y) {
 					TileIndex t = TileXY(x, y);
 					/* Is the callback successful? */
 					if (proc(t, user_data)) {
@@ -378,7 +380,7 @@ uint GetClosestWaterDistance(TileIndex tile, bool water)
 
 	if (!water) {
 		/* no land found - is this a water-only map? */
-		for (TileIndex t = 0; t < MapSize(); t++) {
+		for (TileIndex t = 0; t < tile_map.size; t++) {
 			if (!IsTileType(t, MP_VOID) && !IsTileType(t, MP_WATER)) return 0x1FF;
 		}
 	}

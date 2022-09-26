@@ -15,85 +15,53 @@
 #include "map_type.h"
 #include "direction_func.h"
 
-extern uint _map_tile_mask;
+
+struct TileMap
+{
+	/**
+	 * Logarithm of the map size along the X side.
+	 * @note try to avoid using this one
+	 */
+	uint log_x;     ///< 2^_map_log_x == _map_size_x
+	uint log_y;     ///< 2^_map_log_y == _map_size_y
+	uint size_x;    ///< Size of the map along the X
+	uint size_y;    ///< Size of the map along the Y
+	uint size;      ///< The number of tiles on the map
+	uint tile_mask;
+
+	 /**
+	  * Pointer to the tile-array.
+	  *
+	  * This variable points to the tile-array which contains the tiles of
+	  * the map.
+	  */
+	Tile* _m;
+
+	/**
+	 * Pointer to the extended tile-array.
+	 *
+	 * This variable points to the extended tile-array which contains the tiles
+	 * of the map.
+	 */
+	TileExtended* _me;
+
+	void Allocate();
+};
+
+extern TileMap tile_map;
+#define _m tile_map._m
+#define _me tile_map._me
 
 /**
  * 'Wraps' the given tile to it is within the map. It does
  * this by masking the 'high' bits of.
  * @param x the tile to 'wrap'
  */
+#define TILE_MASK(x) ((x) & tile_map.tile_mask)
 
-#define TILE_MASK(x) ((x) & _map_tile_mask)
 
-/**
- * Pointer to the tile-array.
- *
- * This variable points to the tile-array which contains the tiles of
- * the map.
- */
-extern Tile *_m;
-
-/**
- * Pointer to the extended tile-array.
- *
- * This variable points to the extended tile-array which contains the tiles
- * of the map.
- */
-extern TileExtended *_me;
 
 void AllocateMap(uint size_x, uint size_y);
-
-/**
- * Logarithm of the map size along the X side.
- * @note try to avoid using this one
- * @return 2^"return value" == MapSizeX()
- */
-static inline uint MapLogX()
-{
-	extern uint _map_log_x;
-	return _map_log_x;
-}
-
-/**
- * Logarithm of the map size along the y side.
- * @note try to avoid using this one
- * @return 2^"return value" == MapSizeY()
- */
-static inline uint MapLogY()
-{
-	extern uint _map_log_y;
-	return _map_log_y;
-}
-
-/**
- * Get the size of the map along the X
- * @return the number of tiles along the X of the map
- */
-static inline uint MapSizeX()
-{
-	extern uint _map_size_x;
-	return _map_size_x;
-}
-
-/**
- * Get the size of the map along the Y
- * @return the number of tiles along the Y of the map
- */
-static inline uint MapSizeY()
-{
-	extern uint _map_size_y;
-	return _map_size_y;
-}
-
-/**
- * Get the size of the map
- * @return the number of tiles of the map
- */
-static inline uint MapSize()
-{
-	extern uint _map_size;
-	return _map_size;
-}
 
 /**
  * Gets the maximum X coordinate within the map, including MP_VOID
@@ -101,7 +69,7 @@ static inline uint MapSize()
  */
 static inline uint MapMaxX()
 {
-	return MapSizeX() - 1;
+	return tile_map.size_x - 1;
 }
 
 /**
@@ -110,7 +78,7 @@ static inline uint MapMaxX()
  */
 static inline uint MapMaxY()
 {
-	return MapSizeY() - 1;
+	return tile_map.size_y - 1;
 }
 
 /**
@@ -123,7 +91,7 @@ static inline uint ScaleByMapSize(uint n)
 {
 	/* Subtract 12 from shift in order to prevent integer overflow
 	 * for large values of n. It's safe since the min mapsize is 64x64. */
-	return CeilDiv(n << (MapLogX() + MapLogY() - 12), 1 << 4);
+	return CeilDiv(n << (tile_map.log_x + tile_map.log_y - 12), 1 << 4);
 }
 
 
@@ -138,7 +106,7 @@ static inline uint ScaleByMapSize1D(uint n)
 	/* Normal circumference for the X+Y is 256+256 = 1<<9
 	 * Note, not actually taking the full circumference into account,
 	 * just half of it. */
-	return CeilDiv((n << MapLogX()) + (n << MapLogY()), 1 << 9);
+	return CeilDiv((n << tile_map.log_x) + (n << tile_map.log_y), 1 << 9);
 }
 
 /**
@@ -162,7 +130,7 @@ typedef int32 TileIndexDiff;
  */
 static inline TileIndex TileXY(uint x, uint y)
 {
-	return (y << MapLogX()) + x;
+	return (y << tile_map.log_x) + x;
 }
 
 /**
@@ -182,7 +150,7 @@ static inline TileIndexDiff TileDiffXY(int x, int y)
 	 * 0 << shift isn't optimized to 0 properly.
 	 * Typically x and y are constants, and then this doesn't result
 	 * in any actual multiplication in the assembly code.. */
-	return (y * MapSizeX()) + x;
+	return (y * tile_map.size_x) + x;
 }
 
 /**
@@ -193,7 +161,7 @@ static inline TileIndexDiff TileDiffXY(int x, int y)
  */
 static inline TileIndex TileVirtXY(uint x, uint y)
 {
-	return (y >> 4 << MapLogX()) + (x >> 4);
+	return (y >> 4 << tile_map.log_x) + (x >> 4);
 }
 
 
@@ -214,7 +182,7 @@ static inline uint TileX(TileIndex tile)
  */
 static inline uint TileY(TileIndex tile)
 {
-	return tile.value >> MapLogX();
+	return tile.value >> tile_map.log_x;
 }
 
 /**
@@ -229,7 +197,7 @@ static inline uint TileY(TileIndex tile)
  */
 static inline TileIndexDiff ToTileIndexDiff(TileIndexDiffC tidc)
 {
-	return (tidc.y << MapLogX()) + tidc.x;
+	return (tidc.y << tile_map.log_x) + tidc.x;
 }
 
 
@@ -302,7 +270,7 @@ static inline TileIndex AddTileIndexDiffCWrap(TileIndex tile, TileIndexDiffC dif
 	int x = TileX(tile) + diff.x;
 	int y = TileY(tile) + diff.y;
 	/* Negative value will become big positive value after cast */
-	if ((uint)x >= MapSizeX() || (uint)y >= MapSizeY()) return INVALID_TILE;
+	if ((uint)x >= tile_map.size_x || (uint)y >= tile_map.size_y) return INVALID_TILE;
 	return TileXY(x, y);
 }
 

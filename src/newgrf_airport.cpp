@@ -143,8 +143,8 @@ bool AirportSpec::IsWithinMapBounds(byte table, TileIndex tile) const
 	byte h = this->size_y;
 	if (this->rotation[table] == DIR_E || this->rotation[table] == DIR_W) Swap(w, h);
 
-	return TileX(tile) + w < MapSizeX() &&
-		TileY(tile) + h < MapSizeY();
+	return TileX(tile) + w < tile_map.size_x &&
+		TileY(tile) + h < tile_map.size_y;
 }
 
 /**

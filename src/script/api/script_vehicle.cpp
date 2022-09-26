@@ -256,8 +256,8 @@
 
 	const Vehicle *v = ::Vehicle::Get(vehicle_id);
 	if (v->type == VEH_AIRCRAFT) {
-		uint x = Clamp(v->x_pos / TILE_SIZE, 0, ::MapSizeX() - 2);
-		uint y = Clamp(v->y_pos / TILE_SIZE, 0, ::MapSizeY() - 2);
+		uint x = Clamp(v->x_pos / TILE_SIZE, 0, tile_map.size_x - 2);
+		uint y = Clamp(v->y_pos / TILE_SIZE, 0, tile_map.size_y - 2);
 		return ::TileXY(x, y);
 	}
 

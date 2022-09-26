@@ -495,7 +495,7 @@ void ChangeOwnershipOfCompanyItems(Owner old_owner, Owner new_owner)
 		TileIndex tile = 0;
 		do {
 			ChangeTileOwner(tile, old_owner, new_owner);
-		} while (++tile != MapSize());
+		} while (++tile != tile_map.size);
 
 		if (new_owner != INVALID_OWNER) {
 			/* Update all signals because there can be new segment that was owned by two companies
@@ -514,7 +514,7 @@ void ChangeOwnershipOfCompanyItems(Owner old_owner, Owner new_owner)
 				} else if (IsLevelCrossingTile(tile) && IsTileOwner(tile, new_owner)) {
 					UpdateLevelCrossing(tile);
 				}
-			} while (++tile != MapSize());
+			} while (++tile != tile_map.size);
 		}
 
 		/* update signals in buffer */
@@ -906,7 +906,7 @@ void SetPriceBaseMultiplier(Price price, int factor)
  */
 void StartupIndustryDailyChanges(bool init_counter)
 {
-	uint map_size = MapLogX() + MapLogY();
+	uint map_size = tile_map.log_x + tile_map.log_y;
 	/* After getting map size, it needs to be scaled appropriately and divided by 31,
 	 * which stands for the days in a month.
 	 * Using just 31 will make it so that a monthly reset (based on the real number of days of that month)

@@ -976,7 +976,7 @@ static bool CanConnectToRoad(TileIndex tile, RoadType rt, DiagDirection dir)
  */
 CommandCost CmdBuildLongRoad(DoCommandFlag flags, TileIndex start_tile, TileIndex end_tile, RoadType rt, Axis axis, DisallowedRoadDirections drd, bool start_half, bool end_half, bool is_ai)
 {
-	if (end_tile >= MapSize()) return CMD_ERROR;
+	if (end_tile >= tile_map.size) return CMD_ERROR;
 
 	if (!ValParamRoadType(rt) || !IsValidAxis(axis) || !IsValidDisallowedRoadDirections(drd)) return CMD_ERROR;
 
@@ -1074,7 +1074,7 @@ std::tuple<CommandCost, Money> CmdRemoveLongRoad(DoCommandFlag flags, TileIndex 
 {
 	CommandCost cost(EXPENSES_CONSTRUCTION);
 
-	if (end_tile >= MapSize()) return { CMD_ERROR, 0 };
+	if (end_tile >= tile_map.size) return { CMD_ERROR, 0 };
 	if (!ValParamRoadType(rt) || !IsValidAxis(axis)) return { CMD_ERROR, 0 };
 
 	/* Only drag in X or Y direction dictated by the direction variable */
@@ -1822,7 +1822,7 @@ void UpdateNearestTownForRoadTiles(bool invalidate)
 {
 	assert(!invalidate || _generating_world);
 
-	for (TileIndex t = 0; t < MapSize(); t++) {
+	for (TileIndex t = 0; t < tile_map.size; t++) {
 		if (IsTileType(t, MP_ROAD) && !IsRoadDepot(t) && !HasTownOwnedRoad(t)) {
 			TownID tid = INVALID_TOWN;
 			if (!invalidate) {
@@ -2331,7 +2331,7 @@ CommandCost CmdConvertRoad(DoCommandFlag flags, TileIndex tile, TileIndex area_s
 	TileIndex area_end = tile;
 
 	if (!ValParamRoadType(to_type)) return CMD_ERROR;
-	if (area_start >= MapSize()) return CMD_ERROR;
+	if (area_start >= tile_map.size) return CMD_ERROR;
 
 	RoadVehicleList affected_rvs;
 	RoadTramType rtt = GetRoadTramType(to_type);

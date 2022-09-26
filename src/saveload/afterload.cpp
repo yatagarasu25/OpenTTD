@@ -149,7 +149,7 @@ void SetWaterClassDependingOnSurroundings(TileIndex t, bool include_invalid_wate
 
 static void ConvertTownOwner()
 {
-	for (TileIndex tile = 0; tile != MapSize(); tile++) {
+	for (TileIndex tile = 0; tile != tile_map.size; tile++) {
 		switch (GetTileType(tile)) {
 			case MP_ROAD:
 				if (GB(_m[tile].m5, 4, 2) == ROAD_TILE_CROSSING && HasBit(_m[tile].m3, 7)) {
@@ -202,8 +202,8 @@ static void UpdateCurrencies()
  */
 static void UpdateVoidTiles()
 {
-	for (uint x = 0; x < MapSizeX(); x++) MakeVoid(TileXY(x, MapMaxY()));
-	for (uint y = 0; y < MapSizeY(); y++) MakeVoid(TileXY(MapMaxX(), y));
+	for (uint x = 0; x < tile_map.size_x; x++) MakeVoid(TileXY(x, MapMaxY()));
+	for (uint y = 0; y < tile_map.size_y; y++) MakeVoid(TileXY(MapMaxX(), y));
 }
 
 static inline RailType UpdateRailType(RailType rt, RailType min)
@@ -546,7 +546,7 @@ bool AfterLoadGame()
 {
 	SetSignalHandlers();
 
-	TileIndex map_size = MapSize();
+	TileIndex map_size = tile_map.size;
 
 	extern TileIndex _cur_tileloop_tile; // From landscape.cpp.
 	/* The LFSR used in RunTileLoop iteration cannot have a zeroed state, make it non-zeroed. */
@@ -612,14 +612,14 @@ bool AfterLoadGame()
 
 		/* In old savegame versions, the heightlevel was coded in bits 0..3 of the type field */
 		for (TileIndex t = 0; t < map_size; t++) {
-			_m[t].height = GB(_m[t].type, 0, 4);
-			SB(_m[t].type, 0, 2, GB(_me[t].m6, 0, 2));
+			_m[t].height = GB(_m[t]._type, 0, 4);
+			SB(_m[t]._type, 0, 2, GB(_me[t].m6, 0, 2));
 			SB(_me[t].m6, 0, 2, 0);
 			if (MayHaveBridgeAbove(t)) {
-				SB(_m[t].type, 2, 2, GB(_me[t].m6, 6, 2));
+				SB(_m[t]._type, 2, 2, GB(_me[t].m6, 6, 2));
 				SB(_me[t].m6, 6, 2, 0);
 			} else {
-				SB(_m[t].type, 2, 2, 0);
+				SB(_m[t]._type, 2, 2, 0);
 			}
 		}
 	}
@@ -839,7 +839,7 @@ bool AfterLoadGame()
 
 	if (IsSavegameVersionBefore(SLV_72)) {
 		/* Locks in very old savegames had OWNER_WATER as owner */
-		for (TileIndex t = 0; t < MapSize(); t++) {
+		for (TileIndex t = 0; t < tile_map.size; t++) {
 			switch (GetTileType(t)) {
 				default: break;
 

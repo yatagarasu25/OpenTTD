@@ -358,7 +358,7 @@ int GetSlopePixelZ(int x, int y)
  */
 int GetSlopePixelZOutsideMap(int x, int y)
 {
-	if (IsInsideBS(x, 0, MapSizeX() * TILE_SIZE) && IsInsideBS(y, 0, MapSizeY() * TILE_SIZE)) {
+	if (IsInsideBS(x, 0, tile_map.size_x * TILE_SIZE) && IsInsideBS(y, 0, tile_map.size_y * TILE_SIZE)) {
 		return GetSlopePixelZ(x, y);
 	} else {
 		return _tile_type_procs[MP_VOID]->get_slope_z_proc(INVALID_TILE, x, y);
@@ -738,7 +738,7 @@ CommandCost CmdLandscapeClear(DoCommandFlag flags, TileIndex tile)
  */
 std::tuple<CommandCost, Money> CmdClearArea(DoCommandFlag flags, TileIndex tile, TileIndex start_tile, bool diagonal)
 {
-	if (start_tile >= MapSize()) return { CMD_ERROR, 0 };
+	if (start_tile >= tile_map.size) return { CMD_ERROR, 0 };
 
 	Money money = GetAvailableMoneyForCommand();
 	CommandCost cost(EXPENSES_CONSTRUCTION);
@@ -808,10 +808,10 @@ void RunTileLoop()
 		0xD8F, 0x1296, 0x2496, 0x4357, 0x8679, 0x1030E, 0x206CD, 0x403FE, 0x807B8, 0x1004B2, 0x2006A8, 0x4004B2, 0x800B87
 	};
 	static_assert(lengthof(feedbacks) == 2 * MAX_MAP_SIZE_BITS - 2 * MIN_MAP_SIZE_BITS + 1);
-	const uint32 feedback = feedbacks[MapLogX() + MapLogY() - 2 * MIN_MAP_SIZE_BITS];
+	const uint32 feedback = feedbacks[tile_map.log_x + tile_map.log_y - 2 * MIN_MAP_SIZE_BITS];
 
 	/* We update every tile every 256 ticks, so divide the map size by 2^8 = 256 */
-	uint count = 1 << (MapLogX() + MapLogY() - 8);
+	uint count = 1 << (tile_map.log_x + tile_map.log_y - 8);
 
 	TileIndex tile = _cur_tileloop_tile;
 	/* The LFSR cannot have a zeroed state. */
@@ -844,8 +844,8 @@ void InitializeLandscape()
 		}
 	}
 
-	for (uint x = 0; x < MapSizeX(); x++) MakeVoid(TileXY(x, MapMaxY()));
-	for (uint y = 0; y < MapSizeY(); y++) MakeVoid(TileXY(MapMaxX(), y));
+	for (uint x = 0; x < tile_map.size_x; x++) MakeVoid(TileXY(x, MapMaxY()));
+	for (uint y = 0; y < tile_map.size_y; y++) MakeVoid(TileXY(MapMaxX(), y));
 }
 
 static const byte _genterrain_tbl_1[5] = { 10, 22, 33, 37, 4  };
@@ -859,7 +859,7 @@ static void GenerateTerrain(int type, uint flag)
 	if (templ == nullptr) usererror("Map generator sprites could not be loaded");
 
 	uint x = r & MapMaxX();
-	uint y = (r >> MapLogX()) & MapMaxY();
+	uint y = (r >> tile_map.log_x) & MapMaxY();
 
 	uint edge_distance = 1 + (_settings_game.construction.freeform_edges ? 1 : 0);
 	if (x <= edge_distance || y <= edge_distance) return;
@@ -873,14 +873,14 @@ static void GenerateTerrain(int type, uint flag)
 	const byte *p = templ->data;
 
 	if ((flag & 4) != 0) {
-		uint xw = x * MapSizeY();
-		uint yw = y * MapSizeX();
-		uint bias = (MapSizeX() + MapSizeY()) * 16;
+		uint xw = x * tile_map.size_y;
+		uint yw = y * tile_map.size_x;
+		uint bias = (tile_map.size_x + tile_map.size_y) * 16;
 
 		switch (flag & 3) {
 			default: NOT_REACHED();
 			case 0:
-				if (xw + yw > MapSize() - bias) return;
+				if (xw + yw > tile_map.size - bias) return;
 				break;
 
 			case 1:
@@ -888,7 +888,7 @@ static void GenerateTerrain(int type, uint flag)
 				break;
 
 			case 2:
-				if (xw + yw < MapSize() + bias) return;
+				if (xw + yw < tile_map.size + bias) return;
 				break;
 
 			case 3:
@@ -965,10 +965,10 @@ static void GenerateTerrain(int type, uint flag)
 
 static void CreateDesertOrRainForest(uint desert_tropic_line)
 {
-	TileIndex update_freq = MapSize() / 4;
+	TileIndex update_freq = tile_map.size / 4;
 	const TileIndexDiffC *data;
 
-	for (TileIndex tile = 0; tile != MapSize(); ++tile) {
+	for (TileIndex tile = 0; tile != tile_map.size; ++tile) {
 		if ((tile % update_freq) == 0) IncreaseGeneratingWorldProgress(GWP_LANDSCAPE);
 
 		if (!IsValidTile(tile)) continue;
@@ -989,7 +989,7 @@ static void CreateDesertOrRainForest(uint desert_tropic_line)
 		RunTileLoop();
 	}
 
-	for (TileIndex tile = 0; tile != MapSize(); ++tile) {
+	for (TileIndex tile = 0; tile != tile_map.size; ++tile) {
 		if ((tile % update_freq) == 0) IncreaseGeneratingWorldProgress(GWP_LANDSCAPE);
 
 		if (!IsValidTile(tile)) continue;
@@ -1321,7 +1321,7 @@ static uint CalculateCoverageLine(uint coverage, uint edge_multiplier)
 	std::array<int, MAX_TILE_HEIGHT + 1> edge_histogram = {};
 
 	/* Build a histogram of the map height. */
-	for (TileIndex tile = 0; tile < MapSize(); tile++) {
+	for (TileIndex tile = 0; tile < tile_map.size; tile++) {
 		uint h = TileHeight(tile);
 		histogram[h]++;
 
@@ -1337,7 +1337,7 @@ static uint CalculateCoverageLine(uint coverage, uint edge_multiplier)
 	}
 
 	/* The amount of land we have is the map size minus the first (sea) layer. */
-	uint land_tiles = MapSizeX() * MapSizeY() - histogram[0];
+	uint land_tiles = tile_map.size_x * tile_map.size_y - histogram[0];
 	int best_score = land_tiles;
 
 	/* Our goal is the coverage amount of the land-mass. */
@@ -1420,8 +1420,8 @@ void GenerateLandscape(byte mode)
 	} else {
 		SetGeneratingWorldProgress(GWP_LANDSCAPE, steps + GLS_ORIGINAL);
 		if (_settings_game.construction.freeform_edges) {
-			for (uint x = 0; x < MapSizeX(); x++) MakeVoid(TileXY(x, 0));
-			for (uint y = 0; y < MapSizeY(); y++) MakeVoid(TileXY(0, y));
+			for (uint x = 0; x < tile_map.size_x; x++) MakeVoid(TileXY(x, 0));
+			for (uint y = 0; y < tile_map.size_y; y++) MakeVoid(TileXY(0, y));
 		}
 		switch (_settings_game.game_creation.landscape) {
 			case LT_ARCTIC: {
