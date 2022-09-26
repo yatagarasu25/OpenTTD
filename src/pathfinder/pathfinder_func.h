@@ -44,7 +44,7 @@ static inline TileIndex CalcClosestStationTile(StationID station, TileIndex tile
 	uint y = ClampU(TileY(tile), miny, maxy);
 
 	/* return the tile of our target coordinates */
-	return TileXY(x, y);
+	return tile_map.tile(x, y);
 }
 
 /**

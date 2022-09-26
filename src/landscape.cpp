@@ -837,15 +837,15 @@ void InitializeLandscape()
 {
 	for (uint y = _settings_game.construction.freeform_edges ? 1 : 0; y < MapMaxY(); y++) {
 		for (uint x = _settings_game.construction.freeform_edges ? 1 : 0; x < MapMaxX(); x++) {
-			MakeClear(TileXY(x, y), CLEAR_GRASS, 3);
-			SetTileHeight(TileXY(x, y), 0);
-			SetTropicZone(TileXY(x, y), TROPICZONE_NORMAL);
-			ClearBridgeMiddle(TileXY(x, y));
+			MakeClear(tile_map.tile(x, y), CLEAR_GRASS, 3);
+			SetTileHeight(tile_map.tile(x, y), 0);
+			SetTropicZone(tile_map.tile(x, y), TROPICZONE_NORMAL);
+			ClearBridgeMiddle(tile_map.tile(x, y));
 		}
 	}
 
-	for (uint x = 0; x < tile_map.size_x; x++) MakeVoid(TileXY(x, MapMaxY()));
-	for (uint y = 0; y < tile_map.size_y; y++) MakeVoid(TileXY(MapMaxX(), y));
+	for (uint x = 0; x < tile_map.size_x; x++) MakeVoid(tile_map.tile(x, MapMaxY()));
+	for (uint y = 0; y < tile_map.size_y; y++) MakeVoid(tile_map.tile(MapMaxX(), y));
 }
 
 static const byte _genterrain_tbl_1[5] = { 10, 22, 33, 37, 4  };
@@ -900,7 +900,7 @@ static void GenerateTerrain(int type, uint flag)
 	if (x + w >= MapMaxX()) return;
 	if (y + h >= MapMaxY()) return;
 
-	TileIndex tile = TileXY(x, y);
+	TileIndex tile = tile_map.tile(x, y);
 
 	switch (direction) {
 		default: NOT_REACHED();
@@ -1420,8 +1420,8 @@ void GenerateLandscape(byte mode)
 	} else {
 		SetGeneratingWorldProgress(GWP_LANDSCAPE, steps + GLS_ORIGINAL);
 		if (_settings_game.construction.freeform_edges) {
-			for (uint x = 0; x < tile_map.size_x; x++) MakeVoid(TileXY(x, 0));
-			for (uint y = 0; y < tile_map.size_y; y++) MakeVoid(TileXY(0, y));
+			for (uint x = 0; x < tile_map.size_x; x++) MakeVoid(tile_map.tile(x, 0));
+			for (uint y = 0; y < tile_map.size_y; y++) MakeVoid(tile_map.tile(0, y));
 		}
 		switch (_settings_game.game_creation.landscape) {
 			case LT_ARCTIC: {

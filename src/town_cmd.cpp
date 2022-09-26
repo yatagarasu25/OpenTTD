@@ -2046,8 +2046,8 @@ std::tuple<CommandCost, Money, TownID> CmdFoundTown(DoCommandFlag flags, TileInd
 static TileIndex AlignTileToGrid(TileIndex tile, TownLayout layout)
 {
 	switch (layout) {
-		case TL_2X2_GRID: return TileXY(TileX(tile) - TileX(tile) % 3, TileY(tile) - TileY(tile) % 3);
-		case TL_3X3_GRID: return TileXY(TileX(tile) & ~3, TileY(tile) & ~3);
+		case TL_2X2_GRID: return tile_map.tile(TileX(tile) - TileX(tile) % 3, TileY(tile) - TileY(tile) % 3);
+		case TL_3X3_GRID: return tile_map.tile(TileX(tile) & ~3, TileY(tile) & ~3);
 		default:          return tile;
 	}
 }

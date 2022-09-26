@@ -684,10 +684,10 @@ static bool TryBuildLightHouse()
 	TileIndex tile;
 	switch (dir) {
 		default:
-		case DIAGDIR_NE: tile = TileXY(maxx - 1, r % maxy); break;
-		case DIAGDIR_SE: tile = TileXY(r % maxx, 1); break;
-		case DIAGDIR_SW: tile = TileXY(1,        r % maxy); break;
-		case DIAGDIR_NW: tile = TileXY(r % maxx, maxy - 1); break;
+		case DIAGDIR_NE: tile = tile_map.tile(maxx - 1, r % maxy); break;
+		case DIAGDIR_SE: tile = tile_map.tile(r % maxx, 1); break;
+		case DIAGDIR_SW: tile = tile_map.tile(1,        r % maxy); break;
+		case DIAGDIR_NW: tile = tile_map.tile(r % maxx, maxy - 1); break;
 	}
 
 	/* Only build lighthouses at tiles where the border is sea. */
@@ -733,12 +733,12 @@ void GenerateObjects()
 	uint num_water_tiles = 0;
 	if (_settings_game.construction.freeform_edges) {
 		for (uint x = 0; x < MapMaxX(); x++) {
-			if (IsTileType(TileXY(x, 1), MP_WATER)) num_water_tiles++;
-			if (IsTileType(TileXY(x, MapMaxY() - 1), MP_WATER)) num_water_tiles++;
+			if (IsTileType(tile_map.tile(x, 1), MP_WATER)) num_water_tiles++;
+			if (IsTileType(tile_map.tile(x, MapMaxY() - 1), MP_WATER)) num_water_tiles++;
 		}
 		for (uint y = 1; y < MapMaxY() - 1; y++) {
-			if (IsTileType(TileXY(1, y), MP_WATER)) num_water_tiles++;
-			if (IsTileType(TileXY(MapMaxX() - 1, y), MP_WATER)) num_water_tiles++;
+			if (IsTileType(tile_map.tile(1, y), MP_WATER)) num_water_tiles++;
+			if (IsTileType(tile_map.tile(MapMaxX() - 1, y), MP_WATER)) num_water_tiles++;
 		}
 	}
 

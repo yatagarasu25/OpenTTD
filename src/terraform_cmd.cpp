@@ -123,7 +123,7 @@ static std::tuple<CommandCost, TileIndex> TerraformTileHeight(TerraformerState *
 		 */
 		if (x == 1) x = 0;
 		if (y == 1) y = 0;
-		return { CommandCost(STR_ERROR_TOO_CLOSE_TO_EDGE_OF_MAP), TileXY(x, y) };
+		return { CommandCost(STR_ERROR_TOO_CLOSE_TO_EDGE_OF_MAP), tile_map.tile(x, y) };
 	}
 
 	/* Mark incident tiles that are involved in the terraforming. */

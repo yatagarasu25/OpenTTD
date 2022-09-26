@@ -357,8 +357,8 @@ static int32 LookupWithBuildOnSlopes(::Slope slope, Array *existing, int32 start
  * Normalise all input data so we can easily handle it without needing
  * to call the API lots of times or create large if-elseif-elseif-else
  * constructs.
- * In this case it means that a TileXY(0, -1) becomes -2 and TileXY(0, 1)
- * becomes 2. TileXY(-1, 0) and TileXY(1, 0) stay respectively -1 and 1.
+ * In this case it means that a tile_map.tile(0, -1) becomes -2 and tile_map.tile(0, 1)
+ * becomes 2. tile_map.tile(-1, 0) and tile_map.tile(1, 0) stay respectively -1 and 1.
  * Any other value means that it is an invalid tile offset.
  * @param tile The tile to normalise.
  * @return True if and only if the tile offset is valid.

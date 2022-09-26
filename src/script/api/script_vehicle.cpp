@@ -258,7 +258,7 @@
 	if (v->type == VEH_AIRCRAFT) {
 		uint x = Clamp(v->x_pos / TILE_SIZE, 0, tile_map.size_x - 2);
 		uint y = Clamp(v->y_pos / TILE_SIZE, 0, tile_map.size_y - 2);
-		return ::TileXY(x, y);
+		return ::tile_map.tile(x, y);
 	}
 
 	return v->tile;

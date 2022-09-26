@@ -40,8 +40,8 @@ class TileMatrix {
 		 * by adding top-left and bottom-right of the square. */
 		uint grid_x = (TileX(tile) / N) * N;
 		uint grid_y = (TileY(tile) / N) * N;
-		this->area.Add(TileXY(grid_x, grid_y));
-		this->area.Add(TileXY(grid_x + N - 1, grid_y + N - 1));
+		this->area.Add(tile_map.tile(grid_x, grid_y));
+		this->area.Add(tile_map.tile(grid_x + N - 1, grid_y + N - 1));
 
 		/* Allocate new storage. */
 		T *new_data = CallocT<T>(this->area.w / N * this->area.h / N);
@@ -104,7 +104,7 @@ public:
 		w += std::min(extend * N, tile_map.size_x - tile_x - w);
 		h += std::min(extend * N, tile_map.size_y - tile_y - h);
 
-		return TileArea(TileXY(tile_x, tile_y), w, h);
+		return TileArea(tile_map.tile(tile_x, tile_y), w, h);
 	}
 
 	/**

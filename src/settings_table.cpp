@@ -361,25 +361,25 @@ static bool CheckFreeformEdges(int32 &new_value)
 		}
 	} else {
 		for (uint i = 0; i < MapMaxX(); i++) {
-			if (TileHeight(TileXY(i, 1)) != 0) {
+			if (TileHeight(tile_map.tile(i, 1)) != 0) {
 				ShowErrorMessage(STR_CONFIG_SETTING_EDGES_NOT_WATER, INVALID_STRING_ID, WL_ERROR);
 				return false;
 			}
 		}
 		for (uint i = 1; i < MapMaxX(); i++) {
-			if (!IsTileType(TileXY(i, MapMaxY() - 1), MP_WATER) || TileHeight(TileXY(1, MapMaxY())) != 0) {
+			if (!IsTileType(tile_map.tile(i, MapMaxY() - 1), MP_WATER) || TileHeight(tile_map.tile(1, MapMaxY())) != 0) {
 				ShowErrorMessage(STR_CONFIG_SETTING_EDGES_NOT_WATER, INVALID_STRING_ID, WL_ERROR);
 				return false;
 			}
 		}
 		for (uint i = 0; i < MapMaxY(); i++) {
-			if (TileHeight(TileXY(1, i)) != 0) {
+			if (TileHeight(tile_map.tile(1, i)) != 0) {
 				ShowErrorMessage(STR_CONFIG_SETTING_EDGES_NOT_WATER, INVALID_STRING_ID, WL_ERROR);
 				return false;
 			}
 		}
 		for (uint i = 1; i < MapMaxY(); i++) {
-			if (!IsTileType(TileXY(MapMaxX() - 1, i), MP_WATER) || TileHeight(TileXY(MapMaxX(), i)) != 0) {
+			if (!IsTileType(tile_map.tile(MapMaxX() - 1, i), MP_WATER) || TileHeight(tile_map.tile(MapMaxX(), i)) != 0) {
 				ShowErrorMessage(STR_CONFIG_SETTING_EDGES_NOT_WATER, INVALID_STRING_ID, WL_ERROR);
 				return false;
 			}
@@ -393,17 +393,17 @@ static void UpdateFreeformEdges(int32 new_value)
 	if (_game_mode == GM_MENU) return;
 
 	if (new_value != 0) {
-		for (uint x = 0; x < tile_map.size_x; x++) MakeVoid(TileXY(x, 0));
-		for (uint y = 0; y < tile_map.size_y; y++) MakeVoid(TileXY(0, y));
+		for (uint x = 0; x < tile_map.size_x; x++) MakeVoid(tile_map.tile(x, 0));
+		for (uint y = 0; y < tile_map.size_y; y++) MakeVoid(tile_map.tile(0, y));
 	} else {
 		/* Make tiles at the border water again. */
 		for (uint i = 0; i < MapMaxX(); i++) {
-			SetTileHeight(TileXY(i, 0), 0);
-			SetTileType(TileXY(i, 0), MP_WATER);
+			SetTileHeight(tile_map.tile(i, 0), 0);
+			SetTileType(tile_map.tile(i, 0), MP_WATER);
 		}
 		for (uint i = 0; i < MapMaxY(); i++) {
-			SetTileHeight(TileXY(0, i), 0);
-			SetTileType(TileXY(0, i), MP_WATER);
+			SetTileHeight(tile_map.tile(0, i), 0);
+			SetTileType(tile_map.tile(0, i), MP_WATER);
 		}
 	}
 	MarkWholeScreenDirty();

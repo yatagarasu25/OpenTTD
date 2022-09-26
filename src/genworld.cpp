@@ -109,8 +109,8 @@ static void _GenerateWorld()
 
 			/* Make sure the tiles at the north border are void tiles if needed. */
 			if (_settings_game.construction.freeform_edges) {
-				for (uint x = 0; x < tile_map.size_x; x++) MakeVoid(TileXY(x, 0));
-				for (uint y = 0; y < tile_map.size_y; y++) MakeVoid(TileXY(0, y));
+				for (uint x = 0; x < tile_map.size_x; x++) MakeVoid(tile_map.tile(x, 0));
+				for (uint y = 0; y < tile_map.size_y; y++) MakeVoid(tile_map.tile(0, y));
 			}
 
 			/* Make the map the height of the setting */
@@ -322,7 +322,7 @@ void GenerateWorld(GenWorldMode mode, uint size_x, uint size_y, bool reset_setti
 
 	/* Centre the view on the map */
 	if (FindWindowById(WC_MAIN_WINDOW, 0) != nullptr) {
-		ScrollMainWindowToTile(TileXY(tile_map.size_x / 2, tile_map.size_y / 2), true);
+		ScrollMainWindowToTile(tile_map.tile(tile_map.size_x / 2, tile_map.size_y / 2), true);
 	}
 
 	_GenerateWorld();

@@ -47,7 +47,7 @@
 
 /* static */ TileIndex ScriptMap::GetTileIndex(uint32 x, uint32 y)
 {
-	return ::TileXY(x, y);
+	return ::tile_map.tile(x, y);
 }
 
 /* static */ int32 ScriptMap::DistanceManhattan(TileIndex t1, TileIndex t2)

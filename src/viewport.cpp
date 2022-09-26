@@ -1220,7 +1220,7 @@ static void ViewportAddLandscape()
 
 			if (IsInsideBS(tilecoord.x, 0, tile_map.size_x) && IsInsideBS(tilecoord.y, 0, tile_map.size_y)) {
 				/* This includes the south border at MapMaxX / MapMaxY. When terraforming we still draw tile selections there. */
-				tile_info.tile = TileXY(tilecoord.x, tilecoord.y);
+				tile_info.tile = tile_map.tile(tilecoord.x, tilecoord.y);
 				tile_type = GetTileType(tile_info.tile);
 			} else {
 				tile_info.tile = INVALID_TILE;
@@ -2105,7 +2105,7 @@ static void SetSelectionTilesDirty()
 				uint y = (_thd.pos.y + (a - b) / 2) / TILE_SIZE;
 
 				if (x < MapMaxX() && y < MapMaxY()) {
-					MarkTileDirtyByTile(TileXY(x, y));
+					MarkTileDirtyByTile(tile_map.tile(x, y));
 				}
 			}
 		}

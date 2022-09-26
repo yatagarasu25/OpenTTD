@@ -202,8 +202,8 @@ static void UpdateCurrencies()
  */
 static void UpdateVoidTiles()
 {
-	for (uint x = 0; x < tile_map.size_x; x++) MakeVoid(TileXY(x, MapMaxY()));
-	for (uint y = 0; y < tile_map.size_y; y++) MakeVoid(TileXY(MapMaxX(), y));
+	for (uint x = 0; x < tile_map.size_x; x++) MakeVoid(tile_map.tile(x, MapMaxY()));
+	for (uint y = 0; y < tile_map.size_y; y++) MakeVoid(tile_map.tile(MapMaxX(), y));
 }
 
 static inline RailType UpdateRailType(RailType rt, RailType min)
@@ -2095,7 +2095,7 @@ bool AfterLoadGame()
 					Object::IncTypeCount(type);
 				} else {
 					/* We're at an offset, so get the ID from our "root". */
-					TileIndex northern_tile = t - TileXY(GB(offset, 0, 4), GB(offset, 4, 4));
+					TileIndex northern_tile = t - tile_map.tile(GB(offset, 0, 4), GB(offset, 4, 4));
 					assert(IsTileType(northern_tile, MP_OBJECT));
 					_m[t].m2 = _m[northern_tile].m2;
 				}

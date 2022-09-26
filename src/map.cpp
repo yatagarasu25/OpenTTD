@@ -94,9 +94,9 @@ TileIndex TileAdd(TileIndex tile, TileIndexDiff add,
 #endif
 	}
 
-	assert(TileXY(x, y) == TILE_MASK(tile + add));
+	assert(tile_map.tile(x, y) == TILE_MASK(tile + add));
 
-	return TileXY(x, y);
+	return tile_map.tile(x, y);
 }
 #endif
 
@@ -124,7 +124,7 @@ TileIndex TileAddWrap(TileIndex tile, int addx, int addy)
 	/* Are we about to wrap? */
 	if (x >= MapMaxX() || y >= MapMaxY()) return INVALID_TILE;
 
-	return TileXY(x, y);
+	return tile_map.tile(x, y);
 }
 
 /** 'Lookup table' for tile offsets given a DiagDirection */
@@ -310,7 +310,7 @@ bool CircularTileSearch(TileIndex *tile, uint radius, uint w, uint h, TestTileOn
 			/* Is the tile within the map? */
 			for (uint j = extent[dir] + n * 2 + 1; j != 0; j--) {
 				if (x < tile_map.size_x && y < tile_map.size_y) {
-					TileIndex t = TileXY(x, y);
+					TileIndex t = tile_map.tile(x, y);
 					/* Is the callback successful? */
 					if (proc(t, user_data)) {
 						/* Stop the search */
@@ -369,7 +369,7 @@ uint GetClosestWaterDistance(TileIndex tile, bool water)
 			for (uint a = 0; a < dist; a++) {
 				/* MP_VOID tiles are not checked (interval is [min; max) for IsInsideMM())*/
 				if (IsInsideMM(x, min_xy, max_x) && IsInsideMM(y, min_xy, max_y)) {
-					TileIndex t = TileXY(x, y);
+					TileIndex t = tile_map.tile(x, y);
 					if (HasTileWaterGround(t) == water) return dist;
 				}
 				x += dx;

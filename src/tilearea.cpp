@@ -31,7 +31,7 @@ OrthogonalTileArea::OrthogonalTileArea(TileIndex start, TileIndex end)
 	if (sx > ex) Swap(sx, ex);
 	if (sy > ey) Swap(sy, ey);
 
-	this->tile = TileXY(sx, sy);
+	this->tile = tile_map.tile(sx, sy);
 	this->w    = ex - sx + 1;
 	this->h    = ey - sy + 1;
 }
@@ -62,7 +62,7 @@ void OrthogonalTileArea::Add(TileIndex to_add)
 	ex = std::max(ax, ex);
 	ey = std::max(ay, ey);
 
-	this->tile = TileXY(sx, sy);
+	this->tile = tile_map.tile(sx, sy);
 	this->w    = ex - sx + 1;
 	this->h    = ey - sy + 1;
 }
@@ -130,7 +130,7 @@ OrthogonalTileArea &OrthogonalTileArea::Expand(int rad)
 	int ex = std::min<int>(x + this->w + rad, tile_map.size_x);
 	int ey = std::min<int>(y + this->h + rad, tile_map.size_y);
 
-	this->tile = TileXY(sx, sy);
+	this->tile = tile_map.tile(sx, sy);
 	this->w    = ex - sx;
 	this->h    = ey - sy;
 	return *this;
@@ -274,7 +274,7 @@ TileIterator &DiagonalTileIterator::operator++()
 		uint x = this->base_x + (this->a_cur - this->b_cur) / 2;
 		uint y = this->base_y + (this->b_cur + this->a_cur) / 2;
 		/* Prevent wrapping around the map's borders. */
-		this->tile = x >= tile_map.size_x || y >= tile_map.size_y ? INVALID_TILE : TileXY(x, y);
+		this->tile = x >= tile_map.size_x || y >= tile_map.size_y ? INVALID_TILE : tile_map.tile(x, y);
 	} while (this->tile > tile_map.size && this->b_max != this->b_cur);
 
 	if (this->b_max == this->b_cur) this->tile = INVALID_TILE;

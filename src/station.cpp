@@ -459,7 +459,7 @@ void Station::RecomputeCatchment()
 	this->catchment_tiles.Initialize(GetCatchmentRect());
 
 	/* Loop finding all station tiles */
-	TileArea ta(TileXY(this->rect.left, this->rect.top), TileXY(this->rect.right, this->rect.bottom));
+	TileArea ta(tile_map.tile(this->rect.left, this->rect.top), tile_map.tile(this->rect.right, this->rect.bottom));
 	for (TileIndex tile : ta) {
 		if (!IsTileType(tile, MP_STATION) || GetStationIndex(tile) != this->index) continue;
 
@@ -591,7 +591,7 @@ CommandCost StationRect::BeforeAddRect(TileIndex tile, int w, int h, StationRect
  */
 /* static */ bool StationRect::ScanForStationTiles(StationID st_id, int left_a, int top_a, int right_a, int bottom_a)
 {
-	TileArea ta(TileXY(left_a, top_a), TileXY(right_a, bottom_a));
+	TileArea ta(tile_map.tile(left_a, top_a), tile_map.tile(right_a, bottom_a));
 	for (TileIndex tile : ta) {
 		if (IsTileType(tile, MP_STATION) && GetStationIndex(tile) == st_id) return true;
 	}

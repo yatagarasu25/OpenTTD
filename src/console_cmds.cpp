@@ -354,7 +354,7 @@ DEF_CONSOLE_CMD(ConScrollToTile)
 					IConsolePrint(CC_ERROR, "Tile does not exist.");
 					return true;
 				}
-				ScrollMainWindowToTile(TileXY(x, y), instant);
+				ScrollMainWindowToTile(tile_map.tile(x, y), instant);
 				return true;
 			}
 			break;

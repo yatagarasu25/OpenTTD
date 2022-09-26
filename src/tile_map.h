@@ -41,7 +41,7 @@ static inline uint TileHeight(TileIndex tile)
  */
 static inline uint TileHeightOutsideMap(int x, int y)
 {
-	return TileHeight(TileXY(Clamp(x, 0, MapMaxX()), Clamp(y, 0, MapMaxY())));
+	return TileHeight(tile_map.tile(Clamp(x, 0, MapMaxX()), Clamp(y, 0, MapMaxY())));
 }
 
 /**

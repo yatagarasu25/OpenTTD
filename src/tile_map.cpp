@@ -64,9 +64,9 @@ Slope GetTileSlope(TileIndex tile, int *h)
 	uint y2 = std::min(y1 + 1, MapMaxY());
 
 	int hnorth = TileHeight(tile);           // Height of the North corner.
-	int hwest  = TileHeight(TileXY(x2, y1)); // Height of the West corner.
-	int heast  = TileHeight(TileXY(x1, y2)); // Height of the East corner.
-	int hsouth = TileHeight(TileXY(x2, y2)); // Height of the South corner.
+	int hwest  = TileHeight(tile_map.tile(x2, y1)); // Height of the West corner.
+	int heast  = TileHeight(tile_map.tile(x1, y2)); // Height of the East corner.
+	int hsouth = TileHeight(tile_map.tile(x2, y2)); // Height of the South corner.
 
 	return GetTileSlopeGivenHeight(hnorth, hwest, heast, hsouth, h);
 }
@@ -105,9 +105,9 @@ bool IsTileFlat(TileIndex tile, int *h)
 	uint y2 = std::min(y1 + 1, MapMaxY());
 
 	uint z = TileHeight(tile);
-	if (TileHeight(TileXY(x2, y1)) != z) return false;
-	if (TileHeight(TileXY(x1, y2)) != z) return false;
-	if (TileHeight(TileXY(x2, y2)) != z) return false;
+	if (TileHeight(tile_map.tile(x2, y1)) != z) return false;
+	if (TileHeight(tile_map.tile(x1, y2)) != z) return false;
+	if (TileHeight(tile_map.tile(x2, y2)) != z) return false;
 
 	if (h != nullptr) *h = z;
 	return true;
@@ -127,9 +127,9 @@ int GetTileZ(TileIndex tile)
 
 	return std::min({
 		TileHeight(tile),           // N corner
-		TileHeight(TileXY(x2, y1)), // W corner
-		TileHeight(TileXY(x1, y2)), // E corner
-		TileHeight(TileXY(x2, y2)), // S corner
+		TileHeight(tile_map.tile(x2, y1)), // W corner
+		TileHeight(tile_map.tile(x1, y2)), // E corner
+		TileHeight(tile_map.tile(x2, y2)), // S corner
 	});
 }
 
@@ -147,9 +147,9 @@ int GetTileMaxZ(TileIndex t)
 
 	return std::max({
 		TileHeight(t),              // N corner
-		TileHeight(TileXY(x2, y1)), // W corner
-		TileHeight(TileXY(x1, y2)), // E corner
-		TileHeight(TileXY(x2, y2)), // S corner
+		TileHeight(tile_map.tile(x2, y1)), // W corner
+		TileHeight(tile_map.tile(x1, y2)), // E corner
+		TileHeight(tile_map.tile(x2, y2)), // S corner
 	});
 }
 

@@ -743,7 +743,7 @@ void SetupScreenshotViewport(ScreenshotType t, Viewport *vp, uint32 width, uint3
 			/* Determine world coordinates of screenshot */
 			vp->zoom = ZOOM_LVL_WORLD_SCREENSHOT;
 
-			TileIndex north_tile = _settings_game.construction.freeform_edges ? TileXY(1, 1) : TileXY(0, 0);
+			TileIndex north_tile = _settings_game.construction.freeform_edges ? tile_map.tile(1, 1) : tile_map.tile(0, 0);
 			TileIndex south_tile = tile_map.size - 1;
 
 			/* We need to account for a hill or high building at tile 0,0. */
@@ -820,7 +820,7 @@ static void HeightmapCallback(void *userdata, void *buffer, uint y, uint pitch, 
 {
 	byte *buf = (byte *)buffer;
 	while (n > 0) {
-		TileIndex ti = TileXY(MapMaxX(), y);
+		TileIndex ti = tile_map.tile(MapMaxX(), y);
 		for (uint x = MapMaxX(); true; x--) {
 			*buf = 256 * TileHeight(ti) / (1 + _heightmap_highest_peak);
 			buf++;
@@ -1043,7 +1043,7 @@ static void MinimapScreenCallback(void *userdata, void *buf, uint y, uint pitch,
 		uint row = y + (int)(i / pitch);
 		uint col = (tile_map.size_x - 1) - (i % pitch);
 
-		TileIndex tile = TileXY(col, row);
+		TileIndex tile = tile_map.tile(col, row);
 		Owner o = GetMinimapOwner(tile);
 		byte val = owner_colours[o];
 

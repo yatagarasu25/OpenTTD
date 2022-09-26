@@ -851,9 +851,9 @@ void SmallMapWindow::DrawSmallMapColumn(void *dst, uint xc, uint yc, int pitch, 
 		if (min_xy == 1 && (xc == 0 || yc == 0)) {
 			if (this->zoom == 1) continue; // The tile area is empty, don't draw anything.
 
-			ta = TileArea(TileXY(std::max(min_xy, xc), std::max(min_xy, yc)), this->zoom - (xc == 0), this->zoom - (yc == 0));
+			ta = TileArea(tile_map.tile(std::max(min_xy, xc), std::max(min_xy, yc)), this->zoom - (xc == 0), this->zoom - (yc == 0));
 		} else {
-			ta = TileArea(TileXY(xc, yc), this->zoom, this->zoom);
+			ta = TileArea(tile_map.tile(xc, yc), this->zoom, this->zoom);
 		}
 		ta.ClampToMap(); // Clamp to map boundaries (may contain MP_VOID tiles!).
 

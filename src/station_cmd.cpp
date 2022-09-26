@@ -668,7 +668,7 @@ static void UpdateStationSignCoord(BaseStation *st)
 	if (r->IsEmpty()) return; // no tiles belong to this station
 
 	/* clamp sign coord to be inside the station rect */
-	TileIndex new_xy = TileXY(ClampU(TileX(st->xy), r->left, r->right), ClampU(TileY(st->xy), r->top, r->bottom));
+	TileIndex new_xy = tile_map.tile(ClampU(TileX(st->xy), r->left, r->right), ClampU(TileY(st->xy), r->top, r->bottom));
 	st->MoveSign(new_xy);
 
 	if (!Station::IsExpected(st)) return;
@@ -1083,7 +1083,7 @@ CommandCost CanExpandRailStation(const BaseStation *st, TileArea &new_ta, Axis a
 	int y = std::min(TileY(cur_ta.tile), TileY(new_ta.tile));
 	new_ta.w = std::max(TileX(cur_ta.tile) + cur_ta.w, TileX(new_ta.tile) + new_ta.w) - x;
 	new_ta.h = std::max(TileY(cur_ta.tile) + cur_ta.h, TileY(new_ta.tile) + new_ta.h) - y;
-	new_ta.tile = TileXY(x, y);
+	new_ta.tile = tile_map.tile(x, y);
 
 	/* make sure the final size is not too big. */
 	if (new_ta.w > _settings_game.station.station_spread || new_ta.h > _settings_game.station.station_spread) {
@@ -4078,7 +4078,7 @@ void UpdateStationDockingTiles(Station *st)
 	int y2 = std::min<int>(y + area->h + 1, tile_map.size_y);
 	int y1 = std::max<int>(y - 1, 0);
 
-	TileArea ta(TileXY(x1, y1), TileXY(x2 - 1, y2 - 1));
+	TileArea ta(tile_map.tile(x1, y1), tile_map.tile(x2 - 1, y2 - 1));
 	for (TileIndex tile : ta) {
 		if (IsValidTile(tile) && IsPossibleDockingTile(tile)) CheckForDockingTile(tile);
 	}

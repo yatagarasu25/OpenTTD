@@ -733,7 +733,7 @@ static void Disaster_Small_Ufo_Init()
 
 	int x = TileX(Random()) * TILE_SIZE + TILE_SIZE / 2;
 	DisasterVehicle *v = new DisasterVehicle(x, 0, DIR_SE, ST_SMALL_UFO);
-	v->dest_tile = TileXY(tile_map.size_x / 2, tile_map.size_y / 2);
+	v->dest_tile = tile_map.tile(tile_map.size_x / 2, tile_map.size_y / 2);
 
 	/* Allocate shadow */
 	DisasterVehicle *u = new DisasterVehicle(x, 0, DIR_SE, ST_SMALL_UFO_SHADOW);
@@ -805,7 +805,7 @@ static void Disaster_Big_Ufo_Init()
 	int y = MapMaxX() * TILE_SIZE - 1;
 
 	DisasterVehicle *v = new DisasterVehicle(x, y, DIR_NW, ST_BIG_UFO);
-	v->dest_tile = TileXY(tile_map.size_x / 2, tile_map.size_y / 2);
+	v->dest_tile = tile_map.tile(tile_map.size_x / 2, tile_map.size_y / 2);
 
 	/* Allocate shadow */
 	DisasterVehicle *u = new DisasterVehicle(x, y, DIR_NW, ST_BIG_UFO_SHADOW);

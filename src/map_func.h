@@ -46,6 +46,11 @@ struct TileMap
 	TileExtended* _me;
 
 	void Allocate();
+
+	TileIndex tile(uint x, uint y)
+	{
+		return (y << log_x) + x;
+	}
 };
 
 extern TileMap tile_map;
@@ -120,18 +125,6 @@ static inline uint ScaleByMapSize1D(uint n)
  * @see TileDiffXY(int, int)
  */
 typedef int32 TileIndexDiff;
-
-/**
- * Returns the TileIndex of a coordinate.
- *
- * @param x The x coordinate of the tile
- * @param y The y coordinate of the tile
- * @return The TileIndex calculated by the coordinate
- */
-static inline TileIndex TileXY(uint x, uint y)
-{
-	return (y << tile_map.log_x) + x;
-}
 
 /**
  * Calculates an offset for the given coordinate(-offset).
@@ -271,7 +264,7 @@ static inline TileIndex AddTileIndexDiffCWrap(TileIndex tile, TileIndexDiffC dif
 	int y = TileY(tile) + diff.y;
 	/* Negative value will become big positive value after cast */
 	if ((uint)x >= tile_map.size_x || (uint)y >= tile_map.size_y) return INVALID_TILE;
-	return TileXY(x, y);
+	return tile_map.tile(x, y);
 }
 
 /**

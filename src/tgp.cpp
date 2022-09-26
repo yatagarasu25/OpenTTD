@@ -1004,8 +1004,8 @@ void GenerateTerrainPerlin()
 
 	/* First make sure the tiles at the north border are void tiles if needed. */
 	if (_settings_game.construction.freeform_edges) {
-		for (uint x = 0; x < tile_map.size_x; x++) MakeVoid(TileXY(x, 0));
-		for (uint y = 0; y < tile_map.size_y; y++) MakeVoid(TileXY(0, y));
+		for (uint x = 0; x < tile_map.size_x; x++) MakeVoid(tile_map.tile(x, 0));
+		for (uint y = 0; y < tile_map.size_y; y++) MakeVoid(tile_map.tile(0, y));
 	}
 
 	int max_height = H2I(TGPGetMaxHeight());
@@ -1013,7 +1013,7 @@ void GenerateTerrainPerlin()
 	/* Transfer height map into OTTD map */
 	for (int y = 0; y < _height_map.size_y; y++) {
 		for (int x = 0; x < _height_map.size_x; x++) {
-			TgenSetTileHeight(TileXY(x, y), Clamp(H2I(_height_map.height(x, y)), 0, max_height));
+			TgenSetTileHeight(tile_map.tile(x, y), Clamp(H2I(_height_map.height(x, y)), 0, max_height));
 		}
 	}
 

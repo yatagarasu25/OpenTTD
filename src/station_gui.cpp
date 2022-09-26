@@ -99,7 +99,7 @@ static void FindStationsAroundSelection()
 	uint y = TileY(location.tile);
 
 	int max_c = 1;
-	TileArea ta(TileXY(std::max<int>(0, x - max_c), std::max<int>(0, y - max_c)), TileXY(std::min<int>(MapMaxX(), x + location.w + max_c), std::min<int>(MapMaxY(), y + location.h + max_c)));
+	TileArea ta(tile_map.tile(std::max<int>(0, x - max_c), std::max<int>(0, y - max_c)), tile_map.tile(std::min<int>(MapMaxX(), x + location.w + max_c), std::min<int>(MapMaxY(), y + location.h + max_c)));
 
 	Station *adjacent = nullptr;
 
