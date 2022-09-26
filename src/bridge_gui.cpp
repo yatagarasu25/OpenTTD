@@ -184,12 +184,12 @@ public:
 				Dimension sprite_dim = {0, 0}; // Biggest bridge sprite dimension
 				Dimension text_dim   = {0, 0}; // Biggest text dimension
 				for (int i = 0; i < (int)this->bridges->size(); i++) {
-					const BridgeSpec *b = this->bridges->at(i).spec;
-					sprite_dim = maxdim(sprite_dim, GetSpriteSize(b->sprite));
+					BuildBridgeData &b = this->bridges->at(i);
+					sprite_dim = maxdim(sprite_dim, GetSpriteSize(b.spec->sprite));
 
-					SetDParam(2, this->bridges->at(i).cost);
-					SetDParam(1, b->speed);
-					SetDParam(0, b->material);
+					SetDParam(2, b.cost);
+					SetDParam(1, b.spec->speed);
+					SetDParam(0, b.spec->material);
 					text_dim = maxdim(text_dim, GetStringBoundingBox(_game_mode == GM_EDITOR ? STR_SELECT_BRIDGE_SCENEDIT_INFO : STR_SELECT_BRIDGE_INFO));
 				}
 				sprite_dim.height++; // Sprite is rendered one pixel down in the matrix field.
@@ -388,8 +388,6 @@ void ShowBuildBridgeWindow(TileIndex start, TileIndex end, TransportType transpo
 		errmsg = ret.GetErrorMessage();
 	} else {
 		/* check which bridges can be built */
-		const uint tot_bridgedata_len = CalcBridgeLenCostFactor(bridge_len + 2);
-
 		bl = new GUIBridgeList();
 
 		Money infra_cost = 0;
@@ -429,7 +427,7 @@ void ShowBuildBridgeWindow(TileIndex start, TileIndex end, TransportType transpo
 				item.spec = GetBridgeSpec(brd_type);
 				/* Add to terraforming & bulldozing costs the cost of the
 				 * bridge itself (not computed with DC_QUERY_COST) */
-				item.cost = ret.GetCost() + (((int64)tot_bridgedata_len * _price[PR_BUILD_BRIDGE] * item.spec->price) >> 8) + infra_cost;
+				item.cost = ret.GetCost() + GetBridgePrice(brd_type, bridge_len + 2) + infra_cost;
 				any_available = true;
 			}
 		}

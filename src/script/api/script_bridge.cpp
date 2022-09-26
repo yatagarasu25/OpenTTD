@@ -143,7 +143,7 @@ static void _DoCommandReturnBuildBridge1(class ScriptInstance *instance)
 {
 	if (!IsValidBridge(bridge_id)) return -1;
 
-	return ::CalcBridgeLenCostFactor(length) * _price[PR_BUILD_BRIDGE] * ::GetBridgeSpec(bridge_id)->price >> 8;
+	return GetBridgePrice(bridge_id, length); // TODO: no length + 2 here is it a bug?
 }
 
 /* static */ int32 ScriptBridge::GetMaxLength(BridgeID bridge_id)

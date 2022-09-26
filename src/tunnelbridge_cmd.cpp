@@ -119,6 +119,40 @@ int CalcBridgeLenCostFactor(int length)
 	}
 }
 
+Money GetBridgePrice(BridgeType bridge_type, uint bridge_len)
+{
+	const BridgeSpec* spec = GetBridgeSpec(bridge_type);
+	return ((int64)CalcBridgeLenCostFactor(bridge_len) * _price[PR_BUILD_BRIDGE] * spec->price
+		* _settings_game.difficulty.bridge_build_cost_multiplier / 100)
+		>> 8;
+}
+
+Money GetTunnelPrice(uint tunnel_len)
+{
+	Money cost = 0;
+
+	/* Tile shift coefficient. Will decrease for very long tunnels to avoid exponential growth of price*/
+	int tiles_coef = 3;
+	/* Number of tiles at which the cost increase coefficient per tile is halved */
+	int tiles_bump = 25;
+
+	for (uint i = 0; i < tunnel_len; i++) {
+		if (i == tiles_bump) {
+			tiles_coef++;
+			tiles_bump *= 2;
+		}
+
+		cost += _price[PR_BUILD_TUNNEL];
+		cost += cost >> tiles_coef; // add a multiplier for longer tunnels
+	}
+
+	/* Add the cost of the entrance and exit */
+	cost += _price[PR_BUILD_TUNNEL];
+	cost += _price[PR_BUILD_TUNNEL];
+
+	return cost * _settings_game.difficulty.tunnel_build_cost_multiplier / 100;
+}
+
 /**
  * Get the foundation for a bridge.
  * @param tileh The slope to build the bridge on.
@@ -598,13 +632,11 @@ CommandCost CmdBuildBridge(DoCommandFlag flags, TileIndex tile_end, TileIndex ti
 			default: break;
 		}
 
-		if (c != nullptr) bridge_len = CalcBridgeLenCostFactor(bridge_len);
-
 		if (transport_type != TRANSPORT_WATER) {
-			cost.AddCost((int64)bridge_len * _price[PR_BUILD_BRIDGE] * GetBridgeSpec(bridge_type)->price >> 8);
+			cost.AddCost(GetBridgePrice(bridge_type, bridge_len));
 		} else {
 			/* Aqueducts use a separate base cost. */
-			cost.AddCost((int64)bridge_len * _price[PR_BUILD_AQUEDUCT]);
+			cost.AddCost((int64)CalcBridgeLenCostFactor(bridge_len) * _price[PR_BUILD_AQUEDUCT]); // TODO: No >> 8 is it a bug?
 		}
 
 	}
@@ -680,14 +712,12 @@ CommandCost CmdBuildTunnel(DoCommandFlag flags, TileIndex start_tile, TransportT
 
 	TileIndex end_tile = start_tile;
 
-	/* Tile shift coefficient. Will decrease for very long tunnels to avoid exponential growth of price*/
-	int tiles_coef = 3;
 	/* Number of tiles from start of tunnel */
 	int tiles = 0;
-	/* Number of tiles at which the cost increase coefficient per tile is halved */
-	int tiles_bump = 25;
 
 	CommandCost cost(EXPENSES_CONSTRUCTION);
+	cost.AddCost(ret);
+
 	Slope end_tileh;
 	for (;;) {
 		end_tile += delta;
@@ -701,18 +731,9 @@ CommandCost CmdBuildTunnel(DoCommandFlag flags, TileIndex start_tile, TransportT
 		}
 
 		tiles++;
-		if (tiles == tiles_bump) {
-			tiles_coef++;
-			tiles_bump *= 2;
-		}
-
-		cost.AddCost(_price[PR_BUILD_TUNNEL]);
-		cost.AddCost(cost.GetCost() >> tiles_coef); // add a multiplier for longer tunnels
 	}
 
-	/* Add the cost of the entrance */
-	cost.AddCost(_price[PR_BUILD_TUNNEL]);
-	cost.AddCost(ret);
+	cost.AddCost(GetTunnelPrice(tiles));
 
 	/* if the command fails from here on we want the end tile to be highlighted */
 	_build_tunnel_endtile = end_tile;
@@ -759,7 +780,6 @@ CommandCost CmdBuildTunnel(DoCommandFlag flags, TileIndex start_tile, TransportT
 		if (ret.Failed()) return_cmd_error(STR_ERROR_UNABLE_TO_EXCAVATE_LAND);
 		cost.AddCost(ret);
 	}
-	cost.AddCost(_price[PR_BUILD_TUNNEL]);
 
 	/* Pay for the rail/road in the tunnel including entrances */
 	switch (transport_type) {

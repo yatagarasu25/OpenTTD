@@ -106,6 +106,9 @@ struct DifficultySettings {
 
 	uint16 rail_build_cost_multiplier = 100;      ///< rail construction multiplier
 	uint16 rail_refund_cost_multiplier = 75;      ///< rail refund multiplier
+
+	uint16 bridge_build_cost_multiplier = 100;    ///< bridge construction multiplier
+	uint16 tunnel_build_cost_multiplier = 100;    ///< tunnel construction multiplier
 };
 
 /** Settings relating to viewport/smallmap scrolling. */

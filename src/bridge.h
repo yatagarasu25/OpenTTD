@@ -73,6 +73,9 @@ void DrawBridgeMiddle(const TileInfo *ti);
 CommandCost CheckBridgeAvailability(BridgeType bridge_type, uint bridge_len, DoCommandFlag flags = DC_NONE);
 int CalcBridgeLenCostFactor(int x);
 
+Money GetBridgePrice(BridgeType bridge_type, uint bridge_len);
+Money GetTunnelPrice(uint tunnel_len);
+
 void ResetBridges();
 
 #endif /* BRIDGE_H */
