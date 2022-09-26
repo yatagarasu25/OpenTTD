@@ -24,7 +24,7 @@
 static inline bool IsBridge(TileIndex t)
 {
 	assert(IsTileType(t, MP_TUNNELBRIDGE));
-	return HasBit(_m[t].m5, 7);
+	return HasBit(tile_map.get(t).m5, 7);
 }
 
 /**
@@ -44,7 +44,7 @@ static inline bool IsBridgeTile(TileIndex t)
  */
 static inline bool IsBridgeAbove(TileIndex t)
 {
-	return _m[t].above != 0;
+	return tile_map.get(t).above != 0;
 }
 
 /**
@@ -68,7 +68,7 @@ static inline BridgeType GetBridgeType(TileIndex t)
 static inline Axis GetBridgeAxis(TileIndex t)
 {
 	assert(IsBridgeAbove(t));
-	return (Axis)(_m[t].above - 1);
+	return (Axis)(tile_map.get(t).above - 1);
 }
 
 TileIndex GetNorthernBridgeEnd(TileIndex t);
@@ -92,7 +92,7 @@ static inline int GetBridgePixelHeight(TileIndex tile)
  */
 static inline void ClearBridgeMiddle(TileIndex t)
 {
-	_m[t].above = 0;
+	tile_map.get(t).above = 0;
 }
 
 /**
@@ -102,8 +102,8 @@ static inline void ClearBridgeMiddle(TileIndex t)
  */
 static inline void SetBridgeMiddle(TileIndex t, Axis a)
 {
-	if (a == AXIS_X) _m[t].above_x = 1;
-	else if (a == AXIS_Y) _m[t].above_y = 1;
+	if (a == AXIS_X) tile_map.get(t).above_x = 1;
+	else if (a == AXIS_Y) tile_map.get(t).above_y = 1;
 }
 
 /**
@@ -120,10 +120,10 @@ static inline void MakeBridgeRamp(TileIndex t, Owner o, BridgeType bridgetype, D
 	SetTileType(t, MP_TUNNELBRIDGE);
 	SetTileOwner(t, o);
 	SetDockingTile(t, false);
-	_m[t].m2 = 0;
-	_m[t].m3 = 0;
-	_m[t].m4 = INVALID_ROADTYPE;
-	_m[t].m5 = 1 << 7 | tt << 2 | d;
+	tile_map.get(t).m2 = 0;
+	tile_map.get(t).m3 = 0;
+	tile_map.get(t).m4 = INVALID_ROADTYPE;
+	tile_map.get(t).m5 = 1 << 7 | tt << 2 | d;
 	SB(_me[t].m6, 2, 4, bridgetype);
 	_me[t].m7 = 0;
 	_me[t].m8 = INVALID_ROADTYPE << 6;

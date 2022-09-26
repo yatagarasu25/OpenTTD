@@ -52,7 +52,7 @@ static inline bool MayHaveRoad(TileIndex t)
 static inline RoadTileType GetRoadTileType(TileIndex t)
 {
 	assert(IsTileType(t, MP_ROAD));
-	return (RoadTileType)GB(_m[t].m5, 6, 2);
+	return (RoadTileType)GB(tile_map.get(t).m5, 6, 2);
 }
 
 /**
@@ -128,8 +128,8 @@ static inline bool IsRoadDepotTile(TileIndex t)
 static inline RoadBits GetRoadBits(TileIndex t, RoadTramType rtt)
 {
 	assert(IsNormalRoad(t));
-	if (rtt == RTT_TRAM) return (RoadBits)GB(_m[t].m3, 0, 4);
-	return (RoadBits)GB(_m[t].m5, 0, 4);
+	if (rtt == RTT_TRAM) return (RoadBits)GB(tile_map.get(t).m3, 0, 4);
+	return (RoadBits)GB(tile_map.get(t).m5, 0, 4);
 }
 
 /**
@@ -154,16 +154,16 @@ static inline void SetRoadBits(TileIndex t, RoadBits r, RoadTramType rtt)
 {
 	assert(IsNormalRoad(t)); // XXX incomplete
 	if (rtt == RTT_TRAM) {
-		SB(_m[t].m3, 0, 4, r);
+		SB(tile_map.get(t).m3, 0, 4, r);
 	} else {
-		SB(_m[t].m5, 0, 4, r);
+		SB(tile_map.get(t).m5, 0, 4, r);
 	}
 }
 
 static inline RoadType GetRoadTypeRoad(TileIndex t)
 {
 	assert(MayHaveRoad(t));
-	return (RoadType)GB(_m[t].m4, 0, 6);
+	return (RoadType)GB(tile_map.get(t).m4, 0, 6);
 }
 
 static inline RoadType GetRoadTypeTram(TileIndex t)
@@ -234,11 +234,11 @@ static inline bool HasTileAnyRoadType(TileIndex t, RoadTypes rts)
 static inline Owner GetRoadOwner(TileIndex t, RoadTramType rtt)
 {
 	assert(MayHaveRoad(t));
-	if (rtt == RTT_ROAD) return (Owner)GB(IsNormalRoadTile(t) ? _m[t].m1 : _me[t].m7, 0, 5);
+	if (rtt == RTT_ROAD) return (Owner)GB(IsNormalRoadTile(t) ? tile_map.get(t).m1 : _me[t].m7, 0, 5);
 
 	/* Trams don't need OWNER_TOWN, and remapping OWNER_NONE
 	 * to OWNER_TOWN makes it use one bit less */
-	Owner o = (Owner)GB(_m[t].m3, 4, 4);
+	Owner o = (Owner)GB(tile_map.get(t).m3, 4, 4);
 	return o == OWNER_TOWN ? OWNER_NONE : o;
 }
 
@@ -251,9 +251,9 @@ static inline Owner GetRoadOwner(TileIndex t, RoadTramType rtt)
 static inline void SetRoadOwner(TileIndex t, RoadTramType rtt, Owner o)
 {
 	if (rtt == RTT_ROAD) {
-		SB(IsNormalRoadTile(t) ? _m[t].m1 : _me[t].m7, 0, 5, o);
+		SB(IsNormalRoadTile(t) ? tile_map.get(t).m1 : _me[t].m7, 0, 5, o);
 	} else {
-		SB(_m[t].m3, 4, 4, o == OWNER_NONE ? OWNER_TOWN : o);
+		SB(tile_map.get(t).m3, 4, 4, o == OWNER_NONE ? OWNER_TOWN : o);
 	}
 }
 
@@ -301,7 +301,7 @@ static inline bool IsValidDisallowedRoadDirections(DisallowedRoadDirections drt)
 static inline DisallowedRoadDirections GetDisallowedRoadDirections(TileIndex t)
 {
 	assert(IsNormalRoad(t));
-	return (DisallowedRoadDirections)GB(_m[t].m5, 4, 2);
+	return (DisallowedRoadDirections)GB(tile_map.get(t).m5, 4, 2);
 }
 
 /**
@@ -313,7 +313,7 @@ static inline void SetDisallowedRoadDirections(TileIndex t, DisallowedRoadDirect
 {
 	assert(IsNormalRoad(t));
 	assert(drd < DRD_END);
-	SB(_m[t].m5, 4, 2, drd);
+	SB(tile_map.get(t).m5, 4, 2, drd);
 }
 
 /**
@@ -325,7 +325,7 @@ static inline void SetDisallowedRoadDirections(TileIndex t, DisallowedRoadDirect
 static inline Axis GetCrossingRoadAxis(TileIndex t)
 {
 	assert(IsLevelCrossing(t));
-	return (Axis)GB(_m[t].m5, 0, 1);
+	return (Axis)GB(tile_map.get(t).m5, 0, 1);
 }
 
 /**
@@ -380,7 +380,7 @@ static inline TrackBits GetCrossingRailBits(TileIndex tile)
 static inline bool HasCrossingReservation(TileIndex t)
 {
 	assert(IsLevelCrossingTile(t));
-	return HasBit(_m[t].m5, 4);
+	return HasBit(tile_map.get(t).m5, 4);
 }
 
 /**
@@ -393,7 +393,7 @@ static inline bool HasCrossingReservation(TileIndex t)
 static inline void SetCrossingReservation(TileIndex t, bool b)
 {
 	assert(IsLevelCrossingTile(t));
-	SB(_m[t].m5, 4, 1, b ? 1 : 0);
+	SB(tile_map.get(t).m5, 4, 1, b ? 1 : 0);
 }
 
 /**
@@ -416,7 +416,7 @@ static inline TrackBits GetCrossingReservationTrackBits(TileIndex t)
 static inline bool IsCrossingBarred(TileIndex t)
 {
 	assert(IsLevelCrossing(t));
-	return HasBit(_m[t].m5, 5);
+	return HasBit(tile_map.get(t).m5, 5);
 }
 
 /**
@@ -428,7 +428,7 @@ static inline bool IsCrossingBarred(TileIndex t)
 static inline void SetCrossingBarred(TileIndex t, bool barred)
 {
 	assert(IsLevelCrossing(t));
-	SB(_m[t].m5, 5, 1, barred ? 1 : 0);
+	SB(tile_map.get(t).m5, 5, 1, barred ? 1 : 0);
 }
 
 /**
@@ -565,7 +565,7 @@ static inline void TerminateRoadWorks(TileIndex t)
 static inline DiagDirection GetRoadDepotDirection(TileIndex t)
 {
 	assert(IsRoadDepot(t));
-	return (DiagDirection)GB(_m[t].m5, 0, 2);
+	return (DiagDirection)GB(tile_map.get(t).m5, 0, 2);
 }
 
 
@@ -580,7 +580,7 @@ static inline void SetRoadTypeRoad(TileIndex t, RoadType rt)
 {
 	assert(MayHaveRoad(t));
 	assert(rt == INVALID_ROADTYPE || RoadTypeIsRoad(rt));
-	SB(_m[t].m4, 0, 6, rt);
+	SB(tile_map.get(t).m4, 0, 6, rt);
 }
 
 /**
@@ -636,9 +636,9 @@ static inline void MakeRoadNormal(TileIndex t, RoadBits bits, RoadType road_rt, 
 {
 	SetTileType(t, MP_ROAD);
 	SetTileOwner(t, road);
-	_m[t].m2 = town;
-	_m[t].m3 = (tram_rt != INVALID_ROADTYPE ? bits : 0);
-	_m[t].m5 = (road_rt != INVALID_ROADTYPE ? bits : 0) | ROAD_TILE_NORMAL << 6;
+	tile_map.get(t).m2 = town;
+	tile_map.get(t).m3 = (tram_rt != INVALID_ROADTYPE ? bits : 0);
+	tile_map.get(t).m5 = (road_rt != INVALID_ROADTYPE ? bits : 0) | ROAD_TILE_NORMAL << 6;
 	SB(_me[t].m6, 2, 4, 0);
 	_me[t].m7 = 0;
 	SetRoadTypes(t, road_rt, tram_rt);
@@ -661,10 +661,10 @@ static inline void MakeRoadCrossing(TileIndex t, Owner road, Owner tram, Owner r
 {
 	SetTileType(t, MP_ROAD);
 	SetTileOwner(t, rail);
-	_m[t].m2 = town;
-	_m[t].m3 = 0;
-	_m[t].m4 = INVALID_ROADTYPE;
-	_m[t].m5 = ROAD_TILE_CROSSING << 6 | roaddir;
+	tile_map.get(t).m2 = town;
+	tile_map.get(t).m3 = 0;
+	tile_map.get(t).m4 = INVALID_ROADTYPE;
+	tile_map.get(t).m5 = ROAD_TILE_CROSSING << 6 | roaddir;
 	SB(_me[t].m6, 2, 4, 0);
 	_me[t].m7 = road;
 	_me[t].m8 = INVALID_ROADTYPE << 6 | rat;
@@ -684,10 +684,10 @@ static inline void MakeRoadDepot(TileIndex t, Owner owner, DepotID did, DiagDire
 {
 	SetTileType(t, MP_ROAD);
 	SetTileOwner(t, owner);
-	_m[t].m2 = did;
-	_m[t].m3 = 0;
-	_m[t].m4 = INVALID_ROADTYPE;
-	_m[t].m5 = ROAD_TILE_DEPOT << 6 | dir;
+	tile_map.get(t).m2 = did;
+	tile_map.get(t).m3 = 0;
+	tile_map.get(t).m4 = INVALID_ROADTYPE;
+	tile_map.get(t).m5 = ROAD_TILE_DEPOT << 6 | dir;
 	SB(_me[t].m6, 2, 4, 0);
 	_me[t].m7 = owner;
 	_me[t].m8 = INVALID_ROADTYPE << 6;

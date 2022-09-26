@@ -29,7 +29,7 @@
 static inline uint TileHeight(TileIndex tile)
 {
 	assert(tile < tile_map.size);
-	return _m[tile].height;
+	return tile_map.get(tile).height;
 }
 
 /**
@@ -58,7 +58,7 @@ static inline void SetTileHeight(TileIndex tile, uint height)
 {
 	assert(tile < tile_map.size);
 	assert(height <= MAX_TILE_HEIGHT);
-	_m[tile].height = height;
+	tile_map.get(tile).height = height;
 }
 
 /**
@@ -96,7 +96,7 @@ static inline uint TilePixelHeightOutsideMap(int x, int y)
 static inline TileType GetTileType(TileIndex tile)
 {
 	assert(tile < tile_map.size);
-	return (TileType) _m[tile].type;
+	return (TileType) tile_map.get(tile).type;
 }
 
 /**
@@ -119,7 +119,7 @@ static inline bool IsInnerTile(TileIndex tile)
 static inline void SetTileType(TileIndex tile, TileType type)
 {
 	assert(tile < tile_map.size);
-	_m[tile].type = type;
+	tile_map.get(tile).type = type;
 }
 
 /**
@@ -165,7 +165,7 @@ static inline Owner GetTileOwner(TileIndex tile)
 	assert(!IsTileType(tile, MP_HOUSE));
 	assert(!IsTileType(tile, MP_INDUSTRY));
 
-	return (Owner)GB(_m[tile].m1, 0, 5);
+	return (Owner)GB(tile_map.get(tile).m1, 0, 5);
 }
 
 /**
@@ -185,7 +185,7 @@ static inline void SetTileOwner(TileIndex tile, Owner owner)
 	assert(!IsTileType(tile, MP_HOUSE));
 	assert(!IsTileType(tile, MP_INDUSTRY));
 
-	SB(_m[tile].m1, 0, 5, owner);
+	SB(tile_map.get(tile).m1, 0, 5, owner);
 }
 
 /**
@@ -210,7 +210,7 @@ static inline void SetTropicZone(TileIndex tile, TropicZone type)
 {
 	assert(tile < tile_map.size);
 	assert(!IsTileType(tile, MP_VOID) || type == TROPICZONE_NORMAL);
-	_m[tile].zone = type;
+	tile_map.get(tile).zone = type;
 }
 
 /**
@@ -222,7 +222,7 @@ static inline void SetTropicZone(TileIndex tile, TropicZone type)
 static inline TropicZone GetTropicZone(TileIndex tile)
 {
 	assert(tile < tile_map.size);
-	return (TropicZone)_m[tile].zone;
+	return (TropicZone)tile_map.get(tile).zone;
 }
 
 /**

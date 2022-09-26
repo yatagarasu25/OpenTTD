@@ -28,7 +28,7 @@ typedef byte StationGfx; ///< Index of station graphics. @see _station_display_d
 static inline StationID GetStationIndex(TileIndex t)
 {
 	assert(IsTileType(t, MP_STATION));
-	return (StationID)_m[t].m2;
+	return (StationID)tile_map.get(t).m2;
 }
 
 
@@ -68,7 +68,7 @@ static inline RoadStopType GetRoadStopType(TileIndex t)
 static inline StationGfx GetStationGfx(TileIndex t)
 {
 	assert(IsTileType(t, MP_STATION));
-	return _m[t].m5;
+	return tile_map.get(t).m5;
 }
 
 /**
@@ -80,7 +80,7 @@ static inline StationGfx GetStationGfx(TileIndex t)
 static inline void SetStationGfx(TileIndex t, StationGfx gfx)
 {
 	assert(IsTileType(t, MP_STATION));
-	_m[t].m5 = gfx;
+	tile_map.get(t).m5 = gfx;
 }
 
 /**
@@ -469,7 +469,7 @@ static inline TileIndexDiffC GetDockOffset(TileIndex t)
 static inline bool IsCustomStationSpecIndex(TileIndex t)
 {
 	assert(HasStationTileRail(t));
-	return _m[t].m4 != 0;
+	return tile_map.get(t).m4 != 0;
 }
 
 /**
@@ -481,7 +481,7 @@ static inline bool IsCustomStationSpecIndex(TileIndex t)
 static inline void SetCustomStationSpecIndex(TileIndex t, byte specindex)
 {
 	assert(HasStationTileRail(t));
-	_m[t].m4 = specindex;
+	tile_map.get(t).m4 = specindex;
 }
 
 /**
@@ -493,7 +493,7 @@ static inline void SetCustomStationSpecIndex(TileIndex t, byte specindex)
 static inline uint GetCustomStationSpecIndex(TileIndex t)
 {
 	assert(HasStationTileRail(t));
-	return _m[t].m4;
+	return tile_map.get(t).m4;
 }
 
 /**
@@ -505,7 +505,7 @@ static inline uint GetCustomStationSpecIndex(TileIndex t)
 static inline void SetStationTileRandomBits(TileIndex t, byte random_bits)
 {
 	assert(IsTileType(t, MP_STATION));
-	SB(_m[t].m3, 4, 4, random_bits);
+	SB(tile_map.get(t).m3, 4, 4, random_bits);
 }
 
 /**
@@ -517,7 +517,7 @@ static inline void SetStationTileRandomBits(TileIndex t, byte random_bits)
 static inline byte GetStationTileRandomBits(TileIndex t)
 {
 	assert(IsTileType(t, MP_STATION));
-	return GB(_m[t].m3, 4, 4);
+	return GB(tile_map.get(t).m3, 4, 4);
 }
 
 /**

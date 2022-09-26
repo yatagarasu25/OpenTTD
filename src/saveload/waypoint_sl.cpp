@@ -73,11 +73,12 @@ void MoveWaypointsToBaseStations()
 		for (OldWaypoint &wp : _old_waypoints) {
 			if (wp.delete_ctr != 0) continue; // The waypoint was deleted
 
+			Tile& wt = tile_map.get(wp.xy);
 			/* Waypoint indices were not added to the map prior to this. */
-			_m[wp.xy].m2 = (StationID)wp.index;
+			wt.m2 = (StationID)wp.index;
 
-			if (HasBit(_m[wp.xy].m3, 4)) {
-				wp.spec = StationClass::Get(STAT_CLASS_WAYP)->GetSpec(_m[wp.xy].m4 + 1);
+			if (HasBit(wt.m3, 4)) {
+				wp.spec = StationClass::Get(STAT_CLASS_WAYP)->GetSpec(wt.m4 + 1);
 			}
 		}
 	} else {
@@ -102,10 +103,10 @@ void MoveWaypointsToBaseStations()
 		TileIndex t = wp.xy;
 		/* Sometimes waypoint (sign) locations became disconnected from their actual location in
 		 * the map array. If this is the case, try to locate the actual location in the map array */
-		if (!IsTileType(t, MP_RAILWAY) || GetRailTileType(t) != 2 /* RAIL_TILE_WAYPOINT */ || _m[t].m2 != wp.index) {
+		if (!IsTileType(t, MP_RAILWAY) || GetRailTileType(t) != 2 /* RAIL_TILE_WAYPOINT */ || tile_map.get(t).m2 != wp.index) {
 			Debug(sl, 0, "Found waypoint tile {} with invalid position", t);
 			for (t = 0; t < tile_map.size; t++) {
-				if (IsTileType(t, MP_RAILWAY) && GetRailTileType(t) == 2 /* RAIL_TILE_WAYPOINT */ && _m[t].m2 == wp.index) {
+				if (IsTileType(t, MP_RAILWAY) && GetRailTileType(t) == 2 /* RAIL_TILE_WAYPOINT */ && tile_map.get(t).m2 == wp.index) {
 					Debug(sl, 0, "Found actual waypoint position at {}", t);
 					break;
 				}
@@ -125,10 +126,10 @@ void MoveWaypointsToBaseStations()
 		new_wp->string_id  = STR_SV_STNAME_WAYPOINT;
 
 		/* The tile might've been reserved! */
-		bool reserved = !IsSavegameVersionBefore(SLV_100) && HasBit(_m[t].m5, 4);
+		bool reserved = !IsSavegameVersionBefore(SLV_100) && HasBit(tile_map.get(t).m5, 4);
 
 		/* The tile really has our waypoint, so reassign the map array */
-		MakeRailWaypoint(t, GetTileOwner(t), new_wp->index, (Axis)GB(_m[t].m5, 0, 1), 0, GetRailType(t));
+		MakeRailWaypoint(t, GetTileOwner(t), new_wp->index, (Axis)GB(tile_map.get(t).m5, 0, 1), 0, GetRailType(t));
 		new_wp->facilities |= FACIL_TRAIN;
 		new_wp->owner = GetTileOwner(t);
 

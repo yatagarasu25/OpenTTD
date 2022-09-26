@@ -22,7 +22,7 @@
 static inline TownID GetTownIndex(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE) || (IsTileType(t, MP_ROAD) && !IsRoadDepot(t)));
-	return _m[t].m2;
+	return tile_map.get(t).m2;
 }
 
 /**
@@ -34,7 +34,7 @@ static inline TownID GetTownIndex(TileIndex t)
 static inline void SetTownIndex(TileIndex t, TownID index)
 {
 	assert(IsTileType(t, MP_HOUSE) || (IsTileType(t, MP_ROAD) && !IsRoadDepot(t)));
-	_m[t].m2 = index;
+	tile_map.get(t).m2 = index;
 }
 
 /**
@@ -47,7 +47,7 @@ static inline void SetTownIndex(TileIndex t, TownID index)
 static inline HouseID GetCleanHouseType(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	return _m[t].m4 | (GB(_m[t].m3, 6, 1) << 8);
+	return tile_map.get(t).m4 | (GB(tile_map.get(t).m3, 6, 1) << 8);
 }
 
 /**
@@ -70,8 +70,8 @@ static inline HouseID GetHouseType(TileIndex t)
 static inline void SetHouseType(TileIndex t, HouseID house_id)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	_m[t].m4 = GB(house_id, 0, 8);
-	SB(_m[t].m3, 6, 1, GB(house_id, 8, 1));
+	tile_map.get(t).m4 = GB(house_id, 0, 8);
+	SB(tile_map.get(t).m3, 6, 1, GB(house_id, 8, 1));
 }
 
 /**
@@ -145,7 +145,7 @@ static inline void SetLiftPosition(TileIndex t, byte pos)
 static inline bool IsHouseCompleted(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	return HasBit(_m[t].m3, 7);
+	return HasBit(tile_map.get(t).m3, 7);
 }
 
 /**
@@ -156,7 +156,7 @@ static inline bool IsHouseCompleted(TileIndex t)
 static inline void SetHouseCompleted(TileIndex t, bool status)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	SB(_m[t].m3, 7, 1, !!status);
+	SB(tile_map.get(t).m3, 7, 1, !!status);
 }
 
 /**
@@ -183,7 +183,7 @@ static inline void SetHouseCompleted(TileIndex t, bool status)
 static inline byte GetHouseBuildingStage(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	return IsHouseCompleted(t) ? (byte)TOWN_HOUSE_COMPLETED : GB(_m[t].m5, 3, 2);
+	return IsHouseCompleted(t) ? (byte)TOWN_HOUSE_COMPLETED : GB(tile_map.get(t).m5, 3, 2);
 }
 
 /**
@@ -195,7 +195,7 @@ static inline byte GetHouseBuildingStage(TileIndex t)
 static inline byte GetHouseConstructionTick(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	return IsHouseCompleted(t) ? 0 : GB(_m[t].m5, 0, 3);
+	return IsHouseCompleted(t) ? 0 : GB(tile_map.get(t).m5, 0, 3);
 }
 
 /**
@@ -208,9 +208,9 @@ static inline byte GetHouseConstructionTick(TileIndex t)
 static inline void IncHouseConstructionTick(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	AB(_m[t].m5, 0, 5, 1);
+	AB(tile_map.get(t).m5, 0, 5, 1);
 
-	if (GB(_m[t].m5, 3, 2) == TOWN_HOUSE_COMPLETED) {
+	if (GB(tile_map.get(t).m5, 3, 2) == TOWN_HOUSE_COMPLETED) {
 		/* House is now completed.
 		 * Store the year of construction as well, for newgrf house purpose */
 		SetHouseCompleted(t, true);
@@ -226,7 +226,7 @@ static inline void IncHouseConstructionTick(TileIndex t)
 static inline void ResetHouseAge(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE) && IsHouseCompleted(t));
-	_m[t].m5 = 0;
+	tile_map.get(t).m5 = 0;
 }
 
 /**
@@ -237,7 +237,7 @@ static inline void ResetHouseAge(TileIndex t)
 static inline void IncrementHouseAge(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	if (IsHouseCompleted(t) && _m[t].m5 < 0xFF) _m[t].m5++;
+	if (IsHouseCompleted(t) && tile_map.get(t).m5 < 0xFF) tile_map.get(t).m5++;
 }
 
 /**
@@ -249,7 +249,7 @@ static inline void IncrementHouseAge(TileIndex t)
 static inline Year GetHouseAge(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	return IsHouseCompleted(t) ? _m[t].m5 : 0;
+	return IsHouseCompleted(t) ? tile_map.get(t).m5 : 0;
 }
 
 /**
@@ -262,7 +262,7 @@ static inline Year GetHouseAge(TileIndex t)
 static inline void SetHouseRandomBits(TileIndex t, byte random)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	_m[t].m1 = random;
+	tile_map.get(t).m1 = random;
 }
 
 /**
@@ -275,7 +275,7 @@ static inline void SetHouseRandomBits(TileIndex t, byte random)
 static inline byte GetHouseRandomBits(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	return _m[t].m1;
+	return tile_map.get(t).m1;
 }
 
 /**
@@ -288,7 +288,7 @@ static inline byte GetHouseRandomBits(TileIndex t)
 static inline void SetHouseTriggers(TileIndex t, byte triggers)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	SB(_m[t].m3, 0, 5, triggers);
+	SB(tile_map.get(t).m3, 0, 5, triggers);
 }
 
 /**
@@ -301,7 +301,7 @@ static inline void SetHouseTriggers(TileIndex t, byte triggers)
 static inline byte GetHouseTriggers(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	return GB(_m[t].m3, 0, 5);
+	return GB(tile_map.get(t).m3, 0, 5);
 }
 
 /**
@@ -354,12 +354,12 @@ static inline void MakeHouseTile(TileIndex t, TownID tid, byte counter, byte sta
 	assert(IsTileType(t, MP_CLEAR));
 
 	SetTileType(t, MP_HOUSE);
-	_m[t].m1 = random_bits;
-	_m[t].m2 = tid;
-	_m[t].m3 = 0;
+	tile_map.get(t).m1 = random_bits;
+	tile_map.get(t).m2 = tid;
+	tile_map.get(t).m3 = 0;
 	SetHouseType(t, type);
 	SetHouseCompleted(t, stage == TOWN_HOUSE_COMPLETED);
-	_m[t].m5 = IsHouseCompleted(t) ? 0 : (stage << 3 | counter);
+	tile_map.get(t).m5 = IsHouseCompleted(t) ? 0 : (stage << 3 | counter);
 	SetAnimationFrame(t, 0);
 	SetHouseProcessingTime(t, HouseSpec::Get(type)->processing_time);
 }

@@ -20,11 +20,11 @@ static inline void MakeVoid(TileIndex t)
 {
 	SetTileType(t, MP_VOID);
 	SetTileHeight(t, 0);
-	_m[t].m1 = 0;
-	_m[t].m2 = 0;
-	_m[t].m3 = 0;
-	_m[t].m4 = 0;
-	_m[t].m5 = 0;
+	tile_map.get(t).m1 = 0;
+	tile_map.get(t).m2 = 0;
+	tile_map.get(t).m3 = 0;
+	tile_map.get(t).m4 = 0;
+	tile_map.get(t).m5 = 0;
 	_me[t].m6 = 0;
 	_me[t].m7 = 0;
 }

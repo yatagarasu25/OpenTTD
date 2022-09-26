@@ -35,7 +35,7 @@ enum ClearGround {
 static inline bool IsSnowTile(TileIndex t)
 {
 	assert(IsTileType(t, MP_CLEAR));
-	return HasBit(_m[t].m3, 4);
+	return HasBit(tile_map.get(t).m3, 4);
 }
 
 /**
@@ -47,7 +47,7 @@ static inline bool IsSnowTile(TileIndex t)
 static inline ClearGround GetRawClearGround(TileIndex t)
 {
 	assert(IsTileType(t, MP_CLEAR));
-	return (ClearGround)GB(_m[t].m5, 2, 3);
+	return (ClearGround)GB(tile_map.get(t).m5, 2, 3);
 }
 
 /**
@@ -83,7 +83,7 @@ static inline bool IsClearGround(TileIndex t, ClearGround ct)
 static inline uint GetClearDensity(TileIndex t)
 {
 	assert(IsTileType(t, MP_CLEAR));
-	return GB(_m[t].m5, 0, 2);
+	return GB(tile_map.get(t).m5, 0, 2);
 }
 
 /**
@@ -95,7 +95,7 @@ static inline uint GetClearDensity(TileIndex t)
 static inline void AddClearDensity(TileIndex t, int d)
 {
 	assert(IsTileType(t, MP_CLEAR)); // XXX incomplete
-	_m[t].m5 += d;
+	tile_map.get(t).m5 += d;
 }
 
 /**
@@ -107,7 +107,7 @@ static inline void AddClearDensity(TileIndex t, int d)
 static inline void SetClearDensity(TileIndex t, uint d)
 {
 	assert(IsTileType(t, MP_CLEAR));
-	SB(_m[t].m5, 0, 2, d);
+	SB(tile_map.get(t).m5, 0, 2, d);
 }
 
 
@@ -120,7 +120,7 @@ static inline void SetClearDensity(TileIndex t, uint d)
 static inline uint GetClearCounter(TileIndex t)
 {
 	assert(IsTileType(t, MP_CLEAR));
-	return GB(_m[t].m5, 5, 3);
+	return GB(tile_map.get(t).m5, 5, 3);
 }
 
 /**
@@ -132,7 +132,7 @@ static inline uint GetClearCounter(TileIndex t)
 static inline void AddClearCounter(TileIndex t, int c)
 {
 	assert(IsTileType(t, MP_CLEAR)); // XXX incomplete
-	_m[t].m5 += c << 5;
+	tile_map.get(t).m5 += c << 5;
 }
 
 /**
@@ -144,7 +144,7 @@ static inline void AddClearCounter(TileIndex t, int c)
 static inline void SetClearCounter(TileIndex t, uint c)
 {
 	assert(IsTileType(t, MP_CLEAR)); // XXX incomplete
-	SB(_m[t].m5, 5, 3, c);
+	SB(tile_map.get(t).m5, 5, 3, c);
 }
 
 
@@ -158,7 +158,7 @@ static inline void SetClearCounter(TileIndex t, uint c)
 static inline void SetClearGroundDensity(TileIndex t, ClearGround type, uint density)
 {
 	assert(IsTileType(t, MP_CLEAR)); // XXX incomplete
-	_m[t].m5 = 0 << 5 | type << 2 | density;
+	tile_map.get(t).m5 = 0 << 5 | type << 2 | density;
 }
 
 
@@ -171,7 +171,7 @@ static inline void SetClearGroundDensity(TileIndex t, ClearGround type, uint den
 static inline uint GetFieldType(TileIndex t)
 {
 	assert(GetClearGround(t) == CLEAR_FIELDS);
-	return GB(_m[t].m3, 0, 4);
+	return GB(tile_map.get(t).m3, 0, 4);
 }
 
 /**
@@ -183,7 +183,7 @@ static inline uint GetFieldType(TileIndex t)
 static inline void SetFieldType(TileIndex t, uint f)
 {
 	assert(GetClearGround(t) == CLEAR_FIELDS); // XXX incomplete
-	SB(_m[t].m3, 0, 4, f);
+	SB(tile_map.get(t).m3, 0, 4, f);
 }
 
 /**
@@ -195,7 +195,7 @@ static inline void SetFieldType(TileIndex t, uint f)
 static inline IndustryID GetIndustryIndexOfField(TileIndex t)
 {
 	assert(GetClearGround(t) == CLEAR_FIELDS);
-	return(IndustryID) _m[t].m2;
+	return(IndustryID) tile_map.get(t).m2;
 }
 
 /**
@@ -207,7 +207,7 @@ static inline IndustryID GetIndustryIndexOfField(TileIndex t)
 static inline void SetIndustryIndexOfField(TileIndex t, IndustryID i)
 {
 	assert(GetClearGround(t) == CLEAR_FIELDS);
-	_m[t].m2 = i;
+	tile_map.get(t).m2 = i;
 }
 
 
@@ -223,9 +223,9 @@ static inline uint GetFence(TileIndex t, DiagDirection side)
 	assert(IsClearGround(t, CLEAR_FIELDS));
 	switch (side) {
 		default: NOT_REACHED();
-		case DIAGDIR_SE: return GB(_m[t].m4, 2, 3);
-		case DIAGDIR_SW: return GB(_m[t].m4, 5, 3);
-		case DIAGDIR_NE: return GB(_m[t].m3, 5, 3);
+		case DIAGDIR_SE: return GB(tile_map.get(t).m4, 2, 3);
+		case DIAGDIR_SW: return GB(tile_map.get(t).m4, 5, 3);
+		case DIAGDIR_NE: return GB(tile_map.get(t).m3, 5, 3);
 		case DIAGDIR_NW: return GB(_me[t].m6, 2, 3);
 	}
 }
@@ -242,9 +242,9 @@ static inline void SetFence(TileIndex t, DiagDirection side, uint h)
 	assert(IsClearGround(t, CLEAR_FIELDS));
 	switch (side) {
 		default: NOT_REACHED();
-		case DIAGDIR_SE: SB(_m[t].m4, 2, 3, h); break;
-		case DIAGDIR_SW: SB(_m[t].m4, 5, 3, h); break;
-		case DIAGDIR_NE: SB(_m[t].m3, 5, 3, h); break;
+		case DIAGDIR_SE: SB(tile_map.get(t).m4, 2, 3, h); break;
+		case DIAGDIR_SW: SB(tile_map.get(t).m4, 5, 3, h); break;
+		case DIAGDIR_NE: SB(tile_map.get(t).m3, 5, 3, h); break;
 		case DIAGDIR_NW: SB(_me[t].m6, 2, 3, h); break;
 	}
 }
@@ -259,11 +259,11 @@ static inline void SetFence(TileIndex t, DiagDirection side, uint h)
 static inline void MakeClear(TileIndex t, ClearGround g, uint density)
 {
 	SetTileType(t, MP_CLEAR);
-	_m[t].m1 = 0;
+	tile_map.get(t).m1 = 0;
 	SetTileOwner(t, OWNER_NONE);
-	_m[t].m2 = 0;
-	_m[t].m3 = 0;
-	_m[t].m4 = 0 << 5 | 0 << 2;
+	tile_map.get(t).m2 = 0;
+	tile_map.get(t).m3 = 0;
+	tile_map.get(t).m4 = 0 << 5 | 0 << 2;
 	SetClearGroundDensity(t, g, density); // Sets m5
 	_me[t].m6 = 0;
 	_me[t].m7 = 0;
@@ -280,11 +280,11 @@ static inline void MakeClear(TileIndex t, ClearGround g, uint density)
 static inline void MakeField(TileIndex t, uint field_type, IndustryID industry)
 {
 	SetTileType(t, MP_CLEAR);
-	_m[t].m1 = 0;
+	tile_map.get(t).m1 = 0;
 	SetTileOwner(t, OWNER_NONE);
-	_m[t].m2 = industry;
-	_m[t].m3 = field_type;
-	_m[t].m4 = 0 << 5 | 0 << 2;
+	tile_map.get(t).m2 = industry;
+	tile_map.get(t).m3 = field_type;
+	tile_map.get(t).m4 = 0 << 5 | 0 << 2;
 	SetClearGroundDensity(t, CLEAR_FIELDS, 3);
 	SB(_me[t].m6, 2, 4, 0);
 	_me[t].m7 = 0;
@@ -300,7 +300,7 @@ static inline void MakeField(TileIndex t, uint field_type, IndustryID industry)
 static inline void MakeSnow(TileIndex t, uint density = 0)
 {
 	assert(GetClearGround(t) != CLEAR_SNOW);
-	SetBit(_m[t].m3, 4);
+	SetBit(tile_map.get(t).m3, 4);
 	if (GetRawClearGround(t) == CLEAR_FIELDS) {
 		SetClearGroundDensity(t, CLEAR_GRASS, density);
 	} else {
@@ -316,7 +316,7 @@ static inline void MakeSnow(TileIndex t, uint density = 0)
 static inline void ClearSnow(TileIndex t)
 {
 	assert(GetClearGround(t) == CLEAR_SNOW);
-	ClrBit(_m[t].m3, 4);
+	ClrBit(tile_map.get(t).m3, 4);
 	SetClearDensity(t, 3);
 }
 

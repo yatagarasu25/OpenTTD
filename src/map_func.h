@@ -51,10 +51,17 @@ struct TileMap
 	{
 		return (y << log_x) + x;
 	}
+
+	Tile& get(const TileIndex& i)
+	{
+		assert(i < size);
+		return _m[i];
+	}
+
+	Tile& raw(const TileIndex& i) { return _m[i]; }
 };
 
 extern TileMap tile_map;
-#define _m tile_map._m
 #define _me tile_map._me
 
 /**
