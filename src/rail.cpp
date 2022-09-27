@@ -154,7 +154,7 @@ extern const TrackdirBits _uphill_trackdirs[] = {
  */
 RailType GetTileRailType(TileIndex tile)
 {
-	switch (GetTileType(tile)) {
+	switch (tile_map.get(tile).type) {
 		case MP_RAILWAY:
 			return GetRailType(tile);
 

@@ -56,6 +56,7 @@ enum TileType {
 	MP_INDUSTRY,            ///< Part of an industry
 	MP_TUNNELBRIDGE,        ///< Tunnel entry/exit and bridge heads
 	MP_OBJECT,              ///< Contains objects such as transmitters and owned land
+	MP_TTO_MONORAIL,
 };
 
 /**

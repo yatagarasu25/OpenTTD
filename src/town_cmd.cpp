@@ -122,7 +122,7 @@ Town::~Town()
 
 	/* Check no tile is related to us. */
 	for (TileIndex tile = 0; tile < tile_map.size; ++tile) {
-		switch (GetTileType(tile)) {
+		switch (tile_map.get(tile).type) {
 			case MP_HOUSE:
 				assert(GetTownIndex(tile) != this->index);
 				break;
@@ -1077,7 +1077,7 @@ static bool GrowTownWithExtraHouse(Town *t, TileIndex tile)
 		/* Count both void and house tiles for checking whether there
 		 * are enough houses in the area. This to make it likely that
 		 * houses get build up to the edge of the map. */
-		switch (GetTileType(TileAddByDiagDir(tile, dir))) {
+		switch (tile_map.get(TileAddByDiagDir(tile, dir)).type) {
 			case MP_HOUSE:
 			case MP_VOID:
 				counter++;
@@ -1566,7 +1566,7 @@ static bool CanFollowRoad(TileIndex tile, DiagDirection dir)
 	RoadBits target_rb = GetTownRoadBits(target_tile);
 	if (_settings_game.economy.allow_town_roads || _generating_world) {
 		/* Check whether a road connection exists or can be build. */
-		switch (GetTileType(target_tile)) {
+		switch (tile_map.get(target_tile).type) {
 			case MP_ROAD:
 				return target_rb != ROAD_NONE;
 
@@ -2975,7 +2975,7 @@ CommandCost CmdDeleteTown(DoCommandFlag flags, TownID town_id)
 	/* Check all remaining tiles for town ownership. */
 	for (TileIndex current_tile = 0; current_tile < tile_map.size; ++current_tile) {
 		bool try_clear = false;
-		switch (GetTileType(current_tile)) {
+		switch (tile_map.get(current_tile).type) {
 			case MP_ROAD:
 				try_clear = HasTownOwnedRoad(current_tile) && GetTownIndex(current_tile) == t->index;
 				break;
@@ -3571,7 +3571,7 @@ Town *CalcClosestTownFromTile(TileIndex tile, uint threshold)
  */
 Town *ClosestTownFromTile(TileIndex tile, uint threshold)
 {
-	switch (GetTileType(tile)) {
+	switch (tile_map.get(tile).type) {
 		case MP_ROAD:
 			if (IsRoadDepot(tile)) return CalcClosestTownFromTile(tile, threshold);
 

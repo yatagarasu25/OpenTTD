@@ -32,7 +32,7 @@ enum RoadTileType {
  */
 static inline bool MayHaveRoad(TileIndex t)
 {
-	switch (GetTileType(t)) {
+	switch (tile_map.get(t).type) {
 		case MP_ROAD:
 		case MP_STATION:
 		case MP_TUNNELBRIDGE:
@@ -637,8 +637,7 @@ static inline void SetRoadTypes(TileIndex t, RoadType road_rt, RoadType tram_rt)
  */
 static inline void MakeRoadNormal(TileIndex t, RoadBits bits, RoadType road_rt, RoadType tram_rt, TownID town, Owner road, Owner tram)
 {
-	Tile& t_ = tile_map.get(t); t_.init();
-	SetTileType(t, MP_ROAD);
+	Tile& t_ = tile_map.init(t, MP_ROAD);
 	SetTileOwner(t, road);
 	t_.town.id = town;
 	t_.road.tram_bits = (tram_rt != INVALID_ROADTYPE ? bits : 0);
@@ -664,8 +663,7 @@ static inline void MakeRoadNormal(TileIndex t, RoadBits bits, RoadType road_rt, 
  */
 static inline void MakeRoadCrossing(TileIndex t, Owner road, Owner tram, Owner rail, Axis roaddir, RailType rat, RoadType road_rt, RoadType tram_rt, uint town)
 {
-	Tile& t_ = tile_map.get(t); t_.init();
-	SetTileType(t, MP_ROAD);
+	Tile& t_ = tile_map.init(t, MP_ROAD);
 	SetTileOwner(t, rail);
 	t_.town.id = town;
 	t_.road.type = INVALID_ROADTYPE;
@@ -688,8 +686,7 @@ static inline void MakeRoadCrossing(TileIndex t, Owner road, Owner tram, Owner r
  */
 static inline void MakeRoadDepot(TileIndex t, Owner owner, DepotID did, DiagDirection dir, RoadType rt)
 {
-	Tile& t_ = tile_map.get(t); t_.init();
-	SetTileType(t, MP_ROAD);
+	Tile& t_ = tile_map.init(t, MP_ROAD);
 	SetTileOwner(t, owner);
 	t_.depot.id = did;
 	t_.depot.road.direction = dir;

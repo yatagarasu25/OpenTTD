@@ -61,7 +61,7 @@ protected:
 		/* set base cost */
 		if (IsDiagonalTrackdir(trackdir)) {
 			cost += YAPF_TILE_LENGTH;
-			switch (GetTileType(tile)) {
+			switch (tile_map.get(tile).type) {
 				case MP_ROAD:
 					/* Increase the cost for level crossings */
 					if (IsLevelCrossing(tile)) {

@@ -284,7 +284,7 @@ std::tuple<CommandCost, Money, TileIndex> CmdTerraformLand(DoCommandFlag flags, 
 			if (indirectly_cleared) {
 				cost = Command<CMD_LANDSCAPE_CLEAR>::Do(tile_flags, t);
 			} else {
-				cost = _tile_type_procs[GetTileType(t)]->terraform_tile_proc(t, tile_flags, z_min, tileh);
+				cost = _tile_type_procs[tile_map.get(t).type]->terraform_tile_proc(t, tile_flags, z_min, tileh);
 			}
 			old_generating_world.Restore();
 			if (cost.Failed()) {

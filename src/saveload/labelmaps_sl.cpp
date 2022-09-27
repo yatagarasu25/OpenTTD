@@ -53,7 +53,7 @@ void AfterLoadLabelMaps()
 		}
 
 		for (TileIndex t = 0; t < tile_map.size; t++) {
-			switch (GetTileType(t)) {
+			switch (tile_map.get(t).type) {
 				case MP_RAILWAY:
 					SetRailType(t, railtype_conversion_map[GetRailType(t)]);
 					break;

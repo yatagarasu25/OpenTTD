@@ -273,7 +273,7 @@ static SigFlags ExploreSegment(Owner owner)
 		TileIndex oldtile = tile; // tile we are leaving
 		DiagDirection exitdir = enterdir == INVALID_DIAGDIR ? INVALID_DIAGDIR : ReverseDiagDir(enterdir); // expected new exit direction (for straight line)
 
-		switch (GetTileType(tile)) {
+		switch (tile_map.get(tile).type) {
 			case MP_RAILWAY: {
 				if (GetTileOwner(tile) != owner) continue; // do not propagate signals on others' tiles (remove for tracksharing)
 
@@ -484,7 +484,7 @@ static SigSegState UpdateSignalsInBuffer(Owner owner)
 		 * modification of railbits (including both rail building and removal),
 		 * train entering/leaving block, train leaving depot...
 		 */
-		switch (GetTileType(tile)) {
+		switch (tile_map.get(tile).type) {
 			case MP_TUNNELBRIDGE:
 				/* 'optimization assert' - do not try to update signals when it is not needed */
 				assert(GetTunnelBridgeTransportType(tile) == TRANSPORT_RAIL);

@@ -104,7 +104,7 @@ void SetWaterClassDependingOnSurroundings(TileIndex t, bool include_invalid_wate
 
 	for (DiagDirection dir = DIAGDIR_BEGIN; dir < DIAGDIR_END; dir++) {
 		TileIndex neighbour = TileAddByDiagDir(t, dir);
-		switch (GetTileType(neighbour)) {
+		switch (tile_map.get(neighbour).type) {
 			case MP_WATER:
 				/* clear water and shipdepots have already a WaterClass associated */
 				if (IsCoast(neighbour)) {
@@ -150,7 +150,7 @@ void SetWaterClassDependingOnSurroundings(TileIndex t, bool include_invalid_wate
 static void ConvertTownOwner()
 {
 	for (TileIndex tile = 0; tile != tile_map.size; tile++) {
-		switch (GetTileType(tile)) {
+		switch (tile_map.get(tile).type) {
 			case MP_ROAD:
 				if (GB(tile_map.raw(tile).m5, 4, 2) == ROAD_TILE_CROSSING && HasBit(tile_map.raw(tile).m3, 7)) {
 					tile_map.raw(tile).m3 = OWNER_TOWN;
@@ -476,10 +476,11 @@ static void FixOwnerOfRailTrack(TileIndex t)
 		bool hastram = HasBit(tile_map.get_e(t).m7, 7);
 
 		/* MakeRoadNormal */
-		SetTileType(t, MP_ROAD);
+		auto& t_ = tile_map.init(t, MP_ROAD);
 		SetTileOwner(t, road);
-		tile_map.raw(t).m3 = (hasroad ? bits : 0);
-		tile_map.raw(t).m5 = (hastram ? bits : 0) | ROAD_TILE_NORMAL << 6;
+		t_.road.tram_bits = (hasroad ? bits : 0);
+		t_.road.road_bits = (hastram ? bits : 0);
+		t_.road.tile_type = ROAD_TILE_NORMAL;
 		SB(tile_map.get_e(t).m6, 2, 4, 0);
 		SetRoadOwner(t, RTT_TRAM, tram);
 		return;
@@ -840,7 +841,7 @@ bool AfterLoadGame()
 	if (IsSavegameVersionBefore(SLV_72)) {
 		/* Locks in very old savegames had OWNER_WATER as owner */
 		for (TileIndex t = 0; t < tile_map.size; t++) {
-			switch (GetTileType(t)) {
+			switch (tile_map.get(t).type) {
 				default: break;
 
 				case MP_WATER:
@@ -894,7 +895,7 @@ bool AfterLoadGame()
 	}
 
 	for (TileIndex t = 0; t < map_size; t++) {
-		switch (GetTileType(t)) {
+		switch (tile_map.get(t).type) {
 			case MP_STATION: {
 				BaseStation *bst = BaseStation::GetByTile(t);
 
@@ -964,7 +965,7 @@ bool AfterLoadGame()
 	 *  all about ;) */
 	if (IsSavegameVersionBefore(SLV_6, 1)) {
 		for (TileIndex t = 0; t < map_size; t++) {
-			switch (GetTileType(t)) {
+			switch (tile_map.get(t).type) {
 				case MP_HOUSE:
 					tile_map.get(t).house.old_town_id = tile_map.get(t).house.town_id;
 					SetTownIndex(t, CalcClosestTownFromTile(t)->index);
@@ -1019,7 +1020,7 @@ bool AfterLoadGame()
 
 	if (IsSavegameVersionBefore(SLV_48)) {
 		for (TileIndex t = 0; t < map_size; t++) {
-			switch (GetTileType(t)) {
+			switch (tile_map.get(t).type) {
 				case MP_RAILWAY:
 					if (IsPlainRail(t)) {
 						/* Swap ground type and signal type for plain rail tiles, so the
@@ -1049,7 +1050,7 @@ bool AfterLoadGame()
 		/* Added the RoadType */
 		bool old_bridge = IsSavegameVersionBefore(SLV_42);
 		for (TileIndex t = 0; t < map_size; t++) {
-			switch (GetTileType(t)) {
+			switch (tile_map.get(t).type) {
 				case MP_ROAD:
 					SB(tile_map.raw(t).m5, 6, 2, GB(tile_map.raw(t).m5, 4, 2));
 					switch (GetRoadTileType(t)) {
@@ -1089,7 +1090,7 @@ bool AfterLoadGame()
 		bool old_bridge = IsSavegameVersionBefore(SLV_42);
 
 		for (TileIndex t = 0; t < map_size; t++) {
-			switch (GetTileType(t)) {
+			switch (tile_map.get(t).type) {
 				case MP_ROAD:
 					if (fix_roadtypes) SB(tile_map.get_e(t).m7, 6, 2, (RoadTypes)GB(tile_map.get_e(t).m7, 5, 3));
 					SB(tile_map.get_e(t).m7, 5, 1, GB(tile_map.raw(t).m3, 7, 1)); // snow/desert
@@ -1154,7 +1155,7 @@ bool AfterLoadGame()
 	/* Railtype moved from m3 to m8 in version SLV_EXTEND_RAILTYPES. */
 	if (IsSavegameVersionBefore(SLV_EXTEND_RAILTYPES)) {
 		for (TileIndex t = 0; t < map_size; t++) {
-			switch (GetTileType(t)) {
+			switch (tile_map.get(t).type) {
 				case MP_RAILWAY:
 					SetRailType(t, (RailType)GB(tile_map.raw(t).m3, 0, 4));
 					break;
@@ -1202,10 +1203,10 @@ bool AfterLoadGame()
 							TownID town = IsTileOwner(t, OWNER_TOWN) ? ClosestTownFromTile(t, UINT_MAX)->index : 0;
 
 							/* MakeRoadNormal */
-							SetTileType(t, MP_ROAD);
-							tile_map.raw(t).m2 = town;
-							tile_map.raw(t).m3 = 0;
-							tile_map.raw(t).m5 = (axis == AXIS_X ? ROAD_Y : ROAD_X) | ROAD_TILE_NORMAL << 6;
+							auto& t_ = tile_map.init(t, MP_ROAD);
+							t_.road.town_id = town;
+							t_.road.road_bits = (axis == AXIS_X ? ROAD_Y : ROAD_X);
+							t_.road.tile_type = ROAD_TILE_NORMAL;
 							SB(tile_map.get_e(t).m6, 2, 4, 0);
 							tile_map.get_e(t).m7 = 1 << 6;
 							SetRoadOwner(t, RTT_TRAM, OWNER_NONE);
@@ -1268,7 +1269,7 @@ bool AfterLoadGame()
 		/* Add road subtypes */
 		for (TileIndex t = 0; t < map_size; t++) {
 			bool has_road = false;
-			switch (GetTileType(t)) {
+			switch (tile_map.get(t).type) {
 				case MP_ROAD:
 					has_road = true;
 					break;
@@ -1306,7 +1307,7 @@ bool AfterLoadGame()
 
 		/* .. so we convert the entire map from normal to elrail (so maintain "fairness") */
 		for (TileIndex t = 0; t < map_size; t++) {
-			switch (GetTileType(t)) {
+			switch (tile_map.get(t).type) {
 				case MP_RAILWAY:
 					SetRailType(t, UpdateRailType(GetRailType(t), min_rail));
 					break;
@@ -1358,7 +1359,7 @@ bool AfterLoadGame()
 	 *  room for PBS. Now in version 21 move it back :P. */
 	if (IsSavegameVersionBefore(SLV_21) && !IsSavegameVersionBefore(SLV_15)) {
 		for (TileIndex t = 0; t < map_size; t++) {
-			switch (GetTileType(t)) {
+			switch (tile_map.get(t).type) {
 				case MP_RAILWAY:
 					if (HasSignals(t)) {
 						/* Original signal type/variant was stored in m4 but since saveload
@@ -1709,7 +1710,7 @@ bool AfterLoadGame()
 	 * make all grassy/rough land trees have a density of 3. */
 	if (IsSavegameVersionBefore(SLV_81)) {
 		for (TileIndex t = 0; t < map_size; t++) {
-			if (GetTileType(t) == MP_TREES) {
+			if (tile_map.get(t).type == MP_TREES) {
 				TreeGround groundType = (TreeGround)GB(tile_map.raw(t).m2, 4, 2);
 				if (groundType != TREE_GROUND_SNOW_DESERT) SB(tile_map.raw(t).m2, 6, 2, 3);
 			}
@@ -1767,7 +1768,7 @@ bool AfterLoadGame()
 	/* The water class was moved/unified. */
 	if (IsSavegameVersionBefore(SLV_146)) {
 		for (TileIndex t = 0; t < map_size; t++) {
-			switch (GetTileType(t)) {
+			switch (tile_map.get(t).type) {
 				case MP_STATION:
 					switch (GetStationType(t)) {
 						case STATION_OILRIG:
@@ -1944,7 +1945,7 @@ bool AfterLoadGame()
 	 * clear any possible PBS reservations as well. */
 	if (IsSavegameVersionBefore(SLV_100)) {
 		for (TileIndex t = 0; t < map_size; t++) {
-			switch (GetTileType(t)) {
+			switch (tile_map.get(t).type) {
 				case MP_RAILWAY:
 					if (HasSignals(t)) {
 						/* move the signal variant */
@@ -2193,7 +2194,7 @@ bool AfterLoadGame()
 
 		for (auto tile = _animated_tiles.begin(); tile < _animated_tiles.end(); /* Nothing */) {
 			/* Remove if tile is not animated */
-			bool remove = _tile_type_procs[GetTileType(*tile)]->animate_tile_proc == nullptr;
+			bool remove = _tile_type_procs[tile_map.get(*tile).type]->animate_tile_proc == nullptr;
 
 			/* and remove if duplicate */
 			for (auto j = _animated_tiles.begin(); !remove && j < tile; j++) {
@@ -2446,7 +2447,7 @@ bool AfterLoadGame()
 	/* Move the animation frame to the same location (m7) for all objects. */
 	if (IsSavegameVersionBefore(SLV_147)) {
 		for (TileIndex t = 0; t < map_size; t++) {
-			switch (GetTileType(t)) {
+			switch (tile_map.get(t).type) {
 				case MP_HOUSE:
 					if (GetHouseType(t) >= NEW_HOUSE_OFFSET) {
 						uint per_proc = tile_map.get_e(t).m7;

@@ -23,7 +23,7 @@
  */
 TrackBits GetReservedTrackbits(TileIndex t)
 {
-	switch (GetTileType(t)) {
+	switch (tile_map.get(t).type) {
 		case MP_RAILWAY:
 			if (IsRailDepot(t)) return GetDepotReservationTrackBits(t);
 			if (IsPlainRail(t)) return GetRailReservationTrackBits(t);
@@ -90,7 +90,7 @@ bool TryReserveRailTrack(TileIndex tile, Track t, bool trigger_stations)
 		}
 	}
 
-	switch (GetTileType(tile)) {
+	switch (tile_map.get(tile).type) {
 		case MP_RAILWAY:
 			if (IsPlainRail(tile)) return TryReserveTrack(tile, t);
 			if (IsRailDepot(tile)) {
@@ -150,7 +150,7 @@ void UnreserveRailTrack(TileIndex tile, Track t)
 		}
 	}
 
-	switch (GetTileType(tile)) {
+	switch (tile_map.get(tile).type) {
 		case MP_RAILWAY:
 			if (IsRailDepot(tile)) {
 				SetDepotReservation(tile, false);

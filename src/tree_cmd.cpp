@@ -68,7 +68,7 @@ static const uint16 EDITOR_TREE_DIV = 5;                   ///< Game editor tree
  */
 static bool CanPlantTreesOnTile(TileIndex tile, bool allow_desert)
 {
-	switch (GetTileType(tile)) {
+	switch (tile_map.get(tile).type) {
 		case MP_WATER:
 			return !IsBridgeAbove(tile) && IsCoast(tile) && !IsSlopeWithOneCornerRaised(GetTileSlope(tile));
 
@@ -99,7 +99,7 @@ static void PlantTreesOnTile(TileIndex tile, TreeType treetype, uint count, uint
 	TreeGround ground;
 	uint density = 3;
 
-	switch (GetTileType(tile)) {
+	switch (tile_map.get(tile).type) {
 		case MP_WATER:
 			ground = TREE_GROUND_SHORE;
 			break;
@@ -339,7 +339,7 @@ uint PlaceTreeGroupAroundTile(TileIndex tile, TreeType treetype, uint radius, ui
 
 	if (set_zone && IsInsideMM(treetype, TREE_RAINFOREST, TREE_CACTUS)) {
 		for (TileIndex t : TileArea(tile).Expand(radius)) {
-			if (GetTileType(t) != MP_VOID && DistanceSquare(tile, t) < radius * radius) SetTropicZone(t, TROPICZONE_RAINFOREST);
+			if (tile_map.get(t).type != MP_VOID && DistanceSquare(tile, t) < radius * radius) SetTropicZone(t, TROPICZONE_RAINFOREST);
 		}
 	}
 
@@ -400,7 +400,7 @@ CommandCost CmdPlantTree(DoCommandFlag flags, TileIndex tile, TileIndex start_ti
 
 	TileArea ta(tile, start_tile);
 	for (TileIndex current_tile : ta) {
-		switch (GetTileType(current_tile)) {
+		switch (tile_map.get(current_tile).type) {
 			case MP_TREES:
 				/* no more space for trees? */
 				if (GetTreeCount(current_tile) == 4) {

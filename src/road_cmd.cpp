@@ -337,7 +337,7 @@ static CommandCost RemoveRoad(TileIndex tile, DoCommandFlag flags, RoadBits piec
 	/* The tile doesn't have the given road type */
 	if (existing_rt == INVALID_ROADTYPE) return_cmd_error((rtt == RTT_TRAM) ? STR_ERROR_THERE_IS_NO_TRAMWAY : STR_ERROR_THERE_IS_NO_ROAD);
 
-	switch (GetTileType(tile)) {
+	switch (tile_map.get(tile).type) {
 		case MP_ROAD: {
 			CommandCost ret = EnsureNoVehicleOnGround(tile);
 			if (ret.Failed()) return ret;
@@ -644,7 +644,7 @@ CommandCost CmdBuildRoad(DoCommandFlag flags, TileIndex tile, RoadBits pieces, R
 	RoadTramType rtt = GetRoadTramType(rt);
 
 	bool need_to_clear = false;
-	switch (GetTileType(tile)) {
+	switch (tile_map.get(tile).type) {
 		case MP_ROAD:
 			switch (GetRoadTileType(tile)) {
 				case ROAD_TILE_NORMAL: {
@@ -881,7 +881,7 @@ do_clear:;
 	cost.AddCost(num_pieces * RoadBuildCost(rt));
 
 	if (flags & DC_EXEC) {
-		switch (GetTileType(tile)) {
+		switch (tile_map.get(tile).type) {
 			case MP_ROAD: {
 				RoadTileType rttype = GetRoadTileType(tile);
 				if (existing == ROAD_NONE || rttype == ROAD_TILE_CROSSING) {
@@ -2350,7 +2350,7 @@ CommandCost CmdConvertRoad(DoCommandFlag flags, TileIndex tile, TileIndex area_s
 		if (from_type == INVALID_ROADTYPE || from_type == to_type) continue;
 
 		/* Check if there is any infrastructure on tile */
-		TileType tt = GetTileType(tile);
+		TileType tt = (TileType)tile_map.get(tile).type;
 		switch (tt) {
 			case MP_STATION:
 				if (!IsRoadStop(tile)) continue;

@@ -767,7 +767,7 @@ bool IsNewGRFInspectable(GrfSpecFeature feature, uint index)
  */
 GrfSpecFeature GetGrfSpecFeature(TileIndex tile)
 {
-	switch (GetTileType(tile)) {
+	switch (tile_map.get(tile).type) {
 		default:              return GSF_INVALID;
 		case MP_RAILWAY:      return GSF_RAILTYPES;
 		case MP_ROAD:         return IsLevelCrossing(tile) ? GSF_RAILTYPES : GSF_INVALID;

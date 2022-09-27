@@ -386,8 +386,7 @@ static inline bool IsDockingTile(TileIndex t)
  */
 static inline void MakeShore(TileIndex t)
 {
-	Tile& t_ = tile_map.get(t); t_.init();
-	SetTileType(t, MP_WATER);
+	Tile& t_ = tile_map.init(t, MP_WATER);
 	SetTileOwner(t, OWNER_WATER);
 	SetWaterClass(t, WATER_CLASS_SEA);
 	SetDockingTile(t, false);
@@ -406,8 +405,7 @@ static inline void MakeShore(TileIndex t)
  */
 static inline void MakeWater(TileIndex t, Owner o, WaterClass wc, uint8 random_bits)
 {
-	Tile& t_ = tile_map.get(t); t_.init();
-	SetTileType(t, MP_WATER);
+	Tile& t_ = tile_map.init(t, MP_WATER);
 	SetTileOwner(t, o);
 	SetWaterClass(t, wc);
 	SetDockingTile(t, false);
@@ -459,8 +457,7 @@ static inline void MakeCanal(TileIndex t, Owner o, uint8 random_bits)
  */
 static inline void MakeShipDepot(TileIndex t, Owner o, DepotID did, DepotPart part, Axis a, WaterClass original_water_class)
 {
-	Tile& t_ = tile_map.get(t); t_.init();
-	SetTileType(t, MP_WATER);
+	Tile& t_ = tile_map.init(t, MP_WATER);
 	SetTileOwner(t, o);
 	SetWaterClass(t, original_water_class);
 	SetDockingTile(t, false);
@@ -483,8 +480,7 @@ static inline void MakeShipDepot(TileIndex t, Owner o, DepotID did, DepotPart pa
  */
 static inline void MakeLockTile(TileIndex t, Owner o, LockPart part, DiagDirection dir, WaterClass original_water_class)
 {
-	Tile& t_ = tile_map.get(t); t_.init();
-	SetTileType(t, MP_WATER);
+	Tile& t_ = tile_map.init(t, MP_WATER);
 	SetTileOwner(t, o);
 	SetWaterClass(t, original_water_class);
 	SetDockingTile(t, false);

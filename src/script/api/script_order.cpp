@@ -31,7 +31,7 @@ static OrderType GetOrderTypeByTile(TileIndex t)
 {
 	if (!::IsValidTile(t)) return OT_END;
 
-	switch (::GetTileType(t)) {
+	switch (::tile_map.get(t).type) {
 		default: break;
 		case MP_STATION:
 			if (IsBuoy(t) || IsRailWaypoint(t)) return OT_GOTO_WAYPOINT;

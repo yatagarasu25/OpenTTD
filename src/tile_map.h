@@ -87,19 +87,6 @@ static inline uint TilePixelHeightOutsideMap(int x, int y)
 }
 
 /**
- * Get the tiletype of a given tile.
- *
- * @param tile The tile to get the TileType
- * @return The tiletype of the tile
- * @pre tile < tile_map.size
- */
-static inline TileType GetTileType(TileIndex tile)
-{
-	assert(tile < tile_map.size);
-	return (TileType) tile_map.get(tile).type;
-}
-
-/**
  * Check if a tile is within the map (not a border)
  *
  * @param tile The tile to check
@@ -116,12 +103,6 @@ static inline bool IsInnerTile(TileIndex tile)
 	return x < MapMaxX() && y < MapMaxY() && ((x > 0 && y > 0) || !_settings_game.construction.freeform_edges);
 }
 
-static inline void SetTileType(TileIndex tile, TileType type)
-{
-	assert(tile < tile_map.size);
-	tile_map.get(tile).type = type;
-}
-
 /**
  * Checks if a tile is a given tiletype.
  *
@@ -133,7 +114,7 @@ static inline void SetTileType(TileIndex tile, TileType type)
  */
 static inline bool IsTileType(TileIndex tile, TileType type)
 {
-	return GetTileType(tile) == type;
+	return tile_map.get(tile).type == type;
 }
 
 /**
@@ -144,7 +125,7 @@ static inline bool IsTileType(TileIndex tile, TileType type)
  */
 static inline bool IsValidTile(TileIndex tile)
 {
-	return tile < tile_map.size && !IsTileType(tile, MP_VOID);
+	return tile < tile_map.size && tile_map.get(tile).type != MP_VOID;
 }
 
 /**

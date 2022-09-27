@@ -442,7 +442,7 @@ CommandCost CmdBuildSingleRail(DoCommandFlag flags, TileIndex tile, RailType rai
 	Slope tileh = GetTileSlope(tile);
 	TrackBits trackbit = TrackToTrackBits(track);
 
-	switch (GetTileType(tile)) {
+	switch (tile_map.get(tile).type) {
 		case MP_RAILWAY: {
 			CommandCost ret = CheckTileOwnership(tile);
 			if (ret.Failed()) return ret;
@@ -632,7 +632,7 @@ CommandCost CmdRemoveSingleRail(DoCommandFlag flags, TileIndex tile, Track track
 
 	Train *v = nullptr;
 
-	switch (GetTileType(tile)) {
+	switch (tile_map.get(tile).type) {
 		case MP_ROAD: {
 			if (!IsLevelCrossing(tile) || GetCrossingRailBits(tile) != trackbit) return_cmd_error(STR_ERROR_THERE_IS_NO_RAILROAD_TRACK);
 
@@ -1201,7 +1201,7 @@ static bool AdvanceSignalAutoFill(TileIndex &tile, Trackdir &trackdir, bool remo
 	/* Any left? It's a junction so we stop */
 	if (trackdirbits != TRACKDIR_BIT_NONE) return false;
 
-	switch (GetTileType(tile)) {
+	switch (tile_map.get(tile).type) {
 		case MP_RAILWAY:
 			if (IsRailDepot(tile)) return false;
 			if (!remove && HasSignalOnTrack(tile, TrackdirToTrack(trackdir))) return false;
@@ -1361,7 +1361,7 @@ static CommandCost CmdSignalTrackHelper(DoCommandFlag flags, TileIndex tile, Til
 		}
 
 		if (autofill) {
-			switch (GetTileType(tile)) {
+			switch (tile_map.get(tile).type) {
 				case MP_RAILWAY:
 					signal_ctr += (IsDiagonalTrackdir(trackdir) ? TILE_AXIAL_DISTANCE : TILE_CORNER_DISTANCE);
 					break;
@@ -1547,7 +1547,7 @@ CommandCost CmdConvertRail(DoCommandFlag flags, TileIndex tile, TileIndex area_s
 
 	TileIterator *iter = diagonal ? (TileIterator *)new DiagonalTileIterator(area_start, area_end) : new OrthogonalTileIterator(area_start, area_end);
 	for (; (tile = *iter) != INVALID_TILE; ++(*iter)) {
-		TileType tt = GetTileType(tile);
+		TileType tt = (TileType)tile_map.get(tile).type;
 
 		/* Check if there is any track on tile */
 		switch (tt) {

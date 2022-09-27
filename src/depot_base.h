@@ -40,7 +40,7 @@ struct Depot : DepotPool::PoolItem<&_depot_pool> {
 	 */
 	inline bool IsOfType(const Depot *d) const
 	{
-		return GetTileType(d->xy) == GetTileType(this->xy);
+		return tile_map.get(d->xy).type == tile_map.get(this->xy).type;
 	}
 };
 

@@ -48,7 +48,7 @@ ScriptVehicleList_Depot::ScriptVehicleList_Depot(TileIndex tile)
 	DestinationID dest;
 	VehicleType type;
 
-	switch (GetTileType(tile)) {
+	switch (tile_map.get(tile).type) {
 		case MP_STATION: // Aircraft
 			if (!IsAirport(tile)) return;
 			type = VEH_AIRCRAFT;

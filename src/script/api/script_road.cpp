@@ -434,7 +434,7 @@ static bool NeighbourHasReachableRoad(::RoadType rt, TileIndex start_tile, DiagD
 	TileIndex neighbour_tile = ::TileAddByDiagDir(start_tile, neighbour);
 	if (!HasBit(::GetPresentRoadTypes(neighbour_tile), rt)) return false;
 
-	switch (::GetTileType(neighbour_tile)) {
+	switch (tile_map.get(neighbour_tile).type) {
 		case MP_ROAD:
 			return (::GetRoadTileType(neighbour_tile) != ROAD_TILE_DEPOT);
 

@@ -282,7 +282,7 @@ static uint NPFReservedTrackCost(AyStarNode *current)
 static void NPFMarkTile(TileIndex tile)
 {
 	if (_debug_npf_level < 1 || _networking) return;
-	switch (GetTileType(tile)) {
+	switch (tile_map.get(tile).type) {
 		case MP_RAILWAY:
 			/* DEBUG: mark visited tiles by mowing the grass under them ;-) */
 			if (!IsRailDepot(tile)) {
@@ -347,7 +347,7 @@ static int32 NPFRoadPathCost(AyStar *as, AyStarNode *current, OpenListNode *pare
 	int32 cost = 0;
 
 	/* Determine base length */
-	switch (GetTileType(tile)) {
+	switch (tile_map.get(tile).type) {
 		case MP_TUNNELBRIDGE:
 			cost = IsTunnel(tile) ? NPFTunnelCost(current) : NPFBridgeCost(current);
 			break;
@@ -409,7 +409,7 @@ static int32 NPFRailPathCost(AyStar *as, AyStarNode *current, OpenListNode *pare
 	OpenListNode new_node;
 
 	/* Determine base length */
-	switch (GetTileType(tile)) {
+	switch (tile_map.get(tile).type) {
 		case MP_TUNNELBRIDGE:
 			cost = IsTunnel(tile) ? NPFTunnelCost(current) : NPFBridgeCost(current);
 			break;
@@ -700,7 +700,7 @@ static bool CanEnterTileOwnerCheck(Owner owner, TileIndex tile, DiagDirection en
 		return IsTileOwner(tile, owner);  // You need to own these tiles entirely to use them
 	}
 
-	switch (GetTileType(tile)) {
+	switch (tile_map.get(tile).type) {
 		case MP_ROAD:
 			/* rail-road crossing : are we looking at the railway part? */
 			if (IsLevelCrossing(tile) &&

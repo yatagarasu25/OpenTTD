@@ -1008,7 +1008,7 @@ static Owner GetMinimapOwner(TileIndex tile)
 	if (IsTileType(tile, MP_VOID)) {
 		return OWNER_END;
 	} else {
-		switch (GetTileType(tile)) {
+		switch (tile_map.get(tile).type) {
 		case MP_INDUSTRY: o = OWNER_DEITY;        break;
 		case MP_HOUSE:    o = OWNER_TOWN;         break;
 		default:          o = GetTileOwner(tile); break;

@@ -80,7 +80,7 @@ static void GenerateRockyArea(TileIndex end, TileIndex start)
 	TileArea ta(start, end);
 
 	for (TileIndex tile : ta) {
-		switch (GetTileType(tile)) {
+		switch (tile_map.get(tile).type) {
 			case MP_TREES:
 				if (GetTreeGround(tile) == TREE_GROUND_SHORE) continue;
 				FALLTHROUGH;

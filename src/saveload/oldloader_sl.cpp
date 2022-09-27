@@ -47,8 +47,7 @@ void FixOldMapArray()
 {
 	/* TTO/TTD/TTDP savegames could have buoys at tile 0
 	 * (without assigned station struct) */
-	MemSetT(&tile_map.raw(0), 0);
-	SetTileType(0, MP_WATER);
+	Tile& t_ = tile_map.init(0, MP_WATER);
 	SetTileOwner(0, OWNER_WATER);
 }
 
@@ -61,7 +60,7 @@ static void FixTTDMapArray()
 	}
 
 	for (TileIndex t = 0; t < OLD_MAP_SIZE; t++) {
-		switch (GetTileType(t)) {
+		switch (tile_map.get(t).type) {
 			case MP_STATION:
 				tile_map.raw(t).m4 = 0; // We do not understand this TTDP station mapping (yet)
 				switch (tile_map.raw(t).m5) {
@@ -90,12 +89,10 @@ static void FixTTDMapArray()
 			case MP_WATER:
 				/* if water class == 3, make river there */
 				if (GB(tile_map.raw(t).m3, 0, 2) == 3) {
-					SetTileType(t, MP_WATER);
+					Tile &t_ = tile_map.init(t, MP_WATER);
 					SetTileOwner(t, OWNER_WATER);
-					tile_map.raw(t).m2 = 0;
-					tile_map.raw(t).m3 = 2; // WATER_CLASS_RIVER
-					tile_map.raw(t).m4 = Random();
-					tile_map.raw(t).m5 = 0;
+					t_.water.m3 = 2; // WATER_CLASS_RIVER
+					t_.water.bits = Random();
 				}
 				break;
 
@@ -220,13 +217,13 @@ void FixOldVehicles()
 static bool FixTTOMapArray()
 {
 	for (TileIndex t = 0; t < OLD_MAP_SIZE; t++) {
-		TileType tt = GetTileType(t);
-		if (tt == 11) {
+		TileType tt = (TileType)tile_map.get(t).type;
+		if (tt == MP_TTO_MONORAIL) {
 			/* TTO has a different way of storing monorail.
 			 * Instead of using bits in m3 it uses a different tile type. */
-			tile_map.raw(t).m3 = 1; // rail type = monorail (in TTD)
-			SetTileType(t, MP_RAILWAY);
-			tile_map.raw(t).m2 = 1; // set monorail ground to RAIL_GROUND_GRASS
+			auto& t_ = tile_map.change(t, MP_RAILWAY);
+			t_.raw.m3 = 1; // rail type = monorail (in TTD)
+			t_.raw.m2 = 1; // set monorail ground to RAIL_GROUND_GRASS
 			tt = MP_RAILWAY;
 		}
 

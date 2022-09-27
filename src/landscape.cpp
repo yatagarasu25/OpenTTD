@@ -345,7 +345,7 @@ int GetSlopePixelZ(int x, int y)
 {
 	TileIndex tile = TileVirtXY(x, y);
 
-	return _tile_type_procs[GetTileType(tile)]->get_slope_z_proc(tile, x, y);
+	return _tile_type_procs[tile_map.get(tile).type]->get_slope_z_proc(tile, x, y);
 }
 
 /**
@@ -424,7 +424,7 @@ void GetSlopePixelZOnEdge(Slope tileh, DiagDirection edge, int *z1, int *z2)
 Slope GetFoundationSlope(TileIndex tile, int *z)
 {
 	Slope tileh = GetTileSlope(tile, z);
-	Foundation f = _tile_type_procs[GetTileType(tile)]->get_foundation_proc(tile, tileh);
+	Foundation f = _tile_type_procs[tile_map.get(tile).type]->get_foundation_proc(tile, tileh);
 	uint z_inc = ApplyFoundationToSlope(f, &tileh);
 	if (z != nullptr) *z += z_inc;
 	return tileh;
@@ -572,7 +572,7 @@ void DrawFoundation(TileInfo *ti, Foundation f)
 void DoClearSquare(TileIndex tile)
 {
 	/* If the tile can have animation and we clear it, delete it from the animated tile list. */
-	if (_tile_type_procs[GetTileType(tile)]->animate_tile_proc != nullptr) DeleteAnimatedTile(tile);
+	if (_tile_type_procs[tile_map.get(tile).type]->animate_tile_proc != nullptr) DeleteAnimatedTile(tile);
 
 	MakeClear(tile, CLEAR_GRASS, _generating_world ? 3 : 0);
 	MarkTileDirtyByTile(tile);
@@ -590,7 +590,7 @@ void DoClearSquare(TileIndex tile)
  */
 TrackStatus GetTileTrackStatus(TileIndex tile, TransportType mode, uint sub_mode, DiagDirection side)
 {
-	return _tile_type_procs[GetTileType(tile)]->get_tile_track_status_proc(tile, mode, sub_mode, side);
+	return _tile_type_procs[tile_map.get(tile).type]->get_tile_track_status_proc(tile, mode, sub_mode, side);
 }
 
 /**
@@ -601,12 +601,12 @@ TrackStatus GetTileTrackStatus(TileIndex tile, TransportType mode, uint sub_mode
  */
 void ChangeTileOwner(TileIndex tile, Owner old_owner, Owner new_owner)
 {
-	_tile_type_procs[GetTileType(tile)]->change_tile_owner_proc(tile, old_owner, new_owner);
+	_tile_type_procs[tile_map.get(tile).type]->change_tile_owner_proc(tile, old_owner, new_owner);
 }
 
 void GetTileDesc(TileIndex tile, TileDesc *td)
 {
-	_tile_type_procs[GetTileType(tile)]->get_tile_desc_proc(tile, td);
+	_tile_type_procs[tile_map.get(tile).type]->get_tile_desc_proc(tile, td);
 }
 
 /**
@@ -718,7 +718,7 @@ CommandCost CmdLandscapeClear(DoCommandFlag flags, TileIndex tile)
 			return_cmd_error(STR_ERROR_CAN_T_BUILD_ON_WATER);
 		}
 	} else {
-		cost.AddCost(_tile_type_procs[GetTileType(tile)]->clear_tile_proc(tile, flags));
+		cost.AddCost(_tile_type_procs[tile_map.get(tile).type]->clear_tile_proc(tile, flags));
 	}
 
 	if (flags & DC_EXEC) {
@@ -819,12 +819,12 @@ void RunTileLoop()
 
 	/* Manually update tile 0 every 256 ticks - the LFSR never iterates over it itself.  */
 	if (_tick_counter % 256 == 0) {
-		_tile_type_procs[GetTileType(0)]->tile_loop_proc(0);
+		_tile_type_procs[tile_map.get(0).type]->tile_loop_proc(0);
 		count--;
 	}
 
 	while (count--) {
-		_tile_type_procs[GetTileType(tile)]->tile_loop_proc(tile);
+		_tile_type_procs[tile_map.get(tile).type]->tile_loop_proc(tile);
 
 		/* Get the next tile in sequence using a Galois LFSR. */
 		tile = (tile >> 1) ^ (-(int32)(tile & 1) & feedback);

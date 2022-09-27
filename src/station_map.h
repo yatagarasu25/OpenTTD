@@ -531,8 +531,7 @@ static inline byte GetStationTileRandomBits(TileIndex t)
  */
 static inline void MakeStation(TileIndex t, Owner o, StationID sid, StationType st, byte section, WaterClass wc = WATER_CLASS_INVALID)
 {
-	Tile& t_ = tile_map.get(t); t_.init();
-	SetTileType(t, MP_STATION);
+	Tile& t_ = tile_map.init(t, MP_STATION);
 	SetTileOwner(t, o);
 	SetWaterClass(t, wc);
 	SetDockingTile(t, false);

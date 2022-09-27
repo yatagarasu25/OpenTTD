@@ -59,7 +59,7 @@ RoadBits CleanUpRoadBits(const TileIndex tile, RoadBits org_rb)
 			const RoadBits mirrored_rb = MirrorRoadBits(target_rb);
 
 			if (IsValidTile(neighbor_tile)) {
-				switch (GetTileType(neighbor_tile)) {
+				switch (tile_map.get(neighbor_tile).type) {
 					/* Always connective ones */
 					case MP_CLEAR: case MP_TREES:
 						connective = true;

@@ -273,8 +273,7 @@ static inline void SetTreeCounter(TileIndex t, uint c)
  */
 static inline void MakeTree(TileIndex t, TreeType type, uint count, uint growth, TreeGround ground, uint density)
 {
-	Tile& t_ = tile_map.get(t); t_.init();
-	SetTileType(t, MP_TREES);
+	Tile& t_ = tile_map.init(t, MP_TREES);
 	SetTileOwner(t, OWNER_NONE);
 	SetWaterClass(t, ground == TREE_GROUND_SHORE ? WATER_CLASS_SEA : WATER_CLASS_INVALID);
 	t_.tree.counter = 0;

@@ -1051,7 +1051,7 @@ static void HighlightTownLocalAuthorityTiles(const TileInfo *ti)
 	if (_town_local_authority_kdtree.Count() == 0) return;
 
 	/* Tile belongs to town regardless of distance from town. */
-	if (GetTileType(ti->tile) == MP_HOUSE) {
+	if (tile_map.get(ti->tile).type == MP_HOUSE) {
 		if (!Town::GetByTile(ti->tile)->show_zone) return;
 
 		DrawTileSelectionRect(ti, PALETTE_CRASH);
@@ -1221,7 +1221,7 @@ static void ViewportAddLandscape()
 			if (IsInsideBS(tilecoord.x, 0, tile_map.size_x) && IsInsideBS(tilecoord.y, 0, tile_map.size_y)) {
 				/* This includes the south border at MapMaxX / MapMaxY. When terraforming we still draw tile selections there. */
 				tile_info.tile = tile_map.tile(tilecoord.x, tilecoord.y);
-				tile_type = GetTileType(tile_info.tile);
+				tile_type = (TileType)tile_map.get(tile_info.tile).type;
 			} else {
 				tile_info.tile = INVALID_TILE;
 				tile_type = MP_VOID;

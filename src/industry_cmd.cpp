@@ -991,7 +991,7 @@ static const byte _plantfarmfield_type[] = {1, 1, 1, 1, 1, 3, 3, 4, 4, 4, 5, 5, 
  */
 static bool IsSuitableForFarmField(TileIndex tile, bool allow_fields)
 {
-	switch (GetTileType(tile)) {
+	switch (tile_map.get(tile).type) {
 		case MP_CLEAR: return !IsClearGround(tile, CLEAR_SNOW) && !IsClearGround(tile, CLEAR_DESERT) && (allow_fields || !IsClearGround(tile, CLEAR_FIELDS));
 		case MP_TREES: return GetTreeGround(tile) != TREE_GROUND_SHORE;
 		default:       return false;
@@ -1552,13 +1552,13 @@ static CommandCost CheckIfIndustryIsAllowed(TileIndex tile, int type, const Town
 static bool CheckCanTerraformSurroundingTiles(TileIndex tile, uint height, int internal)
 {
 	/* Check if we don't leave the map */
-	if (TileX(tile) == 0 || TileY(tile) == 0 || GetTileType(tile) == MP_VOID) return false;
+	if (TileX(tile) == 0 || TileY(tile) == 0 || tile_map.get(tile).type == MP_VOID) return false;
 
 	TileArea ta(tile - TileDiffXY(1, 1), 2, 2);
 	for (TileIndex tile_walk : ta) {
 		uint curh = TileHeight(tile_walk);
 		/* Is the tile clear? */
-		if ((GetTileType(tile_walk) != MP_CLEAR) && (GetTileType(tile_walk) != MP_TREES)) return false;
+		if ((tile_map.get(tile_walk).type != MP_CLEAR) && (tile_map.get(tile_walk).type != MP_TREES)) return false;
 
 		/* Don't allow too big of a change if this is the sub-tile check */
 		if (internal != 0 && Delta(curh, height) > 1) return false;
@@ -1663,7 +1663,7 @@ static CommandCost CheckIfFarEnoughFromConflictingIndustry(TileIndex tile, int t
 		const Industry* i = nullptr;
 		TileArea tile_area = TileArea(tile, 1, 1).Expand(dmax);
 		for (TileIndex atile : tile_area) {
-			if (GetTileType(atile) == MP_INDUSTRY) {
+			if (tile_map.get(atile).type == MP_INDUSTRY) {
 				const Industry *i2 = Industry::GetByTile(atile);
 				if (i == i2) continue;
 				i = i2;

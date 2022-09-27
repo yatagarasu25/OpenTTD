@@ -168,7 +168,7 @@ void GetTileDesc(TileIndex tile, TileDesc *td);
 
 static inline void AddAcceptedCargo(TileIndex tile, CargoArray &acceptance, CargoTypes *always_accepted)
 {
-	AddAcceptedCargoProc *proc = _tile_type_procs[GetTileType(tile)]->add_accepted_cargo_proc;
+	AddAcceptedCargoProc *proc = _tile_type_procs[tile_map.get(tile).type]->add_accepted_cargo_proc;
 	if (proc == nullptr) return;
 	CargoTypes dummy = 0; // use dummy bitmask so there don't need to be several 'always_accepted != nullptr' checks
 	proc(tile, acceptance, always_accepted == nullptr ? &dummy : always_accepted);
@@ -176,21 +176,21 @@ static inline void AddAcceptedCargo(TileIndex tile, CargoArray &acceptance, Carg
 
 static inline void AddProducedCargo(TileIndex tile, CargoArray &produced)
 {
-	AddProducedCargoProc *proc = _tile_type_procs[GetTileType(tile)]->add_produced_cargo_proc;
+	AddProducedCargoProc *proc = _tile_type_procs[tile_map.get(tile).type]->add_produced_cargo_proc;
 	if (proc == nullptr) return;
 	proc(tile, produced);
 }
 
 static inline void AnimateTile(TileIndex tile)
 {
-	AnimateTileProc *proc = _tile_type_procs[GetTileType(tile)]->animate_tile_proc;
+	AnimateTileProc *proc = _tile_type_procs[tile_map.get(tile).type]->animate_tile_proc;
 	assert(proc != nullptr);
 	proc(tile);
 }
 
 static inline bool ClickTile(TileIndex tile)
 {
-	ClickTileProc *proc = _tile_type_procs[GetTileType(tile)]->click_tile_proc;
+	ClickTileProc *proc = _tile_type_procs[tile_map.get(tile).type]->click_tile_proc;
 	if (proc == nullptr) return false;
 	return proc(tile);
 }

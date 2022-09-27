@@ -351,7 +351,7 @@ uint32 GetTerrainType(TileIndex tile, TileContext context)
 		case LT_TROPIC: return GetTropicZone(tile);
 		case LT_ARCTIC: {
 			bool has_snow;
-			switch (GetTileType(tile)) {
+			switch (tile_map.get(tile).type) {
 				case MP_CLEAR:
 					/* During map generation the snowstate may not be valid yet, as the tileloop may not have run yet. */
 					if (_generating_world) goto genworld;
@@ -445,7 +445,7 @@ TileIndex GetNearbyTile(byte parameter, TileIndex tile, bool signed_offsets, Axi
  */
 uint32 GetNearbyTileInformation(TileIndex tile, bool grf_version8)
 {
-	TileType tile_type = GetTileType(tile);
+	TileType tile_type = (TileType)tile_map.get(tile).type;
 
 	/* Fake tile type for trees on shore */
 	if (IsTileType(tile, MP_TREES) && GetTreeGround(tile) == TREE_GROUND_SHORE) tile_type = MP_WATER;

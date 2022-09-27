@@ -52,6 +52,21 @@ struct TileMap
 		return (y << log_x) + x;
 	}
 
+	Tile& init(const TileIndex& i, TileType type)
+	{
+		assert(i < size);
+		_m[i].type = type;
+		_m[i].init();
+		return _m[i];
+	}
+
+	Tile& change(const TileIndex& i, TileType type)
+	{
+		assert(i < size);
+		_m[i].type = type;
+		return _m[i];
+	}
+
 	Tile& get(const TileIndex& i)
 	{
 		assert(i < size);
@@ -66,6 +81,13 @@ struct TileMap
 
 	Tile::Raw& raw(const TileIndex& i) { return _m[i].raw; }
 	TileExtended& raw_e(const TileIndex& i) { return _me[i]; }
+
+	Tile::Clear& clear(const TileIndex& i)
+	{
+		Tile& t = get(i);
+		assert(t.type == MP_CLEAR);
+		return _m[i].clear;
+	}
 };
 
 extern TileMap tile_map;

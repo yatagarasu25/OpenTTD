@@ -64,7 +64,7 @@ static inline DepotID GetDepotIndex(TileIndex t)
  */
 static inline VehicleType GetDepotVehicleType(TileIndex t)
 {
-	switch (GetTileType(t)) {
+	switch (tile_map.get(t).type) {
 		default: NOT_REACHED();
 		case MP_RAILWAY: return VEH_TRAIN;
 		case MP_ROAD:    return VEH_ROAD;

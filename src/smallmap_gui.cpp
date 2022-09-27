@@ -751,7 +751,7 @@ inline uint32 SmallMapWindow::GetTileColours(const TileArea &ta) const
 	TileType et = MP_VOID;         // Effective tile type at that position.
 
 	for (TileIndex ti : ta) {
-		TileType ttype = GetTileType(ti);
+		TileType ttype = (TileType)tile_map.get(ti).type;
 
 		switch (ttype) {
 			case MP_TUNNELBRIDGE: {

@@ -85,7 +85,7 @@ static inline TLG GetTLG(TileIndex t)
  */
 static TrackBits GetRailTrackBitsUniversal(TileIndex t, byte *override)
 {
-	switch (GetTileType(t)) {
+	switch (tile_map.get(t).type) {
 		case MP_RAILWAY:
 			if (!HasRailCatenary(GetRailType(t))) return TRACK_BIT_NONE;
 			switch (GetRailTileType(t)) {
@@ -564,7 +564,7 @@ void DrawRailCatenaryOnBridge(const TileInfo *ti)
  */
 void DrawRailCatenary(const TileInfo *ti)
 {
-	switch (GetTileType(ti->tile)) {
+	switch (tile_map.get(ti->tile).type) {
 		case MP_RAILWAY:
 			if (IsRailDepot(ti->tile)) {
 				const SortableSpriteStruct *sss = &RailCatenarySpriteData_Depot[GetRailDepotDirection(ti->tile)];

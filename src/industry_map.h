@@ -278,8 +278,7 @@ static inline void SetIndustryTriggers(TileIndex tile, byte triggers)
  */
 static inline void MakeIndustry(TileIndex t, IndustryID index, IndustryGfx gfx, uint8 random, WaterClass wc)
 {
-	Tile& t_ = tile_map.get(t); t_.init();
-	SetTileType(t, MP_INDUSTRY);
+	Tile& t_ = tile_map.init(t, MP_INDUSTRY);
 	tile_map.get(t).industry.id = index;
 	SetIndustryRandomBits(t, random); // m3
 	SetIndustryGfx(t, gfx); // m5, part of m6

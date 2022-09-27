@@ -27,7 +27,7 @@
 {
 	if (!::IsValidTile(tile)) return false;
 
-	switch (::GetTileType(tile)) {
+	switch (::tile_map.get(tile).type) {
 		default: return false;
 		case MP_CLEAR: return true;
 		case MP_TREES: return true;

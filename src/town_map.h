@@ -351,10 +351,9 @@ static inline void DecHouseProcessingTime(TileIndex t)
  */
 static inline void MakeHouseTile(TileIndex t, TownID tid, byte counter, byte stage, HouseID type, byte random_bits)
 {
-	Tile& t_ = tile_map.get(t); t_.init();
 	assert(IsTileType(t, MP_CLEAR));
 
-	SetTileType(t, MP_HOUSE);
+	Tile& t_ = tile_map.init(t, MP_HOUSE);
 	t_.house.random = random_bits;
 	t_.house.town_id = tid;
 	SetHouseType(t, type);

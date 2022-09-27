@@ -158,7 +158,7 @@ CommandCost CmdBuildShipDepot(DoCommandFlag flags, TileIndex tile, Axis axis)
 bool IsPossibleDockingTile(TileIndex t)
 {
 	assert(IsValidTile(t));
-	switch (GetTileType(t)) {
+	switch (tile_map.get(t).type) {
 		case MP_WATER:
 			if (IsLock(t) && GetLockPart(t) == LOCK_PART_MIDDLE) return false;
 			FALLTHROUGH;
@@ -610,7 +610,7 @@ static CommandCost ClearTile_Water(TileIndex tile, DoCommandFlag flags)
  */
 bool IsWateredTile(TileIndex tile, Direction from)
 {
-	switch (GetTileType(tile)) {
+	switch (tile_map.get(tile).type) {
 		case MP_WATER:
 			switch (GetWaterTileType(tile)) {
 				default: NOT_REACHED();
@@ -1072,7 +1072,7 @@ FloodingBehaviour GetFloodingBehaviour(TileIndex tile)
 	 * FLOOD_PASSIVE: (not used)
 	 * FLOOD_NONE:    canals, rivers, everything else
 	 */
-	switch (GetTileType(tile)) {
+	switch (tile_map.get(tile).type) {
 		case MP_WATER:
 			if (IsCoast(tile)) {
 				Slope tileh = GetTileSlope(tile);
@@ -1112,7 +1112,7 @@ void DoFloodTile(TileIndex target)
 	Slope tileh = GetTileSlope(target);
 	if (tileh != SLOPE_FLAT) {
 		/* make coast.. */
-		switch (GetTileType(target)) {
+		switch (tile_map.get(target).type) {
 			case MP_RAILWAY: {
 				if (!IsPlainRail(target)) break;
 				FloodVehicles(target);
@@ -1172,7 +1172,7 @@ static void DoDryUp(TileIndex tile)
 {
 	Backup<CompanyID> cur_company(_current_company, OWNER_WATER, FILE_LINE);
 
-	switch (GetTileType(tile)) {
+	switch (tile_map.get(tile).type) {
 		case MP_RAILWAY:
 			assert(IsPlainRail(tile));
 			assert(GetRailGroundType(tile) == RAIL_GROUND_WATER);
