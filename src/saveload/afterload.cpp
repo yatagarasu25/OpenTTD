@@ -966,7 +966,7 @@ bool AfterLoadGame()
 		for (TileIndex t = 0; t < map_size; t++) {
 			switch (GetTileType(t)) {
 				case MP_HOUSE:
-					tile_map.get(t).m4 = tile_map.get(t).m2;
+					tile_map.get(t).house.old_town_id = tile_map.get(t).house.town_id;
 					SetTownIndex(t, CalcClosestTownFromTile(t)->index);
 					break;
 

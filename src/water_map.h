@@ -343,7 +343,7 @@ static inline byte GetLockPart(TileIndex t)
 static inline byte GetWaterTileRandomBits(TileIndex t)
 {
 	assert(IsTileType(t, MP_WATER));
-	return tile_map.get(t).m4;
+	return tile_map.get(t).water.bits;
 }
 
 /**
@@ -410,8 +410,8 @@ static inline void MakeWater(TileIndex t, Owner o, WaterClass wc, uint8 random_b
 	SetTileOwner(t, o);
 	SetWaterClass(t, wc);
 	SetDockingTile(t, false);
-	tile_map.get(t).m4 = random_bits;
-	tile_map.get(t).m5 = WBL_TYPE_NORMAL << WBL_TYPE_BEGIN;
+	t_.water.bits = random_bits;
+	t_.m5 = WBL_TYPE_NORMAL << WBL_TYPE_BEGIN;
 	SB(tile_map.get_e(t).m6, 2, 4, 0);
 	tile_map.get_e(t).m7 = 0;
 }

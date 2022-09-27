@@ -469,7 +469,7 @@ static inline TileIndexDiffC GetDockOffset(TileIndex t)
 static inline bool IsCustomStationSpecIndex(TileIndex t)
 {
 	assert(HasStationTileRail(t));
-	return tile_map.get(t).m4 != 0;
+	return tile_map.get(t).station.spec_index != 0;
 }
 
 /**
@@ -481,7 +481,7 @@ static inline bool IsCustomStationSpecIndex(TileIndex t)
 static inline void SetCustomStationSpecIndex(TileIndex t, byte specindex)
 {
 	assert(HasStationTileRail(t));
-	tile_map.get(t).m4 = specindex;
+	tile_map.get(t).station.spec_index = specindex;
 }
 
 /**
@@ -493,7 +493,7 @@ static inline void SetCustomStationSpecIndex(TileIndex t, byte specindex)
 static inline uint GetCustomStationSpecIndex(TileIndex t)
 {
 	assert(HasStationTileRail(t));
-	return tile_map.get(t).m4;
+	return tile_map.get(t).station.spec_index;
 }
 
 /**

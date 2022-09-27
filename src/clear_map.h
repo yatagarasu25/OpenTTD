@@ -261,7 +261,7 @@ static inline void MakeClear(TileIndex t, ClearGround g, uint density)
 	Tile& t_ = tile_map.get(t); t_.init();
 	SetTileType(t, MP_CLEAR);
 	SetTileOwner(t, OWNER_NONE);
-	tile_map.get(t).m4 = 0 << 5 | 0 << 2;
+	t_.m4 = 0 << 5 | 0 << 2;
 	SetClearGroundDensity(t, g, density); // Sets m5
 	tile_map.get_e(t).m6 = 0;
 	tile_map.get_e(t).m7 = 0;
@@ -280,9 +280,9 @@ static inline void MakeField(TileIndex t, uint field_type, IndustryID industry)
 	Tile& t_ = tile_map.get(t); t_.init();
 	SetTileType(t, MP_CLEAR);
 	SetTileOwner(t, OWNER_NONE);
-	tile_map.get(t).tile.industry_id = industry; // TODO ?????
-	tile_map.get(t).tile.field_type = field_type;
-	tile_map.get(t).m4 = 0 << 5 | 0 << 2;
+	t_.tile.industry_id = industry; // TODO ?????
+	t_.tile.field_type = field_type;
+	t_.m4 = 0 << 5 | 0 << 2;
 	SetClearGroundDensity(t, CLEAR_FIELDS, 3);
 	SB(tile_map.get_e(t).m6, 2, 4, 0);
 	tile_map.get_e(t).m7 = 0;

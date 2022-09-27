@@ -286,7 +286,8 @@ static bool FixTTOMapArray()
 				break;
 
 			case MP_WATER:
-				tile_map.get(t).m3 = tile_map.get(t).m2 = 0;
+				tile_map.get(t).water.m3 = 0;
+				tile_map.get(t).water.m2 = 0;
 				break;
 
 			case MP_VOID:
@@ -330,8 +331,8 @@ static bool FixTTOMapArray()
 				break;
 
 			case MP_OBJECT:
-				tile_map.get(t).m2 = 0;
-				tile_map.get(t).m3 = 0;
+				tile_map.get(t).object.index = 0;
+				tile_map.get(t).object.bits = 0;
 				break;
 
 			default:

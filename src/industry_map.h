@@ -200,7 +200,7 @@ static inline void ResetIndustryConstructionStage(TileIndex tile)
 static inline byte GetIndustryAnimationLoop(TileIndex tile)
 {
 	assert(IsTileType(tile, MP_INDUSTRY));
-	return tile_map.get(tile).m4;
+	return tile_map.get(tile).industry.animation_loop;
 }
 
 /**
@@ -212,7 +212,7 @@ static inline byte GetIndustryAnimationLoop(TileIndex tile)
 static inline void SetIndustryAnimationLoop(TileIndex tile, byte count)
 {
 	assert(IsTileType(tile, MP_INDUSTRY));
-	tile_map.get(tile).m4 = count;
+	tile_map.get(tile).industry.animation_loop = count;
 }
 
 /**

@@ -77,9 +77,9 @@ static inline void MakeObject(TileIndex t, Owner o, ObjectID index, WaterClass w
 	SetTileType(t, MP_OBJECT);
 	SetTileOwner(t, o);
 	SetWaterClass(t, wc);
-	tile_map.get(t).object.index = index;
-	tile_map.get(t).object.bits = random;
-	tile_map.get(t).m5 = index >> 16;
+	t_.object.index = index;
+	t_.object.bits = random;
+	t_.m5 = index >> 16;
 	SB(tile_map.get_e(t).m6, 2, 4, 0);
 	tile_map.get_e(t).m7 = 0;
 }

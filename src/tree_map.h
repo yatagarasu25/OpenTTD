@@ -277,12 +277,12 @@ static inline void MakeTree(TileIndex t, TreeType type, uint count, uint growth,
 	SetTileType(t, MP_TREES);
 	SetTileOwner(t, OWNER_NONE);
 	SetWaterClass(t, ground == TREE_GROUND_SHORE ? WATER_CLASS_SEA : WATER_CLASS_INVALID);
-	tile_map.get(t).tree.counter = 0;
-	tile_map.get(t).tree.ground = ground;
-	tile_map.get(t).tree.density = density;
-	tile_map.get(t).tree.type = type;
-	tile_map.get(t).m4 = 0 << 5 | 0 << 2;
-	tile_map.get(t).m5 = count << 6 | growth;
+	t_.tree.counter = 0;
+	t_.tree.ground = ground;
+	t_.tree.density = density;
+	t_.tree.type = type;
+	t_.tree.m4 = 0 << 5 | 0 << 2;
+	t_.tree.m5 = count << 6 | growth;
 	SB(tile_map.get_e(t).m6, 2, 4, 0);
 	tile_map.get_e(t).m7 = 0;
 }

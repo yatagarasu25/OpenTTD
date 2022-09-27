@@ -47,7 +47,7 @@ static inline void SetTownIndex(TileIndex t, TownID index)
 static inline HouseID GetCleanHouseType(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	return tile_map.get(t).m4 | (tile_map.get(t).house.clean_house_flag << 8);
+	return tile_map.get(t).house.house_id | (tile_map.get(t).house.clean_house_flag << 8);
 }
 
 /**
@@ -70,7 +70,7 @@ static inline HouseID GetHouseType(TileIndex t)
 static inline void SetHouseType(TileIndex t, HouseID house_id)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	tile_map.get(t).m4 = GB(house_id, 0, 8);
+	tile_map.get(t).house.house_id = GB(house_id, 0, 8);
 	tile_map.get(t).house.clean_house_flag = GB(house_id, 8, 1);
 }
 
