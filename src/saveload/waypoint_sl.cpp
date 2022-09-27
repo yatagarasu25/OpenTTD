@@ -126,10 +126,10 @@ void MoveWaypointsToBaseStations()
 		new_wp->string_id  = STR_SV_STNAME_WAYPOINT;
 
 		/* The tile might've been reserved! */
-		bool reserved = !IsSavegameVersionBefore(SLV_100) && HasBit(tile_map.get(t).raw.m5, 4);
+		bool reserved = !IsSavegameVersionBefore(SLV_100) && HasBit(tile_map.get(t).waypoint.m5, 4);
 
 		/* The tile really has our waypoint, so reassign the map array */
-		MakeRailWaypoint(t, GetTileOwner(t), new_wp->index, (Axis)GB(tile_map.get(t).raw.m5, 0, 1), 0, GetRailType(t));
+		MakeRailWaypoint(t, GetTileOwner(t), new_wp->index, (Axis)GB(tile_map.get(t).waypoint.m5, 0, 1), 0, GetRailType(t));
 		new_wp->facilities |= FACIL_TRAIN;
 		new_wp->owner = GetTileOwner(t);
 
