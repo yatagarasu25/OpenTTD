@@ -141,7 +141,15 @@ struct Tile {
 						byte house_id;
 						byte old_town_id;
 					};
-					byte m5;
+					union {
+						byte age;
+						struct {
+							byte tick : 3;
+							byte stage : 2;
+							byte m5_57 : 3;
+						};
+						byte tick_and_stage : 5;
+					};
 				} house;
 				struct {
 					uint16 id;
