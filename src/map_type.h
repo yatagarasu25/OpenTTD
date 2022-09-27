@@ -178,7 +178,20 @@ struct Tile {
 					byte tram_owner : 4;
 					byte type : 6;
 					byte m4_67 : 2;
-					byte m5;
+					union {
+						struct {
+							byte road_bits : 4;
+							byte disalowed_direction : 2;
+							byte tile_type : 2;
+						};
+						struct {
+							byte axis : 1;
+							byte m5_13 : 3;
+							byte reserved : 1;
+							byte barred : 1;
+							byte m5_67 : 2;
+						} crossing;
+					};
 				} road;
 				struct {
 					struct {
@@ -223,8 +236,12 @@ struct Tile {
 							byte m1;
 							byte m3;
 							byte type : 6;
-							byte   m4 : 2;
-							byte m5;
+							byte m4 : 2;
+							byte direction : 2;
+							byte m5_23 : 2;
+							byte reserved : 1;
+							byte m5_5 : 1;
+							byte tile_type : 2;
 						} road;
 						struct {
 							byte m1;
