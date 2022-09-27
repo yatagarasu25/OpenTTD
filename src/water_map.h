@@ -117,7 +117,7 @@ static inline bool HasTileWaterClass(TileIndex t)
 static inline WaterClass GetWaterClass(TileIndex t)
 {
 	assert(HasTileWaterClass(t));
-	return (WaterClass)GB(tile_map.get(t).m1, 5, 2);
+	return (WaterClass)tile_map.get(t).water.wc;
 }
 
 /**
@@ -129,7 +129,7 @@ static inline WaterClass GetWaterClass(TileIndex t)
 static inline void SetWaterClass(TileIndex t, WaterClass wc)
 {
 	assert(HasTileWaterClass(t));
-	SB(tile_map.get(t).m1, 5, 2, wc);
+	tile_map.get(t).water.wc = wc;
 }
 
 /**
@@ -366,7 +366,7 @@ static inline bool HasTileWaterGround(TileIndex t)
 static inline void SetDockingTile(TileIndex t, bool b)
 {
 	assert(IsTileType(t, MP_WATER) || IsTileType(t, MP_RAILWAY) || IsTileType(t, MP_STATION) || IsTileType(t, MP_TUNNELBRIDGE));
-	SB(tile_map.get(t).m1, 7, 1, b ? 1 : 0);
+	tile_map.get(t).water.is_docking = b ? 1 : 0;
 }
 
 /**
@@ -375,7 +375,8 @@ static inline void SetDockingTile(TileIndex t, bool b)
  */
 static inline bool IsDockingTile(TileIndex t)
 {
-	return (IsTileType(t, MP_WATER) || IsTileType(t, MP_RAILWAY) || IsTileType(t, MP_STATION) || IsTileType(t, MP_TUNNELBRIDGE)) && HasBit(tile_map.get(t).m1, 7);
+	return (IsTileType(t, MP_WATER) || IsTileType(t, MP_RAILWAY) || IsTileType(t, MP_STATION) || IsTileType(t, MP_TUNNELBRIDGE))
+		&& tile_map.get(t).water.is_docking;
 }
 
 
@@ -464,7 +465,7 @@ static inline void MakeShipDepot(TileIndex t, Owner o, DepotID did, DepotPart pa
 	SetTileOwner(t, o);
 	SetWaterClass(t, original_water_class);
 	SetDockingTile(t, false);
-	tile_map.get(t).m2 = did;
+	tile_map.get(t).depot.id = did;
 	tile_map.get(t).m3 = 0;
 	tile_map.get(t).m4 = 0;
 	tile_map.get(t).m5 = WBL_TYPE_DEPOT << WBL_TYPE_BEGIN | part << WBL_DEPOT_PART | a << WBL_DEPOT_AXIS;

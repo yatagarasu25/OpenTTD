@@ -28,7 +28,7 @@ typedef byte StationGfx; ///< Index of station graphics. @see _station_display_d
 static inline StationID GetStationIndex(TileIndex t)
 {
 	assert(IsTileType(t, MP_STATION));
-	return (StationID)tile_map.get(t).m2;
+	return (StationID)tile_map.get(t).station.id;
 }
 
 

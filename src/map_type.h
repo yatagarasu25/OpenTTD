@@ -41,11 +41,105 @@ static_assert(sizeof(TileCore) == 2);
  * Look at docs/landscape.html for the exact meaning of the members.
  */
 struct Tile : public TileCore {
-	uint16 m2;          ///< Primarily used for indices to towns, industries and stations
-	byte   m1;          ///< Primarily used for ownership information
-	byte   m3;          ///< General purpose
-	byte   m4;          ///< General purpose
-	byte   m5;          ///< General purpose
+	union {
+		struct {
+			uint16 m2;          ///< Primarily used for indices to towns, industries and stations
+			union
+			{
+				byte   m1;          ///< Primarily used for ownership information
+				struct {
+					byte owner : 5;
+					byte wc : 2;
+					byte TUNNELBRIDGE : 1;
+				};
+				struct {
+					byte owner : 5;
+				} road;
+				struct {
+					byte owner : 5;
+					byte wc : 2;
+					byte is_docking : 1;
+				} water;
+			};
+			byte   m3;          ///< General purpose
+			byte   m4;          ///< General purpose
+			byte   m5;          ///< General purpose
+		};
+		struct {
+			byte counter : 4;
+			byte density : 2;
+			byte ground : 3;
+			byte b : 1;
+			byte type;
+		} tree;
+		struct {
+			uint16 id;
+		} town;
+		struct {
+			uint16 town_id;
+			byte random;
+		} house;
+		struct {
+			uint16 id;
+			byte construction_stage : 2;
+			byte construction_counter : 2;
+			byte wc2 : 1;
+			byte wc : 2;
+			byte is_completed : 1;
+			byte field_type;
+		} industry;
+		struct {
+			union {
+				uint16 id;
+				struct {
+					byte signal_ul : 3;
+					byte signal_ul_variant : 1;
+					byte signal_lr : 3;
+					byte signal_lr_variant : 1;
+					byte bits : 3;
+					byte b2 : 1;
+					byte m2_11 : 1;
+					byte b3 : 2;
+				};
+			};
+		} track;
+		struct {
+			uint16 id;
+			byte m1;
+			byte m3;
+			byte m4;
+			byte section;
+		} station;
+		struct {
+			uint16 id;
+			union {
+				struct {
+					byte m1;
+					byte m3;
+					byte m4;
+					byte m5;
+				} road;
+				struct {
+					byte m1;
+					byte m3;
+					byte m4;
+					byte m5;
+				} rail;
+				struct {
+					byte m1;
+					byte m3;
+					byte m4;
+					byte m5;
+				} ship;
+			};
+		} depot;
+		struct {
+			uint16 index;
+		} object;
+		struct {
+			uint16 station_id;
+		} waypoint;
+	};
 };
 
 static_assert(sizeof(Tile) == 8);

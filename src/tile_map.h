@@ -165,7 +165,7 @@ static inline Owner GetTileOwner(TileIndex tile)
 	assert(!IsTileType(tile, MP_HOUSE));
 	assert(!IsTileType(tile, MP_INDUSTRY));
 
-	return (Owner)GB(tile_map.get(tile).m1, 0, 5);
+	return (Owner)tile_map.get(tile).owner;
 }
 
 /**
@@ -185,7 +185,7 @@ static inline void SetTileOwner(TileIndex tile, Owner owner)
 	assert(!IsTileType(tile, MP_HOUSE));
 	assert(!IsTileType(tile, MP_INDUSTRY));
 
-	SB(tile_map.get(tile).m1, 0, 5, owner);
+	tile_map.get(tile).owner = owner;
 }
 
 /**

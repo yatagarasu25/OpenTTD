@@ -22,7 +22,7 @@
 static inline TownID GetTownIndex(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE) || (IsTileType(t, MP_ROAD) && !IsRoadDepot(t)));
-	return tile_map.get(t).m2;
+	return tile_map.get(t).town.id;
 }
 
 /**
@@ -34,7 +34,7 @@ static inline TownID GetTownIndex(TileIndex t)
 static inline void SetTownIndex(TileIndex t, TownID index)
 {
 	assert(IsTileType(t, MP_HOUSE) || (IsTileType(t, MP_ROAD) && !IsRoadDepot(t)));
-	tile_map.get(t).m2 = index;
+	tile_map.get(t).town.id = index;
 }
 
 /**
@@ -262,7 +262,7 @@ static inline Year GetHouseAge(TileIndex t)
 static inline void SetHouseRandomBits(TileIndex t, byte random)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	tile_map.get(t).m1 = random;
+	tile_map.get(t).house.random = random;
 }
 
 /**
@@ -275,7 +275,7 @@ static inline void SetHouseRandomBits(TileIndex t, byte random)
 static inline byte GetHouseRandomBits(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	return tile_map.get(t).m1;
+	return tile_map.get(t).house.random;
 }
 
 /**
@@ -354,8 +354,8 @@ static inline void MakeHouseTile(TileIndex t, TownID tid, byte counter, byte sta
 	assert(IsTileType(t, MP_CLEAR));
 
 	SetTileType(t, MP_HOUSE);
-	tile_map.get(t).m1 = random_bits;
-	tile_map.get(t).m2 = tid;
+	tile_map.get(t).house.random = random_bits;
+	tile_map.get(t).house.town_id = tid;
 	tile_map.get(t).m3 = 0;
 	SetHouseType(t, type);
 	SetHouseCompleted(t, stage == TOWN_HOUSE_COMPLETED);
