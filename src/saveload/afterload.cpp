@@ -472,16 +472,14 @@ static void FixOwnerOfRailTrack(TileIndex t)
 		Owner road = GetRoadOwner(t, RTT_ROAD);
 		Owner tram = GetRoadOwner(t, RTT_TRAM);
 		RoadBits bits = GetCrossingRoadBits(t);
-		bool hasroad = HasBit(tile_map.get_e(t).m7, 6);
-		bool hastram = HasBit(tile_map.get_e(t).m7, 7);
+		bool hasroad = HasBit(tile_map.raw(t).m7, 6);
+		bool hastram = HasBit(tile_map.raw(t).m7, 7);
 
 		/* MakeRoadNormal */
-		auto& t_ = tile_map.init(t, MP_ROAD);
-		SetTileOwner(t, road);
+		auto& t_ = tile_map.init(t, MP_ROAD, road);
 		t_.road.tram_bits = (hasroad ? bits : 0);
 		t_.road.road_bits = (hastram ? bits : 0);
 		t_.road.tile_type = ROAD_TILE_NORMAL;
-		SB(tile_map.get_e(t).m6, 2, 4, 0);
 		SetRoadOwner(t, RTT_TRAM, tram);
 		return;
 	}
@@ -614,11 +612,11 @@ bool AfterLoadGame()
 		/* In old savegame versions, the heightlevel was coded in bits 0..3 of the type field */
 		for (TileIndex t = 0; t < map_size; t++) {
 			tile_map.raw(t).height = GB(tile_map.raw(t).type, 0, 4);
-			SB(tile_map.raw(t).type, 0, 2, GB(tile_map.get_e(t).m6, 0, 2));
-			SB(tile_map.get_e(t).m6, 0, 2, 0);
+			SB(tile_map.raw(t).type, 0, 2, GB(tile_map.raw(t).m6, 0, 2));
+			SB(tile_map.raw(t).m6, 0, 2, 0);
 			if (MayHaveBridgeAbove(t)) {
-				SB(tile_map.raw(t).type, 2, 2, GB(tile_map.get_e(t).m6, 6, 2));
-				SB(tile_map.get_e(t).m6, 6, 2, 0);
+				SB(tile_map.raw(t).type, 2, 2, GB(tile_map.raw(t).m6, 6, 2));
+				SB(tile_map.raw(t).m6, 6, 2, 0);
 			} else {
 				SB(tile_map.raw(t).type, 2, 2, 0);
 			}
@@ -849,7 +847,7 @@ bool AfterLoadGame()
 					break;
 
 				case MP_STATION: {
-					if (HasBit(tile_map.get_e(t).m6, 3)) SetBit(tile_map.get_e(t).m6, 2);
+					if (HasBit(tile_map.raw(t).m6, 3)) SetBit(tile_map.raw(t).m6, 2);
 					StationGfx gfx = GetStationGfx(t);
 					StationType st;
 					if (       IsInsideMM(gfx,   0,   8)) { // Rail station
@@ -887,7 +885,7 @@ bool AfterLoadGame()
 						ResetSignalHandlers();
 						return false;
 					}
-					SB(tile_map.get_e(t).m6, 3, 3, st);
+					SB(tile_map.raw(t).m6, 3, 3, st);
 					break;
 				}
 			}
@@ -1058,25 +1056,25 @@ bool AfterLoadGame()
 						case ROAD_TILE_NORMAL:
 							SB(tile_map.raw(t).m4, 0, 4, GB(tile_map.raw(t).m5, 0, 4));
 							SB(tile_map.raw(t).m4, 4, 4, 0);
-							SB(tile_map.get_e(t).m6, 2, 4, 0);
+							SB(tile_map.raw(t).m6, 2, 4, 0);
 							break;
 						case ROAD_TILE_CROSSING:
 							SB(tile_map.raw(t).m4, 5, 2, GB(tile_map.raw(t).m5, 2, 2));
 							break;
 						case ROAD_TILE_DEPOT:    break;
 					}
-					SB(tile_map.get_e(t).m7, 6, 2, 1); // Set pre-NRT road type bits for conversion later.
+					SB(tile_map.raw(t).m7, 6, 2, 1); // Set pre-NRT road type bits for conversion later.
 					break;
 
 				case MP_STATION:
-					if (IsRoadStop(t)) SB(tile_map.get_e(t).m7, 6, 2, 1);
+					if (IsRoadStop(t)) SB(tile_map.raw(t).m7, 6, 2, 1);
 					break;
 
 				case MP_TUNNELBRIDGE:
 					/* Middle part of "old" bridges */
 					if (old_bridge && IsBridge(t) && HasBit(tile_map.raw(t).m5, 6)) break;
 					if (((old_bridge && IsBridge(t)) ? (TransportType)GB(tile_map.raw(t).m5, 1, 2) : GetTunnelBridgeTransportType(t)) == TRANSPORT_ROAD) {
-						SB(tile_map.get_e(t).m7, 6, 2, 1); // Set pre-NRT road type bits for conversion later.
+						SB(tile_map.raw(t).m7, 6, 2, 1); // Set pre-NRT road type bits for conversion later.
 					}
 					break;
 
@@ -1092,21 +1090,21 @@ bool AfterLoadGame()
 		for (TileIndex t = 0; t < map_size; t++) {
 			switch (tile_map.get(t).type) {
 				case MP_ROAD:
-					if (fix_roadtypes) SB(tile_map.get_e(t).m7, 6, 2, (RoadTypes)GB(tile_map.get_e(t).m7, 5, 3));
-					SB(tile_map.get_e(t).m7, 5, 1, GB(tile_map.raw(t).m3, 7, 1)); // snow/desert
+					if (fix_roadtypes) SB(tile_map.raw(t).m7, 6, 2, (RoadTypes)GB(tile_map.raw(t).m7, 5, 3));
+					SB(tile_map.raw(t).m7, 5, 1, GB(tile_map.raw(t).m3, 7, 1)); // snow/desert
 					switch (GetRoadTileType(t)) {
 						default: SlErrorCorrupt("Invalid road tile type");
 						case ROAD_TILE_NORMAL:
-							SB(tile_map.get_e(t).m7, 0, 4, GB(tile_map.raw(t).m3, 0, 4));  // road works
-							SB(tile_map.get_e(t).m6, 3, 3, GB(tile_map.raw(t).m3, 4, 3));  // ground
+							SB(tile_map.raw(t).m7, 0, 4, GB(tile_map.raw(t).m3, 0, 4));  // road works
+							SB(tile_map.raw(t).m6, 3, 3, GB(tile_map.raw(t).m3, 4, 3));  // ground
 							SB(tile_map.raw(t).m3, 0, 4, GB(tile_map.raw(t).m4, 4, 4));   // tram bits
 							SB(tile_map.raw(t).m3, 4, 4, GB(tile_map.raw(t).m5, 0, 4));   // tram owner
 							SB(tile_map.raw(t).m5, 0, 4, GB(tile_map.raw(t).m4, 0, 4));   // road bits
 							break;
 
 						case ROAD_TILE_CROSSING:
-							SB(tile_map.get_e(t).m7, 0, 5, GB(tile_map.raw(t).m4, 0, 5));  // road owner
-							SB(tile_map.get_e(t).m6, 3, 3, GB(tile_map.raw(t).m3, 4, 3));  // ground
+							SB(tile_map.raw(t).m7, 0, 5, GB(tile_map.raw(t).m4, 0, 5));  // road owner
+							SB(tile_map.raw(t).m6, 3, 3, GB(tile_map.raw(t).m3, 4, 3));  // ground
 							SB(tile_map.raw(t).m3, 4, 4, GB(tile_map.raw(t).m5, 0, 4));   // tram owner
 							SB(tile_map.raw(t).m5, 0, 1, GB(tile_map.raw(t).m4, 6, 1));   // road axis
 							SB(tile_map.raw(t).m5, 5, 1, GB(tile_map.raw(t).m4, 5, 1));   // crossing state
@@ -1125,8 +1123,8 @@ bool AfterLoadGame()
 				case MP_STATION:
 					if (!IsRoadStop(t)) break;
 
-					if (fix_roadtypes) SB(tile_map.get_e(t).m7, 6, 2, (RoadTypes)GB(tile_map.raw(t).m3, 0, 3));
-					SB(tile_map.get_e(t).m7, 0, 5, HasBit(tile_map.get_e(t).m6, 2) ? OWNER_TOWN : GetTileOwner(t));
+					if (fix_roadtypes) SB(tile_map.raw(t).m7, 6, 2, (RoadTypes)GB(tile_map.raw(t).m3, 0, 3));
+					SB(tile_map.raw(t).m7, 0, 5, HasBit(tile_map.raw(t).m6, 2) ? OWNER_TOWN : GetTileOwner(t));
 					SB(tile_map.raw(t).m3, 4, 4, tile_map.raw(t).m1);
 					tile_map.raw(t).m4 = 0;
 					break;
@@ -1134,14 +1132,14 @@ bool AfterLoadGame()
 				case MP_TUNNELBRIDGE:
 					if (old_bridge && IsBridge(t) && HasBit(tile_map.raw(t).m5, 6)) break;
 					if (((old_bridge && IsBridge(t)) ? (TransportType)GB(tile_map.raw(t).m5, 1, 2) : GetTunnelBridgeTransportType(t)) == TRANSPORT_ROAD) {
-						if (fix_roadtypes) SB(tile_map.get_e(t).m7, 6, 2, (RoadTypes)GB(tile_map.raw(t).m3, 0, 3));
+						if (fix_roadtypes) SB(tile_map.raw(t).m7, 6, 2, (RoadTypes)GB(tile_map.raw(t).m3, 0, 3));
 
 						Owner o = GetTileOwner(t);
-						SB(tile_map.get_e(t).m7, 0, 5, o); // road owner
+						SB(tile_map.raw(t).m7, 0, 5, o); // road owner
 						SB(tile_map.raw(t).m3, 4, 4, o == OWNER_NONE ? OWNER_TOWN : o); // tram owner
 					}
-					SB(tile_map.get_e(t).m6, 2, 4, GB(tile_map.raw(t).m2, 4, 4)); // bridge type
-					SB(tile_map.get_e(t).m7, 5, 1, GB(tile_map.raw(t).m4, 7, 1)); // snow/desert
+					SB(tile_map.raw(t).m6, 2, 4, GB(tile_map.raw(t).m2, 4, 4)); // bridge type
+					SB(tile_map.raw(t).m7, 5, 1, GB(tile_map.raw(t).m4, 7, 1)); // snow/desert
 
 					tile_map.raw(t).m2 = 0;
 					tile_map.raw(t).m4 = 0;
@@ -1207,8 +1205,8 @@ bool AfterLoadGame()
 							t_.road.town_id = town;
 							t_.road.road_bits = (axis == AXIS_X ? ROAD_Y : ROAD_X);
 							t_.road.tile_type = ROAD_TILE_NORMAL;
-							SB(tile_map.get_e(t).m6, 2, 4, 0);
-							tile_map.get_e(t).m7 = 1 << 6;
+							SB(tile_map.raw(t).m6, 2, 4, 0);
+							tile_map.raw(t).m7 = 1 << 6;
 							SetRoadOwner(t, RTT_TRAM, OWNER_NONE);
 						}
 					} else {
@@ -1284,12 +1282,12 @@ bool AfterLoadGame()
 			}
 
 			if (has_road) {
-				RoadType road_rt = HasBit(tile_map.get_e(t).m7, 6) ? ROADTYPE_ROAD : INVALID_ROADTYPE;
-				RoadType tram_rt = HasBit(tile_map.get_e(t).m7, 7) ? ROADTYPE_TRAM : INVALID_ROADTYPE;
+				RoadType road_rt = HasBit(tile_map.raw(t).m7, 6) ? ROADTYPE_ROAD : INVALID_ROADTYPE;
+				RoadType tram_rt = HasBit(tile_map.raw(t).m7, 7) ? ROADTYPE_TRAM : INVALID_ROADTYPE;
 
 				assert(road_rt != INVALID_ROADTYPE || tram_rt != INVALID_ROADTYPE);
 				SetRoadTypes(t, road_rt, tram_rt);
-				SB(tile_map.get_e(t).m7, 6, 2, 0); // Clear pre-NRT road type bits.
+				SB(tile_map.raw(t).m7, 6, 2, 0); // Clear pre-NRT road type bits.
 			}
 		}
 	}
@@ -1488,7 +1486,7 @@ bool AfterLoadGame()
 				} else {
 					/* The "lift has destination" bit has been moved from
 					 * m5[7] to m7[0]. */
-					SB(tile_map.get_e(t).m7, 0, 1, HasBit(tile_map.raw(t).m5, 7));
+					SB(tile_map.raw(t).m7, 0, 1, HasBit(tile_map.raw(t).m5, 7));
 					ClrBit(tile_map.raw(t).m5, 7);
 
 					/* The "lift is moving" bit has been removed, as it does
@@ -1901,7 +1899,7 @@ bool AfterLoadGame()
 		/* Increase HouseAnimationFrame from 5 to 7 bits */
 		for (TileIndex t = 0; t < map_size; t++) {
 			if (IsTileType(t, MP_HOUSE) && GetHouseType(t) >= NEW_HOUSE_OFFSET) {
-				SB(tile_map.get_e(t).m6, 2, 6, GB(tile_map.get_e(t).m6, 3, 5));
+				SB(tile_map.raw(t).m6, 2, 6, GB(tile_map.raw(t).m6, 3, 5));
 				SB(tile_map.raw(t).m3, 5, 1, 0);
 			}
 		}
@@ -2051,12 +2049,12 @@ bool AfterLoadGame()
 
 			/* Reordering/generalisation of the object bits. */
 			ObjectType type = tile_map.raw(t).m5;
-			SB(tile_map.get_e(t).m6, 2, 4, type == OBJECT_HQ ? GB(tile_map.raw(t).m3, 2, 3) : 0);
+			SB(tile_map.raw(t).m6, 2, 4, type == OBJECT_HQ ? GB(tile_map.raw(t).m3, 2, 3) : 0);
 			tile_map.raw(t).m3 = type == OBJECT_HQ ? GB(tile_map.raw(t).m3, 1, 1) | GB(tile_map.raw(t).m3, 0, 1) << 4 : 0;
 
 			/* Make sure those bits are clear as well! */
 			tile_map.raw(t).m4 = 0;
-			tile_map.get_e(t).m7 = 0;
+			tile_map.raw(t).m7 = 0;
 		}
 	}
 
@@ -2072,8 +2070,8 @@ bool AfterLoadGame()
 				uint offset = tile_map.raw(t).m3;
 
 				/* Also move the animation state. */
-				tile_map.raw(t).m3 = GB(tile_map.get_e(t).m6, 2, 4);
-				SB(tile_map.get_e(t).m6, 2, 4, 0);
+				tile_map.raw(t).m3 = GB(tile_map.raw(t).m6, 2, 4);
+				SB(tile_map.raw(t).m6, 2, 4, 0);
 
 				if (offset == 0) {
 					/* No offset, so make the object. */
@@ -2450,22 +2448,22 @@ bool AfterLoadGame()
 			switch (tile_map.get(t).type) {
 				case MP_HOUSE:
 					if (GetHouseType(t) >= NEW_HOUSE_OFFSET) {
-						uint per_proc = tile_map.get_e(t).m7;
-						tile_map.get_e(t).m7 = GB(tile_map.get_e(t).m6, 2, 6) | (GB(tile_map.raw(t).m3, 5, 1) << 6);
+						uint per_proc = tile_map.raw(t).m7;
+						tile_map.raw(t).m7 = GB(tile_map.raw(t).m6, 2, 6) | (GB(tile_map.raw(t).m3, 5, 1) << 6);
 						SB(tile_map.raw(t).m3, 5, 1, 0);
-						SB(tile_map.get_e(t).m6, 2, 6, std::min(per_proc, 63U));
+						SB(tile_map.raw(t).m6, 2, 6, std::min(per_proc, 63U));
 					}
 					break;
 
 				case MP_INDUSTRY: {
-					uint rand = tile_map.get_e(t).m7;
-					tile_map.get_e(t).m7 = tile_map.raw(t).m3;
+					uint rand = tile_map.raw(t).m7;
+					tile_map.raw(t).m7 = tile_map.raw(t).m3;
 					tile_map.raw(t).m3 = rand;
 					break;
 				}
 
 				case MP_OBJECT:
-					tile_map.get_e(t).m7 = tile_map.raw(t).m3;
+					tile_map.raw(t).m7 = tile_map.raw(t).m3;
 					tile_map.raw(t).m3 = 0;
 					break;
 

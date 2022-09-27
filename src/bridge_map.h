@@ -56,7 +56,7 @@ static inline bool IsBridgeAbove(TileIndex t)
 static inline BridgeType GetBridgeType(TileIndex t)
 {
 	assert(IsBridgeTile(t));
-	return GB(tile_map.get_e(t).m6, 2, 4);
+	return GB(tile_map.get_e(t).bridge.m6, 2, 4);
 }
 
 /**
@@ -123,9 +123,9 @@ static inline void MakeBridgeRamp(TileIndex t, Owner o, BridgeType bridgetype, D
 	t_.bridge.is_bridge = 1;
 	t_.bridge.direction = d;
 	t_.bridge.transport_type = tt;
-	SB(tile_map.get_e(t).m6, 2, 4, bridgetype);
-	tile_map.get_e(t).m7 = 0;
-	tile_map.get_e(t).m8 = INVALID_ROADTYPE << 6;
+	SB(t_.bridge.m6, 2, 4, bridgetype);
+	t_.bridge.m7 = 0;
+	t_.bridge.m8 = INVALID_ROADTYPE << 6;
 }
 
 /**

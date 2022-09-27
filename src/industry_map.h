@@ -125,7 +125,7 @@ static inline void SetIndustryConstructionStage(TileIndex tile, byte value)
 static inline IndustryGfx GetCleanIndustryGfx(TileIndex t)
 {
 	assert(IsTileType(t, MP_INDUSTRY));
-	return tile_map.get(t).industry.gfx | (GB(tile_map.get_e(t).m6, 2, 1) << 8);
+	return tile_map.get(t).industry.gfx | (GB(tile_map.get_e(t).industry.m6, 2, 1) << 8);
 }
 
 /**
@@ -150,7 +150,7 @@ static inline void SetIndustryGfx(TileIndex t, IndustryGfx gfx)
 {
 	assert(IsTileType(t, MP_INDUSTRY));
 	tile_map.get(t).industry.gfx = GB(gfx, 0, 8);
-	SB(tile_map.get_e(t).m6, 2, 1, GB(gfx, 8, 1));
+	SB(tile_map.get_e(t).industry.m6, 2, 1, GB(gfx, 8, 1));
 }
 
 /**
@@ -251,7 +251,7 @@ static inline void SetIndustryRandomBits(TileIndex tile, byte bits)
 static inline byte GetIndustryTriggers(TileIndex tile)
 {
 	assert(IsTileType(tile, MP_INDUSTRY));
-	return GB(tile_map.get_e(tile).m6, 3, 3);
+	return GB(tile_map.get_e(tile).industry.m6, 3, 3);
 }
 
 
@@ -265,7 +265,7 @@ static inline byte GetIndustryTriggers(TileIndex tile)
 static inline void SetIndustryTriggers(TileIndex tile, byte triggers)
 {
 	assert(IsTileType(tile, MP_INDUSTRY));
-	SB(tile_map.get_e(tile).m6, 3, 3, triggers);
+	SB(tile_map.get_e(tile).industry.m6, 3, 3, triggers);
 }
 
 /**
@@ -279,12 +279,12 @@ static inline void SetIndustryTriggers(TileIndex tile, byte triggers)
 static inline void MakeIndustry(TileIndex t, IndustryID index, IndustryGfx gfx, uint8 random, WaterClass wc)
 {
 	Tile& t_ = tile_map.init(t, MP_INDUSTRY);
-	tile_map.get(t).industry.id = index;
+	t_.industry.id = index;
 	SetIndustryRandomBits(t, random); // m3
 	SetIndustryGfx(t, gfx); // m5, part of m6
 	SetIndustryTriggers(t, 0); // rest of m6
 	SetWaterClass(t, wc);
-	tile_map.get_e(t).m7 = 0;
+	t_.industry.m7 = 0;
 }
 
 #endif /* INDUSTRY_MAP_H */

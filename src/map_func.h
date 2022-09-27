@@ -80,7 +80,6 @@ struct TileMap
 	}
 
 	Tile::Raw& raw(const TileIndex& i) { return _m[i].raw; }
-	Tile::Raw& raw_e(const TileIndex& i) { return _m[i].raw; }
 
 	Tile::Owned& owned(const TileIndex& i)
 	{

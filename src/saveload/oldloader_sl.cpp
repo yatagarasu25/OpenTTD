@@ -1482,10 +1482,10 @@ static bool LoadOldMapPart1(LoadgameState *ls, int num)
 		}
 		for (uint i = 0; i < OLD_MAP_SIZE / 4; i++) {
 			byte b = ReadByte(ls);
-			tile_map.raw_e(i * 4 + 0).m6 = GB(b, 0, 2);
-			tile_map.raw_e(i * 4 + 1).m6 = GB(b, 2, 2);
-			tile_map.raw_e(i * 4 + 2).m6 = GB(b, 4, 2);
-			tile_map.raw_e(i * 4 + 3).m6 = GB(b, 6, 2);
+			tile_map.raw(i * 4 + 0).m6 = GB(b, 0, 2);
+			tile_map.raw(i * 4 + 1).m6 = GB(b, 2, 2);
+			tile_map.raw(i * 4 + 2).m6 = GB(b, 4, 2);
+			tile_map.raw(i * 4 + 3).m6 = GB(b, 6, 2);
 		}
 	}
 

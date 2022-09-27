@@ -282,8 +282,6 @@ static inline void MakeTree(TileIndex t, TreeType type, uint count, uint growth,
 	t_.tree.type = type;
 	t_.tree.growth = growth;
 	t_.tree.count = count;
-	SB(tile_map.get_e(t).m6, 2, 4, 0);
-	tile_map.get_e(t).m7 = 0;
 }
 
 #endif /* TREE_MAP_H */

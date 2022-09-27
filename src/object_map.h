@@ -78,8 +78,6 @@ static inline void MakeObject(TileIndex t, Owner o, ObjectID index, WaterClass w
 	t_.object.index = index;
 	t_.object.bits = random;
 	t_.object.index2 = index >> 16;
-	SB(tile_map.get_e(t).m6, 2, 4, 0);
-	tile_map.get_e(t).m7 = 0;
 }
 
 #endif /* OBJECT_MAP_H */
