@@ -152,7 +152,7 @@ struct Tile {
 					byte is_completed : 1;
 					byte bits;
 					byte animation_loop;
-					byte m5;
+					byte gfx;
 				} industry;
 				struct {
 					uint16 m2;
@@ -205,7 +205,8 @@ struct Tile {
 					};
 					byte ground_type : 4;
 					byte signal_states : 4;
-					byte m5;
+					byte track_bits : 6;
+					byte tile_type : 2;
 				} rail;
 				struct {
 					uint16 id;
@@ -229,7 +230,11 @@ struct Tile {
 							byte m1;
 							byte m3;
 							byte m4;
-							byte m5;
+							byte direction : 2;
+							byte m5_23 : 2;
+							byte reserved : 1;
+							byte m5_5 : 1;
+							byte tile_type : 2;
 						} rail;
 						struct {
 							byte m1;
@@ -244,7 +249,7 @@ struct Tile {
 					byte m1;
 					byte bits;
 					byte m4;
-					byte m5;
+					byte index2;
 				} object;
 				struct {
 					uint16 station_id;

@@ -37,7 +37,7 @@ enum RailTileType {
 static inline RailTileType GetRailTileType(TileIndex t)
 {
 	assert(IsTileType(t, MP_RAILWAY));
-	return (RailTileType)GB(tile_map.get(t).rail.m5, 6, 2);
+	return (RailTileType)tile_map.get(t).rail.tile_type;
 }
 
 /**
@@ -84,7 +84,7 @@ static inline bool HasSignals(TileIndex t)
 static inline void SetHasSignals(TileIndex tile, bool signals)
 {
 	assert(IsPlainRailTile(tile));
-	SB(tile_map.get(tile).rail.m5, 6, 1, signals);
+	tile_map.get(tile).rail.tile_type = RAIL_TILE_SIGNALS;
 }
 
 /**
@@ -137,7 +137,7 @@ static inline void SetRailType(TileIndex t, RailType r)
 static inline TrackBits GetTrackBits(TileIndex tile)
 {
 	assert(IsPlainRailTile(tile));
-	return (TrackBits)GB(tile_map.get(tile).rail.m5, 0, 6);
+	return (TrackBits) tile_map.get(tile).rail.track_bits;
 }
 
 /**
@@ -145,10 +145,10 @@ static inline TrackBits GetTrackBits(TileIndex tile)
  * @param t the tile to set the track bits of
  * @param b the new track bits for the tile
  */
-static inline void SetTrackBits(TileIndex t, TrackBits b)
+static inline void SetTrackBits(TileIndex tile, TrackBits b)
 {
-	assert(IsPlainRailTile(t));
-	SB(tile_map.get(t).rail.m5, 0, 6, b);
+	assert(IsPlainRailTile(tile));
+	tile_map.get(tile).rail.track_bits = b;
 }
 
 /**
@@ -171,7 +171,7 @@ static inline bool HasTrack(TileIndex tile, Track track)
  */
 static inline DiagDirection GetRailDepotDirection(TileIndex t)
 {
-	return (DiagDirection)GB(tile_map.get(t).rail.m5, 0, 2);
+	return (DiagDirection) tile_map.get(t).depot.rail.direction;
 }
 
 /**
@@ -259,7 +259,7 @@ static inline void UnreserveTrack(TileIndex tile, Track t)
 static inline bool HasDepotReservation(TileIndex t)
 {
 	assert(IsRailDepot(t));
-	return HasBit(tile_map.get(t).rail.m5, 4);
+	return tile_map.get(t).depot.rail.reserved;
 }
 
 /**
@@ -271,7 +271,7 @@ static inline bool HasDepotReservation(TileIndex t)
 static inline void SetDepotReservation(TileIndex t, bool b)
 {
 	assert(IsRailDepot(t));
-	SB(tile_map.get(t).rail.m5, 4, 1, (byte)b);
+	tile_map.get(t).depot.rail.reserved = b;
 }
 
 /**
@@ -528,7 +528,8 @@ static inline void MakeRailNormal(TileIndex t, Owner o, TrackBits b, RailType r)
 	SetTileType(t, MP_RAILWAY);
 	SetTileOwner(t, o);
 	SetDockingTile(t, false);
-	t_.rail.m5 = RAIL_TILE_NORMAL << 6 | b;
+	t_.rail.track_bits = b;
+	t_.rail.tile_type = RAIL_TILE_NORMAL;
 	SB(tile_map.get_e(t).m6, 2, 4, 0);
 	tile_map.get_e(t).m7 = 0;
 	tile_map.get_e(t).m8 = r;
@@ -542,7 +543,8 @@ static inline void MakeRailDepot(TileIndex t, Owner o, DepotID did, DiagDirectio
 	SetTileOwner(t, o);
 	SetDockingTile(t, false);
 	t_.depot.id = did;
-	t_.rail.m5 = RAIL_TILE_DEPOT << 6 | d;
+	t_.depot.rail.direction = d;
+	t_.depot.rail.tile_type = RAIL_TILE_DEPOT;
 	SB(tile_map.get_e(t).m6, 2, 4, 0);
 	tile_map.get_e(t).m7 = 0;
 	tile_map.get_e(t).m8 = r;

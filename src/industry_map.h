@@ -125,7 +125,7 @@ static inline void SetIndustryConstructionStage(TileIndex tile, byte value)
 static inline IndustryGfx GetCleanIndustryGfx(TileIndex t)
 {
 	assert(IsTileType(t, MP_INDUSTRY));
-	return tile_map.get(t).industry.m5 | (GB(tile_map.get_e(t).m6, 2, 1) << 8);
+	return tile_map.get(t).industry.gfx | (GB(tile_map.get_e(t).m6, 2, 1) << 8);
 }
 
 /**
@@ -149,7 +149,7 @@ static inline IndustryGfx GetIndustryGfx(TileIndex t)
 static inline void SetIndustryGfx(TileIndex t, IndustryGfx gfx)
 {
 	assert(IsTileType(t, MP_INDUSTRY));
-	tile_map.get(t).industry.m5 = GB(gfx, 0, 8);
+	tile_map.get(t).industry.gfx = GB(gfx, 0, 8);
 	SB(tile_map.get_e(t).m6, 2, 1, GB(gfx, 8, 1));
 }
 
