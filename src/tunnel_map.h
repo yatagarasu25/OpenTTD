@@ -49,11 +49,9 @@ bool IsTunnelInWayDir(TileIndex tile, int z, DiagDirection dir);
  */
 static inline void MakeRoadTunnel(TileIndex t, Owner o, DiagDirection d, RoadType road_rt, RoadType tram_rt)
 {
+	Tile& t_ = tile_map.get(t); t_.init();
 	SetTileType(t, MP_TUNNELBRIDGE);
 	SetTileOwner(t, o);
-	tile_map.get(t).m2 = 0;
-	tile_map.get(t).m3 = 0;
-	tile_map.get(t).m4 = 0;
 	tile_map.get(t).m5 = TRANSPORT_ROAD << 2 | d;
 	SB(tile_map.get_e(t).m6, 2, 4, 0);
 	tile_map.get_e(t).m7 = 0;
@@ -72,11 +70,9 @@ static inline void MakeRoadTunnel(TileIndex t, Owner o, DiagDirection d, RoadTyp
  */
 static inline void MakeRailTunnel(TileIndex t, Owner o, DiagDirection d, RailType r)
 {
+	Tile& t_ = tile_map.get(t); t_.init();
 	SetTileType(t, MP_TUNNELBRIDGE);
 	SetTileOwner(t, o);
-	tile_map.get(t).m2 = 0;
-	tile_map.get(t).m3 = 0;
-	tile_map.get(t).m4 = 0;
 	tile_map.get(t).m5 = TRANSPORT_RAIL << 2 | d;
 	SB(tile_map.get_e(t).m6, 2, 4, 0);
 	tile_map.get_e(t).m7 = 0;

@@ -35,7 +35,7 @@ enum ClearGround {
 static inline bool IsSnowTile(TileIndex t)
 {
 	assert(IsTileType(t, MP_CLEAR));
-	return HasBit(tile_map.get(t).m3, 4);
+	return tile_map.get(t).tile.is_snow;
 }
 
 /**
@@ -171,7 +171,7 @@ static inline void SetClearGroundDensity(TileIndex t, ClearGround type, uint den
 static inline uint GetFieldType(TileIndex t)
 {
 	assert(GetClearGround(t) == CLEAR_FIELDS);
-	return GB(tile_map.get(t).m3, 0, 4);
+	return tile_map.get(t).tile.field_type;
 }
 
 /**
@@ -183,7 +183,7 @@ static inline uint GetFieldType(TileIndex t)
 static inline void SetFieldType(TileIndex t, uint f)
 {
 	assert(GetClearGround(t) == CLEAR_FIELDS); // XXX incomplete
-	SB(tile_map.get(t).m3, 0, 4, f);
+	tile_map.get(t).tile.field_type = f;
 }
 
 /**
@@ -277,11 +277,11 @@ static inline void MakeClear(TileIndex t, ClearGround g, uint density)
  */
 static inline void MakeField(TileIndex t, uint field_type, IndustryID industry)
 {
+	Tile& t_ = tile_map.get(t); t_.init();
 	SetTileType(t, MP_CLEAR);
-	tile_map.get(t).m1 = 0;
 	SetTileOwner(t, OWNER_NONE);
-	tile_map.get(t).industry.id = industry;
-	tile_map.get(t).industry.field_type = field_type;
+	tile_map.get(t).tile.industry_id = industry; // TODO ?????
+	tile_map.get(t).tile.field_type = field_type;
 	tile_map.get(t).m4 = 0 << 5 | 0 << 2;
 	SetClearGroundDensity(t, CLEAR_FIELDS, 3);
 	SB(tile_map.get_e(t).m6, 2, 4, 0);
@@ -298,7 +298,7 @@ static inline void MakeField(TileIndex t, uint field_type, IndustryID industry)
 static inline void MakeSnow(TileIndex t, uint density = 0)
 {
 	assert(GetClearGround(t) != CLEAR_SNOW);
-	SetBit(tile_map.get(t).m3, 4);
+	tile_map.get(t).tile.is_snow = 1;
 	if (GetRawClearGround(t) == CLEAR_FIELDS) {
 		SetClearGroundDensity(t, CLEAR_GRASS, density);
 	} else {
@@ -314,7 +314,7 @@ static inline void MakeSnow(TileIndex t, uint density = 0)
 static inline void ClearSnow(TileIndex t)
 {
 	assert(GetClearGround(t) == CLEAR_SNOW);
-	ClrBit(tile_map.get(t).m3, 4);
+	tile_map.get(t).tile.is_snow = 0;
 	SetClearDensity(t, 3);
 }
 

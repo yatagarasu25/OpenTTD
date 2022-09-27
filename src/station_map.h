@@ -505,7 +505,7 @@ static inline uint GetCustomStationSpecIndex(TileIndex t)
 static inline void SetStationTileRandomBits(TileIndex t, byte random_bits)
 {
 	assert(IsTileType(t, MP_STATION));
-	SB(tile_map.get(t).m3, 4, 4, random_bits);
+	tile_map.get(t).station.random = random_bits;
 }
 
 /**
@@ -517,7 +517,7 @@ static inline void SetStationTileRandomBits(TileIndex t, byte random_bits)
 static inline byte GetStationTileRandomBits(TileIndex t)
 {
 	assert(IsTileType(t, MP_STATION));
-	return GB(tile_map.get(t).m3, 4, 4);
+	return tile_map.get(t).station.random;
 }
 
 /**

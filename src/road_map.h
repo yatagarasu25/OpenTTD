@@ -128,7 +128,7 @@ static inline bool IsRoadDepotTile(TileIndex t)
 static inline RoadBits GetRoadBits(TileIndex t, RoadTramType rtt)
 {
 	assert(IsNormalRoad(t));
-	if (rtt == RTT_TRAM) return (RoadBits)GB(tile_map.get(t).m3, 0, 4);
+	if (rtt == RTT_TRAM) return (RoadBits)tile_map.get(t).road.tram_bits;
 	return (RoadBits)GB(tile_map.get(t).m5, 0, 4);
 }
 
@@ -154,7 +154,7 @@ static inline void SetRoadBits(TileIndex t, RoadBits r, RoadTramType rtt)
 {
 	assert(IsNormalRoad(t)); // XXX incomplete
 	if (rtt == RTT_TRAM) {
-		SB(tile_map.get(t).m3, 0, 4, r);
+		tile_map.get(t).road.tram_bits = r;
 	} else {
 		SB(tile_map.get(t).m5, 0, 4, r);
 	}
@@ -238,7 +238,7 @@ static inline Owner GetRoadOwner(TileIndex t, RoadTramType rtt)
 
 	/* Trams don't need OWNER_TOWN, and remapping OWNER_NONE
 	 * to OWNER_TOWN makes it use one bit less */
-	Owner o = (Owner)GB(tile_map.get(t).m3, 4, 4);
+	Owner o = (Owner)tile_map.get(t).road.tram_owner;
 	return o == OWNER_TOWN ? OWNER_NONE : o;
 }
 
@@ -256,7 +256,7 @@ static inline void SetRoadOwner(TileIndex t, RoadTramType rtt, Owner o)
 		else
 			SB(tile_map.get_e(t).m7, 0, 5, o);
 	} else {
-		SB(tile_map.get(t).m3, 4, 4, o == OWNER_NONE ? OWNER_TOWN : o);
+		tile_map.get(t).road.tram_owner = (o == OWNER_NONE ? OWNER_TOWN : o);
 	}
 }
 
@@ -637,10 +637,11 @@ static inline void SetRoadTypes(TileIndex t, RoadType road_rt, RoadType tram_rt)
  */
 static inline void MakeRoadNormal(TileIndex t, RoadBits bits, RoadType road_rt, RoadType tram_rt, TownID town, Owner road, Owner tram)
 {
+	Tile& t_ = tile_map.get(t); t_.init();
 	SetTileType(t, MP_ROAD);
 	SetTileOwner(t, road);
 	tile_map.get(t).town.id = town;
-	tile_map.get(t).m3 = (tram_rt != INVALID_ROADTYPE ? bits : 0);
+	tile_map.get(t).road.tram_bits = (tram_rt != INVALID_ROADTYPE ? bits : 0);
 	tile_map.get(t).m5 = (road_rt != INVALID_ROADTYPE ? bits : 0) | ROAD_TILE_NORMAL << 6;
 	SB(tile_map.get_e(t).m6, 2, 4, 0);
 	tile_map.get_e(t).m7 = 0;
@@ -662,10 +663,10 @@ static inline void MakeRoadNormal(TileIndex t, RoadBits bits, RoadType road_rt, 
  */
 static inline void MakeRoadCrossing(TileIndex t, Owner road, Owner tram, Owner rail, Axis roaddir, RailType rat, RoadType road_rt, RoadType tram_rt, uint town)
 {
+	Tile& t_ = tile_map.get(t); t_.init();
 	SetTileType(t, MP_ROAD);
 	SetTileOwner(t, rail);
 	tile_map.get(t).town.id = town;
-	tile_map.get(t).m3 = 0;
 	tile_map.get(t).m4 = INVALID_ROADTYPE;
 	tile_map.get(t).m5 = ROAD_TILE_CROSSING << 6 | roaddir;
 	SB(tile_map.get_e(t).m6, 2, 4, 0);
@@ -685,10 +686,10 @@ static inline void MakeRoadCrossing(TileIndex t, Owner road, Owner tram, Owner r
  */
 static inline void MakeRoadDepot(TileIndex t, Owner owner, DepotID did, DiagDirection dir, RoadType rt)
 {
+	Tile& t_ = tile_map.get(t); t_.init();
 	SetTileType(t, MP_ROAD);
 	SetTileOwner(t, owner);
 	tile_map.get(t).depot.id = did;
-	tile_map.get(t).m3 = 0;
 	tile_map.get(t).m4 = INVALID_ROADTYPE;
 	tile_map.get(t).m5 = ROAD_TILE_DEPOT << 6 | dir;
 	SB(tile_map.get_e(t).m6, 2, 4, 0);

@@ -75,10 +75,10 @@ void MoveWaypointsToBaseStations()
 
 			Tile& wt = tile_map.get(wp.xy);
 			/* Waypoint indices were not added to the map prior to this. */
-			wt.m2 = (StationID)wp.index;
+			wt.waypoint.station_id = (StationID)wp.index;
 
-			if (HasBit(wt.m3, 4)) {
-				wp.spec = StationClass::Get(STAT_CLASS_WAYP)->GetSpec(wt.m4 + 1);
+			if (wt.waypoint.m3_4) {
+				wp.spec = StationClass::Get(STAT_CLASS_WAYP)->GetSpec(wt.waypoint.tile_index + 1);
 			}
 		}
 	} else {

@@ -329,9 +329,11 @@ static inline void CycleSignalSide(TileIndex t, Track track)
 	byte sig;
 	byte pos = (track == TRACK_LOWER || track == TRACK_RIGHT) ? 4 : 6;
 
-	sig = GB(tile_map.get(t).m3, pos, 2);
+	sig = ((track == TRACK_LOWER || track == TRACK_RIGHT)
+		? tile_map.get(t).track.signal_side_lr : tile_map.get(t).track.signal_side_ul);
 	if (--sig == 0) sig = IsPbsSignal(GetSignalType(t, track)) ? 2 : 3;
-	SB(tile_map.get(t).m3, pos, 2, sig);
+	((track == TRACK_LOWER || track == TRACK_RIGHT)
+		? tile_map.get(t).track.signal_side_lr : tile_map.get(t).track.signal_side_ul) = sig;
 }
 
 static inline SignalVariant GetSignalVariant(TileIndex t, Track track)
@@ -385,7 +387,7 @@ static inline SignalState GetSingleSignalState(TileIndex t, byte signalbit)
  */
 static inline void SetPresentSignals(TileIndex tile, uint signals)
 {
-	SB(tile_map.get(tile).m3, 4, 4, signals);
+	tile_map.get(tile).track.signals_present = signals;
 }
 
 /**
@@ -395,7 +397,7 @@ static inline void SetPresentSignals(TileIndex tile, uint signals)
  */
 static inline uint GetPresentSignals(TileIndex tile)
 {
-	return GB(tile_map.get(tile).m3, 4, 4);
+	return tile_map.get(tile).track.signals_present;
 }
 
 /**

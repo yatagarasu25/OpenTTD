@@ -386,13 +386,11 @@ static inline bool IsDockingTile(TileIndex t)
  */
 static inline void MakeShore(TileIndex t)
 {
+	Tile& t_ = tile_map.get(t); t_.init();
 	SetTileType(t, MP_WATER);
 	SetTileOwner(t, OWNER_WATER);
 	SetWaterClass(t, WATER_CLASS_SEA);
 	SetDockingTile(t, false);
-	tile_map.get(t).m2 = 0;
-	tile_map.get(t).m3 = 0;
-	tile_map.get(t).m4 = 0;
 	tile_map.get(t).m5 = WBL_TYPE_NORMAL << WBL_TYPE_BEGIN | 1 << WBL_COAST_FLAG;
 	SB(tile_map.get_e(t).m6, 2, 4, 0);
 	tile_map.get_e(t).m7 = 0;
@@ -407,12 +405,11 @@ static inline void MakeShore(TileIndex t)
  */
 static inline void MakeWater(TileIndex t, Owner o, WaterClass wc, uint8 random_bits)
 {
+	Tile& t_ = tile_map.get(t); t_.init();
 	SetTileType(t, MP_WATER);
 	SetTileOwner(t, o);
 	SetWaterClass(t, wc);
 	SetDockingTile(t, false);
-	tile_map.get(t).m2 = 0;
-	tile_map.get(t).m3 = 0;
 	tile_map.get(t).m4 = random_bits;
 	tile_map.get(t).m5 = WBL_TYPE_NORMAL << WBL_TYPE_BEGIN;
 	SB(tile_map.get_e(t).m6, 2, 4, 0);
@@ -461,13 +458,12 @@ static inline void MakeCanal(TileIndex t, Owner o, uint8 random_bits)
  */
 static inline void MakeShipDepot(TileIndex t, Owner o, DepotID did, DepotPart part, Axis a, WaterClass original_water_class)
 {
+	Tile& t_ = tile_map.get(t); t_.init();
 	SetTileType(t, MP_WATER);
 	SetTileOwner(t, o);
 	SetWaterClass(t, original_water_class);
 	SetDockingTile(t, false);
 	tile_map.get(t).depot.id = did;
-	tile_map.get(t).m3 = 0;
-	tile_map.get(t).m4 = 0;
 	tile_map.get(t).m5 = WBL_TYPE_DEPOT << WBL_TYPE_BEGIN | part << WBL_DEPOT_PART | a << WBL_DEPOT_AXIS;
 	SB(tile_map.get_e(t).m6, 2, 4, 0);
 	tile_map.get_e(t).m7 = 0;
@@ -484,13 +480,11 @@ static inline void MakeShipDepot(TileIndex t, Owner o, DepotID did, DepotPart pa
  */
 static inline void MakeLockTile(TileIndex t, Owner o, LockPart part, DiagDirection dir, WaterClass original_water_class)
 {
+	Tile& t_ = tile_map.get(t); t_.init();
 	SetTileType(t, MP_WATER);
 	SetTileOwner(t, o);
 	SetWaterClass(t, original_water_class);
 	SetDockingTile(t, false);
-	tile_map.get(t).m2 = 0;
-	tile_map.get(t).m3 = 0;
-	tile_map.get(t).m4 = 0;
 	tile_map.get(t).m5 = WBL_TYPE_LOCK << WBL_TYPE_BEGIN | part << WBL_LOCK_PART_BEGIN | dir << WBL_LOCK_ORIENT_BEGIN;
 	SB(tile_map.get_e(t).m6, 2, 4, 0);
 	tile_map.get_e(t).m7 = 0;

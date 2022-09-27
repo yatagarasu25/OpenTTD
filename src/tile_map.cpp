@@ -170,14 +170,12 @@ int GetTileMaxZ(TileIndex t)
 
 void MakeStation(TileIndex t, Owner o, StationID sid, StationType st, byte section, WaterClass wc)
 {
-	Tile& t_ = tile_map.get(t);
+	Tile& t_ = tile_map.get(t); t_.init();
 	SetTileType(t, MP_STATION);
 	SetTileOwner(t, o);
 	SetWaterClass(t, wc);
 	SetDockingTile(t, false);
 	t_.station.id = sid;
-	t_.m3 = 0;
-	t_.m4 = 0;
 	t_.station.section = section;
 	SB(tile_map.get_e(t).m6, 2, 1, 0);
 	SB(tile_map.get_e(t).m6, 3, 3, st);

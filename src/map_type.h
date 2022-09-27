@@ -54,9 +54,6 @@ struct Tile : public TileCore {
 				};
 				struct {
 					byte owner : 5;
-				} road;
-				struct {
-					byte owner : 5;
 					byte wc : 2;
 					byte is_docking : 1;
 				} water;
@@ -66,10 +63,16 @@ struct Tile : public TileCore {
 			byte   m5;          ///< General purpose
 		};
 		struct {
+			uint16 industry_id;
+			byte   m1;
+			byte   field_type : 4;
+			byte   is_snow : 1;
+		} tile;
+		struct {
 			byte counter : 4;
 			byte density : 2;
 			byte ground : 3;
-			byte b : 1;
+			byte b : 3;
 			byte type;
 		} tree;
 		struct {
@@ -78,6 +81,10 @@ struct Tile : public TileCore {
 		struct {
 			uint16 town_id;
 			byte random;
+			byte triggers : 5;
+			byte m3 : 1;
+			byte clean_house_flag : 1;
+			byte is_completed : 1;
 		} house;
 		struct {
 			uint16 id;
@@ -86,27 +93,44 @@ struct Tile : public TileCore {
 			byte wc2 : 1;
 			byte wc : 2;
 			byte is_completed : 1;
-			byte field_type;
+			byte bits;
 		} industry;
 		struct {
+			uint16 m2;
+			byte owner : 5;
+			byte m1 : 3;
+			byte tram_bits : 4;
+			byte tram_owner : 4;
+		} road;
+		struct {
+			struct {
+				byte signal_ul : 3;
+				byte signal_ul_variant : 1;
+				byte signal_lr : 3;
+				byte signal_lr_variant : 1;
+				byte bits : 3;
+				byte m2_11 : 1;
+				byte m2_12 : 4;
+			};
+			byte m1;
 			union {
-				uint16 id;
+				byte m3;
 				struct {
-					byte signal_ul : 3;
-					byte signal_ul_variant : 1;
-					byte signal_lr : 3;
-					byte signal_lr_variant : 1;
-					byte bits : 3;
-					byte m2_11 : 1;
-					byte m2_12 : 1;
-					byte b3 : 3;
+					byte m3 : 4;
+					byte signal_side_lr : 2;
+					byte signal_side_ul : 2;
+				};
+				struct {
+					byte m3 : 4;
+					byte signals_present : 4;
 				};
 			};
 		} track;
 		struct {
 			uint16 id;
 			byte m1;
-			byte m3;
+			byte m3 : 4;
+			byte random : 4;
 			byte m4;
 			byte section;
 		} station;
@@ -135,9 +159,16 @@ struct Tile : public TileCore {
 		} depot;
 		struct {
 			uint16 index;
+			byte m1;
+			byte bits;
 		} object;
 		struct {
 			uint16 station_id;
+			byte m1;
+			byte m3 : 4;
+			byte m3_4 : 1;
+			byte m3_5 : 3;
+			byte tile_index;
 		} waypoint;
 	};
 
