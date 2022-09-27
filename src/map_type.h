@@ -108,8 +108,22 @@ struct Tile {
 					byte is_docking : 1;
 					byte m3;
 					byte bits;
-					byte m5;
+					byte is_coast : 1;
+					byte m5_1 : 1;
+					byte lock : 2;
+					byte type : 4;
 				} water;
+				struct {
+					uint16 m2;
+					byte owner : 5;
+					byte wc : 2;
+					byte is_docking : 1;
+					byte m3;
+					byte bits;
+					byte direction : 2;
+					byte part : 2;
+					byte type : 4;
+				} lock;
 				struct {
 					byte counter : 4;
 					byte density : 2;
@@ -265,7 +279,10 @@ struct Tile {
 							byte m1;
 							byte m3;
 							byte m4;
-							byte m5;
+							byte part : 1;
+							byte axis : 1;
+							byte m5_23 : 2;
+							byte type : 4;
 						} ship;
 					};
 				} depot;
