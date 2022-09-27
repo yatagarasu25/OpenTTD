@@ -197,7 +197,7 @@ static inline void SetFieldType(TileIndex t, uint f)
 static inline IndustryID GetIndustryIndexOfField(TileIndex t)
 {
 	assert(GetClearGround(t) == CLEAR_FIELDS);
-	return(IndustryID) tile_map.get(t).m2;
+	return(IndustryID) tile_map.get(t).field.industry_id;
 }
 
 /**

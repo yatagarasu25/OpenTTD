@@ -258,7 +258,11 @@ struct Tile {
 
 	void init()
 	{
-		all = 0;
+		raw.m2 = 0;
+		raw.m1 = 0;
+		raw.m3 = 0;
+		raw.m4 = 0;
+		raw.m5 = 0;
 	}
 };
 

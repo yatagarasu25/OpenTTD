@@ -131,7 +131,7 @@ struct MAPOChunkHandler : ChunkHandler {
 
 		for (TileIndex i = 0; i != size;) {
 			SlCopy(buf.data(), MAP_SL_BUF_SIZE, SLE_UINT8);
-			for (uint j = 0; j != MAP_SL_BUF_SIZE; j++) tile_map.raw(i++).m1_ = buf[j];
+			for (uint j = 0; j != MAP_SL_BUF_SIZE; j++) tile_map.raw(i++).m1 = buf[j];
 		}
 	}
 
@@ -142,7 +142,7 @@ struct MAPOChunkHandler : ChunkHandler {
 
 		SlSetLength(size);
 		for (TileIndex i = 0; i != size;) {
-			for (uint j = 0; j != MAP_SL_BUF_SIZE; j++) buf[j] = tile_map.raw(i++).m1_;
+			for (uint j = 0; j != MAP_SL_BUF_SIZE; j++) buf[j] = tile_map.raw(i++).m1;
 			SlCopy(buf.data(), MAP_SL_BUF_SIZE, SLE_UINT8);
 		}
 	}
@@ -161,7 +161,7 @@ struct MAP2ChunkHandler : ChunkHandler {
 				/* In those versions the m2 was 8 bits */
 				IsSavegameVersionBefore(SLV_5) ? SLE_FILE_U8 | SLE_VAR_U16 : SLE_UINT16
 			);
-			for (uint j = 0; j != MAP_SL_BUF_SIZE; j++) tile_map.raw(i++).m2_ = buf[j];
+			for (uint j = 0; j != MAP_SL_BUF_SIZE; j++) tile_map.raw(i++).m2 = buf[j];
 		}
 	}
 
@@ -172,7 +172,7 @@ struct MAP2ChunkHandler : ChunkHandler {
 
 		SlSetLength(size * sizeof(uint16));
 		for (TileIndex i = 0; i != size;) {
-			for (uint j = 0; j != MAP_SL_BUF_SIZE; j++) buf[j] = tile_map.raw(i++).m2_;
+			for (uint j = 0; j != MAP_SL_BUF_SIZE; j++) buf[j] = tile_map.raw(i++).m2;
 			SlCopy(buf.data(), MAP_SL_BUF_SIZE, SLE_UINT16);
 		}
 	}
