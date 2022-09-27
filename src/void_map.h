@@ -18,13 +18,9 @@
  */
 static inline void MakeVoid(TileIndex t)
 {
+	Tile& t_ = tile_map.get(t); t_.init();
 	SetTileType(t, MP_VOID);
 	SetTileHeight(t, 0);
-	tile_map.get(t).m1_ = 0;
-	tile_map.get(t).m2_ = 0;
-	tile_map.get(t).m3 = 0;
-	tile_map.get(t).m4 = 0;
-	tile_map.get(t).m5 = 0;
 	tile_map.get_e(t).m6 = 0;
 	tile_map.get_e(t).m7 = 0;
 }

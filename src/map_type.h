@@ -40,106 +40,226 @@ static_assert(sizeof(TileCore) == 2);
  * Data that is stored per tile. Also used TileExtended for this.
  * Look at docs/landscape.html for the exact meaning of the members.
  */
-struct Tile : public TileCore {
+struct Tile {
+	struct Raw {
+		byte type;          ///< rainforest/desert (0..1), bridges (2..3), The type (bits 4..7)
+		byte height;        ///< The height of the northern corner.
+		uint16 m2;          ///< Primarily used for indices to towns, industries and stations
+		byte   m1;          ///< Primarily used for ownership information
+		byte   m3;          ///< General purpose
+		byte   m4;          ///< General purpose
+		byte   m5;          ///< General purpose
+	};
+
 	union {
+		uint64 all;
+		Raw raw;
 		struct {
-			uint16 m2_;          ///< Primarily used for indices to towns, industries and stations
-			union
-			{
-				byte   m1_;          ///< Primarily used for ownership information
-				struct {
-					byte owner : 5;
-					byte wc : 2;
-					byte TUNNELBRIDGE : 1;
+			struct {
+				union {
+					byte _type;
+					struct {
+						byte zone : 2;
+						byte above_x : 1;
+						byte above_y : 1;
+						byte type : 4;
+					};
+					struct {
+						byte zone : 2;
+						byte above : 2;
+						byte type : 4;
+					};
 				};
+				byte height;
+			};
+			union {
 				struct {
+					uint16 industry_id;
+					byte m1;
+					byte field_type : 4;
+					byte is_snow : 1;
+					byte m3_57 : 3;
+					byte m4_12 : 2;
+					byte fence_se : 3;
+					byte fence_sw : 3;
+					byte density : 2;
+					byte ground_type : 3;
+					byte counter : 3;
+				} clear;
+				struct {
+					uint16 industry_id;
+					byte m1;
+					byte type : 4;
+					byte is_snow : 1;
+					byte fence_ne : 3;
+					byte m4_12 : 2;
+					byte fence_se : 3;
+					byte fence_sw : 3;
+					byte m5;
+				} field;
+				struct {
+					uint16 m2;
 					byte owner : 5;
-				} road;
+				} owned;
 				struct {
+					uint16 m2;
 					byte owner : 5;
 					byte wc : 2;
 					byte is_docking : 1;
+					byte m3;
+					byte bits;
+					byte m5;
 				} water;
-			};
-			byte   m3;          ///< General purpose
-			byte   m4;          ///< General purpose
-			byte   m5;          ///< General purpose
-		};
-		struct {
-			byte counter : 4;
-			byte density : 2;
-			byte ground : 3;
-			byte b : 1;
-			byte type;
-		} tree;
-		struct {
-			uint16 id;
-		} town;
-		struct {
-			uint16 town_id;
-			byte random;
-		} house;
-		struct {
-			uint16 id;
-			byte construction_stage : 2;
-			byte construction_counter : 2;
-			byte wc2 : 1;
-			byte wc : 2;
-			byte is_completed : 1;
-			byte field_type;
-		} industry;
-		struct {
-			union {
-				uint16 id;
 				struct {
-					byte signal_ul : 3;
-					byte signal_ul_variant : 1;
-					byte signal_lr : 3;
-					byte signal_lr_variant : 1;
-					byte bits : 3;
-					byte b2 : 1;
-					byte m2_11 : 1;
-					byte b3 : 2;
-				};
-			};
-		} track;
-		struct {
-			uint16 id;
-			byte m1;
-			byte m3;
-			byte m4;
-			byte section;
-		} station;
-		struct {
-			uint16 id;
-			union {
+					byte counter : 4;
+					byte density : 2;
+					byte ground : 3;
+					byte m2_1415 : 5;
+					byte m1;
+					byte type;
+					byte m4;
+					byte m5;
+				} tree;
 				struct {
+					uint16 id;
 					byte m1;
 					byte m3;
 					byte m4;
+					byte m5;
+				} town;
+				struct {
+					uint16 town_id;
+					byte random;
+					byte triggers : 5;
+					byte m3_5 : 1;
+					byte clean_house_flag : 1;
+					byte is_completed : 1;
+					union {
+						byte house_id;
+						byte old_town_id;
+					};
+					byte m5;
+				} house;
+				struct {
+					uint16 id;
+					byte construction_stage : 2;
+					byte construction_counter : 2;
+					byte wc2 : 1;
+					byte wc : 2;
+					byte is_completed : 1;
+					byte bits;
+					byte animation_loop;
+					byte m5;
+				} industry;
+				struct {
+					uint16 m2;
+					struct {
+						byte owner : 5;
+						byte wc : 2;
+						byte TUNNELBRIDGE : 1;
+					};
+					byte m3_18;
+					byte type : 6;
+					byte m4_67 : 2;
+					byte direction : 2;
+					byte transport_type : 2;
+					byte reserved : 1;
+					byte m5_67 : 2;
+					byte is_bridge : 1;
+				} bridge;
+				struct {
+					uint16 m2;
+					byte owner : 5;
+					byte m1 : 3;
+					byte tram_bits : 4;
+					byte tram_owner : 4;
+					byte type : 6;
+					byte m4_67 : 2;
 					byte m5;
 				} road;
 				struct {
+					struct {
+						byte signal_ul : 3;
+						byte signal_ul_variant : 1;
+						byte signal_lr : 3;
+						byte signal_lr_variant : 1;
+						byte bits : 3;
+						byte m2_11 : 1;
+						byte m2_1215 : 4;
+					};
 					byte m1;
-					byte m3;
-					byte m4;
+					union {
+						byte m3;
+						struct {
+							byte m3 : 4;
+							byte signal_side_lr : 2;
+							byte signal_side_ul : 2;
+						};
+						struct {
+							byte m3 : 4;
+							byte signals_present : 4;
+						};
+					};
+					byte ground_type : 4;
+					byte signal_states : 4;
 					byte m5;
 				} rail;
 				struct {
+					uint16 id;
 					byte m1;
-					byte m3;
+					byte m3 : 4;
+					byte random : 4;
+					byte spec_index;
+					byte gfx;
+				} station;
+				struct {
+					uint16 id;
+					union {
+						struct {
+							byte m1;
+							byte m3;
+							byte type : 6;
+							byte   m4 : 2;
+							byte m5;
+						} road;
+						struct {
+							byte m1;
+							byte m3;
+							byte m4;
+							byte m5;
+						} rail;
+						struct {
+							byte m1;
+							byte m3;
+							byte m4;
+							byte m5;
+						} ship;
+					};
+				} depot;
+				struct {
+					uint16 index;
+					byte m1;
+					byte bits;
 					byte m4;
 					byte m5;
-				} ship;
+				} object;
+				struct {
+					uint16 station_id;
+					byte m1;
+					byte m3_03 : 4;
+					byte m3_4 : 1;
+					byte m3_57 : 3;
+					byte tile_index;
+					byte m5;
+				} waypoint;
 			};
-		} depot;
-		struct {
-			uint16 index;
-		} object;
-		struct {
-			uint16 station_id;
-		} waypoint;
+		};
 	};
+
+	void init()
+	{
+		all = 0;
+	}
 };
 
 static_assert(sizeof(Tile) == 8);

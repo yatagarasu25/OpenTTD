@@ -26,7 +26,7 @@
 static inline DiagDirection GetTunnelBridgeDirection(TileIndex t)
 {
 	assert(IsTileType(t, MP_TUNNELBRIDGE));
-	return (DiagDirection)GB(tile_map.get(t).m5, 0, 2);
+	return (DiagDirection)tile_map.get(t).bridge.direction;
 }
 
 /**
@@ -39,7 +39,7 @@ static inline DiagDirection GetTunnelBridgeDirection(TileIndex t)
 static inline TransportType GetTunnelBridgeTransportType(TileIndex t)
 {
 	assert(IsTileType(t, MP_TUNNELBRIDGE));
-	return (TransportType)GB(tile_map.get(t).m5, 2, 2);
+	return (TransportType)tile_map.get(t).bridge.transport_type;
 }
 
 /**
@@ -92,7 +92,7 @@ static inline bool HasTunnelBridgeReservation(TileIndex t)
 {
 	assert(IsTileType(t, MP_TUNNELBRIDGE));
 	assert(GetTunnelBridgeTransportType(t) == TRANSPORT_RAIL);
-	return HasBit(tile_map.get(t).m5, 4);
+	return tile_map.get(t).bridge.reserved;
 }
 
 /**
@@ -105,7 +105,7 @@ static inline void SetTunnelBridgeReservation(TileIndex t, bool b)
 {
 	assert(IsTileType(t, MP_TUNNELBRIDGE));
 	assert(GetTunnelBridgeTransportType(t) == TRANSPORT_RAIL);
-	SB(tile_map.get(t).m5, 4, 1, b ? 1 : 0);
+	tile_map.get(t).bridge.reserved = b ? 1 : 0;
 }
 
 /**

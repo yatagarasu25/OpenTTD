@@ -47,7 +47,7 @@ static inline bool IsObjectTypeTile(TileIndex t, ObjectType type)
 static inline ObjectID GetObjectIndex(TileIndex t)
 {
 	assert(IsTileType(t, MP_OBJECT));
-	return tile_map.get(t).object.index | tile_map.get(t).m5 << 16;
+	return tile_map.get(t).object.index | tile_map.get(t).object.m5 << 16;
 }
 
 /**
@@ -59,7 +59,7 @@ static inline ObjectID GetObjectIndex(TileIndex t)
 static inline byte GetObjectRandomBits(TileIndex t)
 {
 	assert(IsTileType(t, MP_OBJECT));
-	return tile_map.get(t).m3;
+	return tile_map.get(t).object.bits;
 }
 
 
@@ -73,13 +73,13 @@ static inline byte GetObjectRandomBits(TileIndex t)
  */
 static inline void MakeObject(TileIndex t, Owner o, ObjectID index, WaterClass wc, byte random)
 {
+	Tile& t_ = tile_map.get(t); t_.init();
 	SetTileType(t, MP_OBJECT);
 	SetTileOwner(t, o);
 	SetWaterClass(t, wc);
-	tile_map.get(t).object.index = index;
-	tile_map.get(t).m3 = random;
-	tile_map.get(t).m4 = 0;
-	tile_map.get(t).m5 = index >> 16;
+	t_.object.index = index;
+	t_.object.bits = random;
+	t_.object.m5 = index >> 16;
 	SB(tile_map.get_e(t).m6, 2, 4, 0);
 	tile_map.get_e(t).m7 = 0;
 }

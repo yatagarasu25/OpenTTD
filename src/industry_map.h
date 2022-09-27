@@ -125,7 +125,7 @@ static inline void SetIndustryConstructionStage(TileIndex tile, byte value)
 static inline IndustryGfx GetCleanIndustryGfx(TileIndex t)
 {
 	assert(IsTileType(t, MP_INDUSTRY));
-	return tile_map.get(t).m5 | (GB(tile_map.get_e(t).m6, 2, 1) << 8);
+	return tile_map.get(t).industry.m5 | (GB(tile_map.get_e(t).m6, 2, 1) << 8);
 }
 
 /**
@@ -149,7 +149,7 @@ static inline IndustryGfx GetIndustryGfx(TileIndex t)
 static inline void SetIndustryGfx(TileIndex t, IndustryGfx gfx)
 {
 	assert(IsTileType(t, MP_INDUSTRY));
-	tile_map.get(t).m5 = GB(gfx, 0, 8);
+	tile_map.get(t).industry.m5 = GB(gfx, 0, 8);
 	SB(tile_map.get_e(t).m6, 2, 1, GB(gfx, 8, 1));
 }
 
@@ -200,7 +200,7 @@ static inline void ResetIndustryConstructionStage(TileIndex tile)
 static inline byte GetIndustryAnimationLoop(TileIndex tile)
 {
 	assert(IsTileType(tile, MP_INDUSTRY));
-	return tile_map.get(tile).m4;
+	return tile_map.get(tile).industry.animation_loop;
 }
 
 /**
@@ -212,7 +212,7 @@ static inline byte GetIndustryAnimationLoop(TileIndex tile)
 static inline void SetIndustryAnimationLoop(TileIndex tile, byte count)
 {
 	assert(IsTileType(tile, MP_INDUSTRY));
-	tile_map.get(tile).m4 = count;
+	tile_map.get(tile).industry.animation_loop = count;
 }
 
 /**
@@ -225,7 +225,7 @@ static inline void SetIndustryAnimationLoop(TileIndex tile, byte count)
 static inline byte GetIndustryRandomBits(TileIndex tile)
 {
 	assert(IsTileType(tile, MP_INDUSTRY));
-	return tile_map.get(tile).m3;
+	return tile_map.get(tile).industry.is_completed;
 }
 
 /**
@@ -238,7 +238,7 @@ static inline byte GetIndustryRandomBits(TileIndex tile)
 static inline void SetIndustryRandomBits(TileIndex tile, byte bits)
 {
 	assert(IsTileType(tile, MP_INDUSTRY));
-	tile_map.get(tile).m3 = bits;
+	tile_map.get(tile).industry.bits = bits;
 }
 
 /**
@@ -278,11 +278,10 @@ static inline void SetIndustryTriggers(TileIndex tile, byte triggers)
  */
 static inline void MakeIndustry(TileIndex t, IndustryID index, IndustryGfx gfx, uint8 random, WaterClass wc)
 {
+	Tile& t_ = tile_map.get(t); t_.init();
 	SetTileType(t, MP_INDUSTRY);
-	tile_map.get(t).m1_ = 0;
 	tile_map.get(t).industry.id = index;
 	SetIndustryRandomBits(t, random); // m3
-	tile_map.get(t).m4 = 0;
 	SetIndustryGfx(t, gfx); // m5, part of m6
 	SetIndustryTriggers(t, 0); // rest of m6
 	SetWaterClass(t, wc);

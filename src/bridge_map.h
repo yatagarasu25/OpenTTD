@@ -24,7 +24,7 @@
 static inline bool IsBridge(TileIndex t)
 {
 	assert(IsTileType(t, MP_TUNNELBRIDGE));
-	return HasBit(tile_map.get(t).m5, 7);
+	return tile_map.get(t).bridge.is_bridge;
 }
 
 /**
@@ -117,13 +117,14 @@ static inline void SetBridgeMiddle(TileIndex t, Axis a)
  */
 static inline void MakeBridgeRamp(TileIndex t, Owner o, BridgeType bridgetype, DiagDirection d, TransportType tt)
 {
+	Tile& t_ = tile_map.get(t); t_.init();
 	SetTileType(t, MP_TUNNELBRIDGE);
 	SetTileOwner(t, o);
 	SetDockingTile(t, false);
-	tile_map.get(t).m2_ = 0;
-	tile_map.get(t).m3 = 0;
-	tile_map.get(t).m4 = INVALID_ROADTYPE;
-	tile_map.get(t).m5 = 1 << 7 | tt << 2 | d;
+	t_.bridge.type = INVALID_ROADTYPE;
+	t_.bridge.is_bridge = 1;
+	t_.bridge.direction = d;
+	t_.bridge.transport_type = tt;
 	SB(tile_map.get_e(t).m6, 2, 4, bridgetype);
 	tile_map.get_e(t).m7 = 0;
 	tile_map.get_e(t).m8 = INVALID_ROADTYPE << 6;

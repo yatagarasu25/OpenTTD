@@ -23,6 +23,7 @@
 enum RailTileType {
 	RAIL_TILE_NORMAL   = 0, ///< Normal rail tile without signals
 	RAIL_TILE_SIGNALS  = 1, ///< Normal rail tile with signals
+	RAIL_TILE_WAYPOINT = 2, ///< Normal rail tile with waypoint
 	RAIL_TILE_DEPOT    = 3, ///< Depot (one entrance)
 };
 
@@ -36,7 +37,7 @@ enum RailTileType {
 static inline RailTileType GetRailTileType(TileIndex t)
 {
 	assert(IsTileType(t, MP_RAILWAY));
-	return (RailTileType)GB(tile_map.get(t).m5, 6, 2);
+	return (RailTileType)GB(tile_map.get(t).rail.m5, 6, 2);
 }
 
 /**
@@ -83,7 +84,7 @@ static inline bool HasSignals(TileIndex t)
 static inline void SetHasSignals(TileIndex tile, bool signals)
 {
 	assert(IsPlainRailTile(tile));
-	SB(tile_map.get(tile).m5, 6, 1, signals);
+	SB(tile_map.get(tile).rail.m5, 6, 1, signals);
 }
 
 /**
@@ -136,7 +137,7 @@ static inline void SetRailType(TileIndex t, RailType r)
 static inline TrackBits GetTrackBits(TileIndex tile)
 {
 	assert(IsPlainRailTile(tile));
-	return (TrackBits)GB(tile_map.get(tile).m5, 0, 6);
+	return (TrackBits)GB(tile_map.get(tile).rail.m5, 0, 6);
 }
 
 /**
@@ -147,7 +148,7 @@ static inline TrackBits GetTrackBits(TileIndex tile)
 static inline void SetTrackBits(TileIndex t, TrackBits b)
 {
 	assert(IsPlainRailTile(t));
-	SB(tile_map.get(t).m5, 0, 6, b);
+	SB(tile_map.get(t).rail.m5, 0, 6, b);
 }
 
 /**
@@ -170,7 +171,7 @@ static inline bool HasTrack(TileIndex tile, Track track)
  */
 static inline DiagDirection GetRailDepotDirection(TileIndex t)
 {
-	return (DiagDirection)GB(tile_map.get(t).m5, 0, 2);
+	return (DiagDirection)GB(tile_map.get(t).rail.m5, 0, 2);
 }
 
 /**
@@ -194,10 +195,10 @@ static inline Track GetRailDepotTrack(TileIndex t)
 static inline TrackBits GetRailReservationTrackBits(TileIndex t)
 {
 	assert(IsPlainRailTile(t));
-	byte track_b = GB(tile_map.get(t).m2, 8, 3);
+	byte track_b = tile_map.get(t).rail.bits;
 	Track track = (Track)(track_b - 1);    // map array saves Track+1
 	if (track_b == 0) return TRACK_BIT_NONE;
-	return (TrackBits)(TrackToTrackBits(track) | (HasBit(tile_map.get(t).m2, 11) ? TrackToTrackBits(TrackToOppositeTrack(track)) : 0));
+	return (TrackBits)(TrackToTrackBits(track) | (tile_map.get(t).rail.m2_11 ? TrackToTrackBits(TrackToOppositeTrack(track)) : 0));
 }
 
 /**
@@ -212,8 +213,8 @@ static inline void SetTrackReservation(TileIndex t, TrackBits b)
 	assert(b != INVALID_TRACK_BIT);
 	assert(!TracksOverlap(b));
 	Track track = RemoveFirstTrack(&b);
-	SB(tile_map.get(t).m2, 8, 3, track == INVALID_TRACK ? 0 : track + 1);
-	SB(tile_map.get(t).m2, 11, 1, (byte)(b != TRACK_BIT_NONE));
+	tile_map.get(t).rail.bits = (track == INVALID_TRACK ? 0 : track + 1);
+	tile_map.get(t).rail.m2_11 = (byte)(b != TRACK_BIT_NONE);
 }
 
 /**
@@ -258,7 +259,7 @@ static inline void UnreserveTrack(TileIndex tile, Track t)
 static inline bool HasDepotReservation(TileIndex t)
 {
 	assert(IsRailDepot(t));
-	return HasBit(tile_map.get(t).m5, 4);
+	return HasBit(tile_map.get(t).rail.m5, 4);
 }
 
 /**
@@ -270,7 +271,7 @@ static inline bool HasDepotReservation(TileIndex t)
 static inline void SetDepotReservation(TileIndex t, bool b)
 {
 	assert(IsRailDepot(t));
-	SB(tile_map.get(t).m5, 4, 1, (byte)b);
+	SB(tile_map.get(t).rail.m5, 4, 1, (byte)b);
 }
 
 /**
@@ -293,16 +294,19 @@ static inline bool IsPbsSignal(SignalType s)
 static inline SignalType GetSignalType(TileIndex t, Track track)
 {
 	assert(GetRailTileType(t) == RAIL_TILE_SIGNALS);
-	byte pos = (track == TRACK_LOWER || track == TRACK_RIGHT) ? 4 : 0;
-	return (SignalType)GB(tile_map.get(t).m2, pos, 3);
+	return (SignalType)
+		((track == TRACK_LOWER || track == TRACK_RIGHT)
+			? tile_map.get(t).rail.signal_lr : tile_map.get(t).rail.signal_ul);
 }
 
 static inline void SetSignalType(TileIndex t, Track track, SignalType s)
 {
 	assert(GetRailTileType(t) == RAIL_TILE_SIGNALS);
-	byte pos = (track == TRACK_LOWER || track == TRACK_RIGHT) ? 4 : 0;
-	SB(tile_map.get(t).m2, pos, 3, s);
-	if (track == INVALID_TRACK) SB(tile_map.get(t).m2, 4, 3, s);
+
+	((track == TRACK_LOWER || track == TRACK_RIGHT)
+		? tile_map.get(t).rail.signal_lr : tile_map.get(t).rail.signal_ul) = s;
+
+	if (track == INVALID_TRACK) tile_map.get(t).rail.signal_lr = s;
 }
 
 static inline bool IsPresignalEntry(TileIndex t, Track track)
@@ -326,22 +330,24 @@ static inline void CycleSignalSide(TileIndex t, Track track)
 	byte sig;
 	byte pos = (track == TRACK_LOWER || track == TRACK_RIGHT) ? 4 : 6;
 
-	sig = GB(tile_map.get(t).m3, pos, 2);
+	sig = ((track == TRACK_LOWER || track == TRACK_RIGHT)
+		? tile_map.get(t).rail.signal_side_lr : tile_map.get(t).rail.signal_side_ul);
 	if (--sig == 0) sig = IsPbsSignal(GetSignalType(t, track)) ? 2 : 3;
-	SB(tile_map.get(t).m3, pos, 2, sig);
+	((track == TRACK_LOWER || track == TRACK_RIGHT)
+		? tile_map.get(t).rail.signal_side_lr : tile_map.get(t).rail.signal_side_ul) = sig;
 }
 
 static inline SignalVariant GetSignalVariant(TileIndex t, Track track)
 {
-	byte pos = (track == TRACK_LOWER || track == TRACK_RIGHT) ? 7 : 3;
-	return (SignalVariant)GB(tile_map.get(t).m2, pos, 1);
+	return (SignalVariant)((track == TRACK_LOWER || track == TRACK_RIGHT)
+		? tile_map.get(t).rail.signal_lr_variant : tile_map.get(t).rail.signal_ul_variant);
 }
 
 static inline void SetSignalVariant(TileIndex t, Track track, SignalVariant v)
 {
-	byte pos = (track == TRACK_LOWER || track == TRACK_RIGHT) ? 7 : 3;
-	SB(tile_map.get(t).m2, pos, 1, v);
-	if (track == INVALID_TRACK) SB(tile_map.get(t).m2, 7, 1, v);
+	((track == TRACK_LOWER || track == TRACK_RIGHT)
+		? tile_map.get(t).rail.signal_lr_variant : tile_map.get(t).rail.signal_ul_variant) = v;
+	if (track == INVALID_TRACK) tile_map.get(t).rail.signal_lr_variant = v;
 }
 
 /**
@@ -351,7 +357,7 @@ static inline void SetSignalVariant(TileIndex t, Track track, SignalVariant v)
  */
 static inline void SetSignalStates(TileIndex tile, uint state)
 {
-	SB(tile_map.get(tile).m4, 4, 4, state);
+	tile_map.get(tile).rail.signal_states = state;
 }
 
 /**
@@ -361,7 +367,7 @@ static inline void SetSignalStates(TileIndex tile, uint state)
  */
 static inline uint GetSignalStates(TileIndex tile)
 {
-	return GB(tile_map.get(tile).m4, 4, 4);
+	return tile_map.get(tile).rail.signal_states;
 }
 
 /**
@@ -382,7 +388,7 @@ static inline SignalState GetSingleSignalState(TileIndex t, byte signalbit)
  */
 static inline void SetPresentSignals(TileIndex tile, uint signals)
 {
-	SB(tile_map.get(tile).m3, 4, 4, signals);
+	tile_map.get(tile).rail.signals_present = signals;
 }
 
 /**
@@ -392,7 +398,7 @@ static inline void SetPresentSignals(TileIndex tile, uint signals)
  */
 static inline uint GetPresentSignals(TileIndex tile)
 {
-	return GB(tile_map.get(tile).m3, 4, 4);
+	return tile_map.get(tile).rail.signals_present;
 }
 
 /**
@@ -502,12 +508,12 @@ enum RailGroundType {
 
 static inline void SetRailGroundType(TileIndex t, RailGroundType rgt)
 {
-	SB(tile_map.get(t).m4, 0, 4, rgt);
+	tile_map.get(t).rail.ground_type = rgt;
 }
 
 static inline RailGroundType GetRailGroundType(TileIndex t)
 {
-	return (RailGroundType)GB(tile_map.get(t).m4, 0, 4);
+	return (RailGroundType)tile_map.get(t).rail.ground_type;
 }
 
 static inline bool IsSnowRailGround(TileIndex t)
@@ -518,13 +524,11 @@ static inline bool IsSnowRailGround(TileIndex t)
 
 static inline void MakeRailNormal(TileIndex t, Owner o, TrackBits b, RailType r)
 {
+	Tile& t_ = tile_map.get(t); t_.init();
 	SetTileType(t, MP_RAILWAY);
 	SetTileOwner(t, o);
 	SetDockingTile(t, false);
-	tile_map.get(t).m2 = 0;
-	tile_map.get(t).m3 = 0;
-	tile_map.get(t).m4 = 0;
-	tile_map.get(t).m5 = RAIL_TILE_NORMAL << 6 | b;
+	t_.rail.m5 = RAIL_TILE_NORMAL << 6 | b;
 	SB(tile_map.get_e(t).m6, 2, 4, 0);
 	tile_map.get_e(t).m7 = 0;
 	tile_map.get_e(t).m8 = r;
@@ -533,13 +537,12 @@ static inline void MakeRailNormal(TileIndex t, Owner o, TrackBits b, RailType r)
 
 static inline void MakeRailDepot(TileIndex t, Owner o, DepotID did, DiagDirection d, RailType r)
 {
+	Tile& t_ = tile_map.get(t); t_.init();
 	SetTileType(t, MP_RAILWAY);
 	SetTileOwner(t, o);
 	SetDockingTile(t, false);
-	tile_map.get(t).m2 = did;
-	tile_map.get(t).m3 = 0;
-	tile_map.get(t).m4 = 0;
-	tile_map.get(t).m5 = RAIL_TILE_DEPOT << 6 | d;
+	t_.depot.id = did;
+	t_.rail.m5 = RAIL_TILE_DEPOT << 6 | d;
 	SB(tile_map.get_e(t).m6, 2, 4, 0);
 	tile_map.get_e(t).m7 = 0;
 	tile_map.get_e(t).m8 = r;

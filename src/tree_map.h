@@ -73,7 +73,7 @@ enum TreeGround {
 static inline TreeType GetTreeType(TileIndex t)
 {
 	assert(IsTileType(t, MP_TREES));
-	return (TreeType)tile_map.get(t).m3;
+	return (TreeType)tile_map.get(t).tree.type;
 }
 
 /**
@@ -149,7 +149,7 @@ static inline void SetTreeGroundDensity(TileIndex t, TreeGround g, uint d)
 static inline uint GetTreeCount(TileIndex t)
 {
 	assert(IsTileType(t, MP_TREES));
-	return GB(tile_map.get(t).m5, 6, 2) + 1;
+	return GB(tile_map.get(t).tree.m5, 6, 2) + 1;
 }
 
 /**
@@ -166,7 +166,7 @@ static inline uint GetTreeCount(TileIndex t)
 static inline void AddTreeCount(TileIndex t, int c)
 {
 	assert(IsTileType(t, MP_TREES)); // XXX incomplete
-	tile_map.get(t).m5 += c << 6;
+	tile_map.get(t).tree.m5 += c << 6;
 }
 
 /**
@@ -181,7 +181,7 @@ static inline void AddTreeCount(TileIndex t, int c)
 static inline uint GetTreeGrowth(TileIndex t)
 {
 	assert(IsTileType(t, MP_TREES));
-	return GB(tile_map.get(t).m5, 0, 3);
+	return GB(tile_map.get(t).tree.m5, 0, 3);
 }
 
 /**
@@ -196,7 +196,7 @@ static inline uint GetTreeGrowth(TileIndex t)
 static inline void AddTreeGrowth(TileIndex t, int a)
 {
 	assert(IsTileType(t, MP_TREES)); // XXX incomplete
-	tile_map.get(t).m5 += a;
+	tile_map.get(t).tree.m5 += a;
 }
 
 /**
@@ -212,7 +212,7 @@ static inline void AddTreeGrowth(TileIndex t, int a)
 static inline void SetTreeGrowth(TileIndex t, uint g)
 {
 	assert(IsTileType(t, MP_TREES)); // XXX incomplete
-	SB(tile_map.get(t).m5, 0, 3, g);
+	SB(tile_map.get(t).tree.m5, 0, 3, g);
 }
 
 /**
@@ -273,15 +273,16 @@ static inline void SetTreeCounter(TileIndex t, uint c)
  */
 static inline void MakeTree(TileIndex t, TreeType type, uint count, uint growth, TreeGround ground, uint density)
 {
+	Tile& t_ = tile_map.get(t); t_.init();
 	SetTileType(t, MP_TREES);
 	SetTileOwner(t, OWNER_NONE);
 	SetWaterClass(t, ground == TREE_GROUND_SHORE ? WATER_CLASS_SEA : WATER_CLASS_INVALID);
-	tile_map.get(t).tree.counter = 0;
-	tile_map.get(t).tree.ground = ground;
-	tile_map.get(t).tree.density = density;
-	tile_map.get(t).tree.type = type;
-	tile_map.get(t).m4 = 0 << 5 | 0 << 2;
-	tile_map.get(t).m5 = count << 6 | growth;
+	t_.tree.counter = 0;
+	t_.tree.ground = ground;
+	t_.tree.density = density;
+	t_.tree.type = type;
+	t_.tree.m4 = 0 << 5 | 0 << 2;
+	t_.tree.m5 = count << 6 | growth;
 	SB(tile_map.get_e(t).m6, 2, 4, 0);
 	tile_map.get_e(t).m7 = 0;
 }
