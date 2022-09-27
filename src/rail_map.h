@@ -524,8 +524,7 @@ static inline bool IsSnowRailGround(TileIndex t)
 
 static inline void MakeRailNormal(TileIndex t, Owner o, TrackBits b, RailType r)
 {
-	Tile& t_ = tile_map.init(t, MP_RAILWAY);
-	SetTileOwner(t, o);
+	Tile& t_ = tile_map.init(t, MP_RAILWAY, o);
 	SetDockingTile(t, false);
 	t_.rail.track_bits = b;
 	t_.rail.tile_type = RAIL_TILE_NORMAL;
@@ -537,8 +536,7 @@ static inline void MakeRailNormal(TileIndex t, Owner o, TrackBits b, RailType r)
 
 static inline void MakeRailDepot(TileIndex t, Owner o, DepotID did, DiagDirection d, RailType r)
 {
-	Tile& t_ = tile_map.init(t, MP_RAILWAY);
-	SetTileOwner(t, o);
+	Tile& t_ = tile_map.init(t, MP_RAILWAY, o);
 	SetDockingTile(t, false);
 	t_.depot.id = did;
 	t_.depot.rail.direction = d;

@@ -399,11 +399,11 @@ static void UpdateFreeformEdges(int32 new_value)
 		/* Make tiles at the border water again. */
 		for (uint i = 0; i < MapMaxX(); i++) {
 			SetTileHeight(tile_map.tile(i, 0), 0);
-			SetTileType(tile_map.tile(i, 0), MP_WATER);
+			tile_map.get(tile_map.tile(i, 0)).type = MP_WATER;
 		}
 		for (uint i = 0; i < MapMaxY(); i++) {
 			SetTileHeight(tile_map.tile(0, i), 0);
-			SetTileType(tile_map.tile(0, i), MP_WATER);
+			tile_map.get(tile_map.tile(0, i)).type = MP_WATER;
 		}
 	}
 	MarkWholeScreenDirty();

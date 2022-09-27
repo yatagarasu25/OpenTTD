@@ -14,6 +14,7 @@
 #include "tile_type.h"
 #include "map_type.h"
 #include "direction_func.h"
+#include "company_type.h"
 
 
 struct TileMap
@@ -35,29 +36,13 @@ struct TileMap
 	  * This variable points to the tile-array which contains the tiles of
 	  * the map.
 	  */
-	Tile* _m;
-
-	/**
-	 * Pointer to the extended tile-array.
-	 *
-	 * This variable points to the extended tile-array which contains the tiles
-	 * of the map.
-	 */
-	TileExtended* _me;
+	Tile* _m = nullptr;
 
 	void Allocate();
 
 	TileIndex tile(uint x, uint y)
 	{
 		return (y << log_x) + x;
-	}
-
-	Tile& init(const TileIndex& i, TileType type)
-	{
-		assert(i < size);
-		_m[i].type = type;
-		_m[i].init();
-		return _m[i];
 	}
 
 	Tile& change(const TileIndex& i, TileType type)
@@ -67,26 +52,46 @@ struct TileMap
 		return _m[i];
 	}
 
+	Tile& init(const TileIndex& i, TileType type)
+	{
+		auto& t = change(i, type);
+		t.init();
+		return t;
+	}
+
+	Tile& init(const TileIndex& i, TileType type, Owner o)
+	{
+		auto& t = change(i, type);
+		t.owned().owner = o;
+		t.init();
+		return t;
+	}
+
 	Tile& get(const TileIndex& i)
 	{
 		assert(i < size);
 		return _m[i];
 	}
 
-	TileExtended& get_e(const TileIndex& i)
+	Tile& get_e(const TileIndex& i)
 	{
 		assert(i < size);
-		return _me[i];
+		return _m[i];
 	}
 
 	Tile::Raw& raw(const TileIndex& i) { return _m[i].raw; }
-	TileExtended& raw_e(const TileIndex& i) { return _me[i]; }
+	Tile::Raw& raw_e(const TileIndex& i) { return _m[i].raw; }
+
+	Tile::Owned& owned(const TileIndex& i)
+	{
+		return get(i).owned();
+	}
 
 	Tile::Clear& clear(const TileIndex& i)
 	{
 		Tile& t = get(i);
 		assert(t.type == MP_CLEAR);
-		return _m[i].clear;
+		return t.clear;
 	}
 };
 

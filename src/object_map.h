@@ -73,8 +73,7 @@ static inline byte GetObjectRandomBits(TileIndex t)
  */
 static inline void MakeObject(TileIndex t, Owner o, ObjectID index, WaterClass wc, byte random)
 {
-	Tile& t_ = tile_map.init(t, MP_OBJECT);
-	SetTileOwner(t, o);
+	Tile& t_ = tile_map.init(t, MP_OBJECT, o);
 	SetWaterClass(t, wc);
 	t_.object.index = index;
 	t_.object.bits = random;

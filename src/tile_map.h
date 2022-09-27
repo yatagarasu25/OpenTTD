@@ -142,11 +142,7 @@ static inline bool IsValidTile(TileIndex tile)
  */
 static inline Owner GetTileOwner(TileIndex tile)
 {
-	assert(IsValidTile(tile));
-	assert(!IsTileType(tile, MP_HOUSE));
-	assert(!IsTileType(tile, MP_INDUSTRY));
-
-	return (Owner)tile_map.get(tile).owned.owner;
+	return (Owner)tile_map.owned(tile).owner;
 }
 
 /**
@@ -162,11 +158,7 @@ static inline Owner GetTileOwner(TileIndex tile)
  */
 static inline void SetTileOwner(TileIndex tile, Owner owner)
 {
-	assert(IsValidTile(tile));
-	assert(!IsTileType(tile, MP_HOUSE));
-	assert(!IsTileType(tile, MP_INDUSTRY));
-
-	tile_map.get(tile).owned.owner = owner;
+	tile_map.owned(tile).owner = owner;
 }
 
 /**
@@ -215,7 +207,7 @@ static inline TropicZone GetTropicZone(TileIndex tile)
 static inline byte GetAnimationFrame(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE) || IsTileType(t, MP_OBJECT) || IsTileType(t, MP_INDUSTRY) ||IsTileType(t, MP_STATION));
-	return tile_map.get_e(t).m7;
+	return tile_map.get(t).animated.frame;
 }
 
 /**
@@ -227,7 +219,7 @@ static inline byte GetAnimationFrame(TileIndex t)
 static inline void SetAnimationFrame(TileIndex t, byte frame)
 {
 	assert(IsTileType(t, MP_HOUSE) || IsTileType(t, MP_OBJECT) || IsTileType(t, MP_INDUSTRY) ||IsTileType(t, MP_STATION));
-	tile_map.get_e(t).m7 = frame;
+	tile_map.get(t).animated.frame = frame;
 }
 
 Slope GetTileSlope(TileIndex tile, int *h = nullptr);

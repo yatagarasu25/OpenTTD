@@ -24,17 +24,9 @@ TileMap tile_map;
 
 void TileMap::Allocate()
 {
-#undef _m
-#undef _me
-
 	free(_m);
-	free(_me);
 
 	_m = CallocT<Tile>(size);
-	_me = CallocT<TileExtended>(size);
-
-#define _m tile_map._m
-#define _me tile_map._me
 }
 
 /**

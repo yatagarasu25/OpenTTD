@@ -251,8 +251,7 @@ static inline void SetFence(TileIndex t, DiagDirection side, uint h)
  */
 static inline void MakeClear(TileIndex t, ClearGround g, uint density)
 {
-	Tile& t_ = tile_map.init(t, MP_CLEAR);
-	SetTileOwner(t, OWNER_NONE);
+	Tile& t_ = tile_map.init(t, MP_CLEAR, OWNER_NONE);
 	SetClearGroundDensity(t, g, density); // Sets m5
 	tile_map.get_e(t).m6 = 0;
 	tile_map.get_e(t).m7 = 0;
@@ -268,8 +267,7 @@ static inline void MakeClear(TileIndex t, ClearGround g, uint density)
  */
 static inline void MakeField(TileIndex t, uint field_type, IndustryID industry)
 {
-	Tile& t_ = tile_map.init(t, MP_CLEAR);
-	SetTileOwner(t, OWNER_NONE);
+	Tile& t_ = tile_map.init(t, MP_CLEAR, OWNER_NONE);
 	t_.field.industry_id = industry; // TODO ?????
 	t_.field.type = field_type;
 	SetClearGroundDensity(t, CLEAR_FIELDS, 3);

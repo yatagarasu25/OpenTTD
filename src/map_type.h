@@ -49,7 +49,27 @@ struct Tile {
 		byte   m3;          ///< General purpose
 		byte   m4;          ///< General purpose
 		byte   m5;          ///< General purpose
+		byte   m6;          ///< General purpose
+		byte   m7;          ///< Primarily used for newgrf support
+		uint16 m8;          ///< General purpose
 	};
+
+	struct Owned {
+		uint16 m2;
+		byte owner : 5;
+	};
+
+	struct Animated {
+		uint16 m2;
+		byte   m1;
+		byte   m3;
+		byte   m4;
+		byte   m5;
+		byte   m6;
+		byte   frame;
+		uint16 m8;
+	};
+
 
 	struct Clear {
 		uint16 industry_id;
@@ -75,11 +95,6 @@ struct Tile {
 		byte fence_se : 3;
 		byte fence_sw : 3;
 		byte m5;
-	};
-
-	struct Owned {
-		uint16 m2;
-		byte owner : 5;
 	};
 
 	struct Water {
@@ -324,9 +339,11 @@ struct Tile {
 				byte height;
 			};
 			union {
+				Owned owned_;
+				Animated animated;
+
 				Clear clear;
 				Field field;
-				Owned owned;
 				Water water;
 				Lock lock;
 				Tree tree;
@@ -340,6 +357,17 @@ struct Tile {
 				Depot depot;
 				Object object;
 				Waypoint waypoint;
+
+				struct {
+					uint16 _m2;          ///< Primarily used for indices to towns, industries and stations
+					byte   _m1;          ///< Primarily used for ownership information
+					byte   _m3;          ///< General purpose
+					byte   _m4;          ///< General purpose
+					byte   _m5;          ///< General purpose
+					byte   m6;          ///< General purpose
+					byte   m7;          ///< Primarily used for newgrf support
+					uint16 m8;          ///< General purpose
+				};
 			};
 		};
 	};
@@ -351,20 +379,21 @@ struct Tile {
 		raw.m3 = 0;
 		raw.m4 = 0;
 		raw.m5 = 0;
+		raw.m6 = 0;
+		raw.m7 = 0;
+		raw.m8 = 0;
+	}
+
+	Owned& owned()
+	{
+		assert(type != MP_VOID && type != MP_HOUSE && type != MP_INDUSTRY);
+
+		return owned_;
 	}
 };
 
-static_assert(sizeof(Tile) == 8);
+static_assert(sizeof(Tile) == 16);
 
-/**
- * Data that is stored per tile. Also used Tile for this.
- * Look at docs/landscape.html for the exact meaning of the members.
- */
-struct TileExtended {
-	byte m6;   ///< General purpose
-	byte m7;   ///< Primarily used for newgrf support
-	uint16 m8; ///< General purpose
-};
 
 /**
  * An offset value between two tiles.
