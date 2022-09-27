@@ -293,16 +293,19 @@ static inline bool IsPbsSignal(SignalType s)
 static inline SignalType GetSignalType(TileIndex t, Track track)
 {
 	assert(GetRailTileType(t) == RAIL_TILE_SIGNALS);
-	byte pos = (track == TRACK_LOWER || track == TRACK_RIGHT) ? 4 : 0;
-	return (SignalType)GB(tile_map.get(t).m2, pos, 3);
+	return (SignalType)
+		((track == TRACK_LOWER || track == TRACK_RIGHT)
+			? tile_map.get(t).track.signal_lr : tile_map.get(t).track.signal_ul);
 }
 
 static inline void SetSignalType(TileIndex t, Track track, SignalType s)
 {
 	assert(GetRailTileType(t) == RAIL_TILE_SIGNALS);
-	byte pos = (track == TRACK_LOWER || track == TRACK_RIGHT) ? 4 : 0;
-	SB(tile_map.get(t).m2, pos, 3, s);
-	if (track == INVALID_TRACK) SB(tile_map.get(t).m2, 4, 3, s);
+
+	((track == TRACK_LOWER || track == TRACK_RIGHT)
+		? tile_map.get(t).track.signal_lr : tile_map.get(t).track.signal_ul) = s;
+
+	if (track == INVALID_TRACK) tile_map.get(t).track.signal_lr = s;
 }
 
 static inline bool IsPresignalEntry(TileIndex t, Track track)
@@ -333,15 +336,15 @@ static inline void CycleSignalSide(TileIndex t, Track track)
 
 static inline SignalVariant GetSignalVariant(TileIndex t, Track track)
 {
-	byte pos = (track == TRACK_LOWER || track == TRACK_RIGHT) ? 7 : 3;
-	return (SignalVariant)GB(tile_map.get(t).m2, pos, 1);
+	return (SignalVariant)((track == TRACK_LOWER || track == TRACK_RIGHT)
+		? tile_map.get(t).track.signal_lr_variant : tile_map.get(t).track.signal_ul_variant);
 }
 
 static inline void SetSignalVariant(TileIndex t, Track track, SignalVariant v)
 {
-	byte pos = (track == TRACK_LOWER || track == TRACK_RIGHT) ? 7 : 3;
-	SB(tile_map.get(t).m2, pos, 1, v);
-	if (track == INVALID_TRACK) SB(tile_map.get(t).m2, 7, 1, v);
+	((track == TRACK_LOWER || track == TRACK_RIGHT)
+		? tile_map.get(t).track.signal_lr_variant : tile_map.get(t).track.signal_ul_variant) = v;
+	if (track == INVALID_TRACK) tile_map.get(t).track.signal_lr_variant = v;
 }
 
 /**
@@ -518,12 +521,10 @@ static inline bool IsSnowRailGround(TileIndex t)
 
 static inline void MakeRailNormal(TileIndex t, Owner o, TrackBits b, RailType r)
 {
+	Tile& t_ = tile_map.get(t); t_.init();
 	SetTileType(t, MP_RAILWAY);
 	SetTileOwner(t, o);
 	SetDockingTile(t, false);
-	tile_map.get(t).m2 = 0;
-	tile_map.get(t).m3 = 0;
-	tile_map.get(t).m4 = 0;
 	tile_map.get(t).m5 = RAIL_TILE_NORMAL << 6 | b;
 	SB(tile_map.get_e(t).m6, 2, 4, 0);
 	tile_map.get_e(t).m7 = 0;
@@ -533,12 +534,11 @@ static inline void MakeRailNormal(TileIndex t, Owner o, TrackBits b, RailType r)
 
 static inline void MakeRailDepot(TileIndex t, Owner o, DepotID did, DiagDirection d, RailType r)
 {
+	Tile& t_ = tile_map.get(t); t_.init();
 	SetTileType(t, MP_RAILWAY);
 	SetTileOwner(t, o);
 	SetDockingTile(t, false);
-	tile_map.get(t).m2 = did;
-	tile_map.get(t).m3 = 0;
-	tile_map.get(t).m4 = 0;
+	tile_map.get(t).depot.id = did;
 	tile_map.get(t).m5 = RAIL_TILE_DEPOT << 6 | d;
 	SB(tile_map.get_e(t).m6, 2, 4, 0);
 	tile_map.get_e(t).m7 = 0;
