@@ -195,7 +195,7 @@ static inline void SetFieldType(TileIndex t, uint f)
 static inline IndustryID GetIndustryIndexOfField(TileIndex t)
 {
 	assert(GetClearGround(t) == CLEAR_FIELDS);
-	return(IndustryID) tile_map.get(t).m2;
+	return(IndustryID) tile_map.get(t).industry.id;
 }
 
 /**
@@ -207,7 +207,7 @@ static inline IndustryID GetIndustryIndexOfField(TileIndex t)
 static inline void SetIndustryIndexOfField(TileIndex t, IndustryID i)
 {
 	assert(GetClearGround(t) == CLEAR_FIELDS);
-	tile_map.get(t).m2 = i;
+	tile_map.get(t).industry.id = i;
 }
 
 
@@ -259,9 +259,9 @@ static inline void SetFence(TileIndex t, DiagDirection side, uint h)
 static inline void MakeClear(TileIndex t, ClearGround g, uint density)
 {
 	SetTileType(t, MP_CLEAR);
-	tile_map.get(t).m1 = 0;
+	tile_map.get(t).m1_ = 0;
 	SetTileOwner(t, OWNER_NONE);
-	tile_map.get(t).m2 = 0;
+	tile_map.get(t).m2_ = 0;
 	tile_map.get(t).m3 = 0;
 	tile_map.get(t).m4 = 0 << 5 | 0 << 2;
 	SetClearGroundDensity(t, g, density); // Sets m5
@@ -280,10 +280,10 @@ static inline void MakeClear(TileIndex t, ClearGround g, uint density)
 static inline void MakeField(TileIndex t, uint field_type, IndustryID industry)
 {
 	SetTileType(t, MP_CLEAR);
-	tile_map.get(t).m1 = 0;
+	tile_map.get(t).m1_ = 0;
 	SetTileOwner(t, OWNER_NONE);
-	tile_map.get(t).m2 = industry;
-	tile_map.get(t).m3 = field_type;
+	tile_map.get(t).industry.id = industry;
+	tile_map.get(t).industry.field_type = field_type;
 	tile_map.get(t).m4 = 0 << 5 | 0 << 2;
 	SetClearGroundDensity(t, CLEAR_FIELDS, 3);
 	SB(tile_map.get_e(t).m6, 2, 4, 0);

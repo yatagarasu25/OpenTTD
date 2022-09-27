@@ -168,36 +168,17 @@ int GetTileMaxZ(TileIndex t)
 #include "station_map.h"
 
 
-struct OwnedTile : public TileCore
-{
-	Owner owner; // 0, 5, owner; !!!
-};
-
-struct StationTile : public OwnedTile
-{
-	StationID sid; // m2
-	uint16 m3m4;
-	byte section;
-
-	/*
-	SB(tile_map.get_e(t).m6, 2, 1, 0);
-	SB(tile_map.get_e(t).m6, 3, 3, st);
-	tile_map.get_e(t).m7 = 0;
-	tile_map.get_e(t).m8 = 0;
-	*/
-};
-
 void MakeStation(TileIndex t, Owner o, StationID sid, StationType st, byte section, WaterClass wc)
 {
-	StationTile& st_ = (StationTile&)(tile_map.get(t));
+	Tile& t_ = tile_map.get(t);
 	SetTileType(t, MP_STATION);
 	SetTileOwner(t, o);
 	SetWaterClass(t, wc);
 	SetDockingTile(t, false);
-	tile_map.get(t).m2 = sid;
-	tile_map.get(t).m3 = 0;
-	tile_map.get(t).m4 = 0;
-	tile_map.get(t).m5 = section;
+	t_.station.id = sid;
+	t_.m3 = 0;
+	t_.m4 = 0;
+	t_.station.section = section;
 	SB(tile_map.get_e(t).m6, 2, 1, 0);
 	SB(tile_map.get_e(t).m6, 3, 3, st);
 	tile_map.get_e(t).m7 = 0;

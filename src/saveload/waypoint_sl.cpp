@@ -75,7 +75,7 @@ void MoveWaypointsToBaseStations()
 
 			Tile& wt = tile_map.get(wp.xy);
 			/* Waypoint indices were not added to the map prior to this. */
-			wt.m2 = (StationID)wp.index;
+			wt.waypoint.station_id = (StationID)wp.index;
 
 			if (HasBit(wt.m3, 4)) {
 				wp.spec = StationClass::Get(STAT_CLASS_WAYP)->GetSpec(wt.m4 + 1);
@@ -103,10 +103,10 @@ void MoveWaypointsToBaseStations()
 		TileIndex t = wp.xy;
 		/* Sometimes waypoint (sign) locations became disconnected from their actual location in
 		 * the map array. If this is the case, try to locate the actual location in the map array */
-		if (!IsTileType(t, MP_RAILWAY) || GetRailTileType(t) != 2 /* RAIL_TILE_WAYPOINT */ || tile_map.get(t).m2 != wp.index) {
+		if (!IsTileType(t, MP_RAILWAY) || GetRailTileType(t) != 2 /* RAIL_TILE_WAYPOINT */ || tile_map.get(t).waypoint.station_id != wp.index) {
 			Debug(sl, 0, "Found waypoint tile {} with invalid position", t);
 			for (t = 0; t < tile_map.size; t++) {
-				if (IsTileType(t, MP_RAILWAY) && GetRailTileType(t) == 2 /* RAIL_TILE_WAYPOINT */ && tile_map.get(t).m2 == wp.index) {
+				if (IsTileType(t, MP_RAILWAY) && GetRailTileType(t) == 2 /* RAIL_TILE_WAYPOINT */ && tile_map.get(t).waypoint.station_id == wp.index) {
 					Debug(sl, 0, "Found actual waypoint position at {}", t);
 					break;
 				}

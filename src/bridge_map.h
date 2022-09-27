@@ -120,7 +120,7 @@ static inline void MakeBridgeRamp(TileIndex t, Owner o, BridgeType bridgetype, D
 	SetTileType(t, MP_TUNNELBRIDGE);
 	SetTileOwner(t, o);
 	SetDockingTile(t, false);
-	tile_map.get(t).m2 = 0;
+	tile_map.get(t).m2_ = 0;
 	tile_map.get(t).m3 = 0;
 	tile_map.get(t).m4 = INVALID_ROADTYPE;
 	tile_map.get(t).m5 = 1 << 7 | tt << 2 | d;

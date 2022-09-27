@@ -51,7 +51,7 @@ static inline void MakeRoadTunnel(TileIndex t, Owner o, DiagDirection d, RoadTyp
 {
 	SetTileType(t, MP_TUNNELBRIDGE);
 	SetTileOwner(t, o);
-	tile_map.get(t).m2 = 0;
+	tile_map.get(t).m2_ = 0;
 	tile_map.get(t).m3 = 0;
 	tile_map.get(t).m4 = 0;
 	tile_map.get(t).m5 = TRANSPORT_ROAD << 2 | d;
@@ -74,7 +74,7 @@ static inline void MakeRailTunnel(TileIndex t, Owner o, DiagDirection d, RailTyp
 {
 	SetTileType(t, MP_TUNNELBRIDGE);
 	SetTileOwner(t, o);
-	tile_map.get(t).m2 = 0;
+	tile_map.get(t).m2_ = 0;
 	tile_map.get(t).m3 = 0;
 	tile_map.get(t).m4 = 0;
 	tile_map.get(t).m5 = TRANSPORT_RAIL << 2 | d;

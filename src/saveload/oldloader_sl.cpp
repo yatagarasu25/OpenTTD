@@ -92,7 +92,7 @@ static void FixTTDMapArray()
 				if (GB(tile_map.get(t).m3, 0, 2) == 3) {
 					SetTileType(t, MP_WATER);
 					SetTileOwner(t, OWNER_WATER);
-					tile_map.get(t).m2 = 0;
+					tile_map.get(t).m2_ = 0;
 					tile_map.get(t).m3 = 2; // WATER_CLASS_RIVER
 					tile_map.get(t).m4 = Random();
 					tile_map.get(t).m5 = 0;
@@ -226,7 +226,7 @@ static bool FixTTOMapArray()
 			 * Instead of using bits in m3 it uses a different tile type. */
 			tile_map.get(t).m3 = 1; // rail type = monorail (in TTD)
 			SetTileType(t, MP_RAILWAY);
-			tile_map.get(t).m2 = 1; // set monorail ground to RAIL_GROUND_GRASS
+			tile_map.get(t).m2_ = 1; // set monorail ground to RAIL_GROUND_GRASS
 			tt = MP_RAILWAY;
 		}
 
@@ -240,13 +240,13 @@ static bool FixTTOMapArray()
 						break;
 					case 1: // RAIL_TILE_SIGNALS
 						tile_map.get(t).m4 = (~tile_map.get(t).m5 & 1) << 2;        // signal variant (present only in OTTD)
-						SB(tile_map.get(t).m2, 6, 2, GB(tile_map.get(t).m5, 3, 2)); // signal status
+						SB(tile_map.get(t).m2_, 6, 2, GB(tile_map.get(t).m5, 3, 2)); // signal status
 						tile_map.get(t).m3 |= 0xC0;                       // both signals are present
 						tile_map.get(t).m5 = HasBit(tile_map.get(t).m5, 5) ? 2 : 1; // track direction (only X or Y)
 						tile_map.get(t).m5 |= 0x40;                       // RAIL_TILE_SIGNALS
 						break;
 					case 3: // RAIL_TILE_DEPOT
-						tile_map.get(t).m2 = 0;
+						tile_map.get(t).m2_ = 0;
 						break;
 					default:
 						return false;
@@ -256,10 +256,10 @@ static bool FixTTOMapArray()
 			case MP_ROAD: // road (depot) or level crossing
 				switch (GB(tile_map.get(t).m5, 4, 4)) {
 					case 0: // ROAD_TILE_NORMAL
-						if (tile_map.get(t).m2 == 4) tile_map.get(t).m2 = 5; // 'small trees' -> ROADSIDE_TREES
+						if (tile_map.get(t).m2_ == 4) tile_map.get(t).m2_ = 5; // 'small trees' -> ROADSIDE_TREES
 						break;
 					case 1: // ROAD_TILE_CROSSING (there aren't monorail crossings in TTO)
-						tile_map.get(t).m3 = tile_map.get(t).m1; // set owner of road = owner of rail
+						tile_map.get(t).m3 = tile_map.get(t).m1_; // set owner of road = owner of rail
 						break;
 					case 2: // ROAD_TILE_DEPOT
 						break;
@@ -269,9 +269,9 @@ static bool FixTTOMapArray()
 				break;
 
 			case MP_HOUSE:
-				tile_map.get(t).m3 = tile_map.get(t).m2 & 0xC0;    // construction stage
-				tile_map.get(t).m2 &= 0x3F;              // building type
-				if (tile_map.get(t).m2 >= 5) tile_map.get(t).m2++; // skip "large office block on snow"
+				tile_map.get(t).m3 = tile_map.get(t).m2_ & 0xC0;    // construction stage
+				tile_map.get(t).m2_ &= 0x3F;              // building type
+				if (tile_map.get(t).m2_ >= 5) tile_map.get(t).m2_++; // skip "large office block on snow"
 				break;
 
 			case MP_TREES:
@@ -286,11 +286,11 @@ static bool FixTTOMapArray()
 				break;
 
 			case MP_WATER:
-				tile_map.get(t).m3 = tile_map.get(t).m2 = 0;
+				tile_map.get(t).m3 = tile_map.get(t).m2_ = 0;
 				break;
 
 			case MP_VOID:
-				tile_map.get(t).m2 = tile_map.get(t).m3 = tile_map.get(t).m5 = 0;
+				tile_map.get(t).m2_ = tile_map.get(t).m3 = tile_map.get(t).m5 = 0;
 				break;
 
 			case MP_INDUSTRY:
@@ -314,7 +314,7 @@ static bool FixTTOMapArray()
 					byte m5 = tile_map.get(t).m5;
 					tile_map.get(t).m5 = m5 & 0xE1; // copy bits 7..5, 1
 					if (GB(m5, 1, 2) == 1) tile_map.get(t).m5 |= 0x02; // road bridge
-					if (GB(m5, 1, 2) == 3) tile_map.get(t).m2 |= 0xA0; // monorail bridge -> tubular, steel bridge
+					if (GB(m5, 1, 2) == 3) tile_map.get(t).m2_ |= 0xA0; // monorail bridge -> tubular, steel bridge
 					if (!HasBit(m5, 6)) { // bridge head
 						tile_map.get(t).m3 = (GB(m5, 1, 2) == 3) ? 1 : 0; // track subtype (1 for monorail, 0 for others)
 					} else { // middle bridge part
@@ -323,14 +323,14 @@ static bool FixTTOMapArray()
 						if (GB(m5, 3, 2) == 1) tile_map.get(t).m5 |= 0x08; // set for road/water under (0 for rail/clear)
 					}
 				} else { // tunnel entrance/exit
-					tile_map.get(t).m2 = 0;
+					tile_map.get(t).m2_ = 0;
 					tile_map.get(t).m3 = HasBit(tile_map.get(t).m5, 3); // monorail
 					tile_map.get(t).m5 &= HasBit(tile_map.get(t).m5, 3) ? 0x03 : 0x07 ; // direction, transport type (== 0 for rail)
 				}
 				break;
 
 			case MP_OBJECT:
-				tile_map.get(t).m2 = 0;
+				tile_map.get(t).m2_ = 0;
 				tile_map.get(t).m3 = 0;
 				break;
 
@@ -1471,10 +1471,10 @@ static bool LoadOldMapPart1(LoadgameState *ls, int num)
 	}
 
 	for (uint i = 0; i < OLD_MAP_SIZE; i++) {
-		tile_map._m[i].m1 = ReadByte(ls);
+		tile_map._m[i].m1_ = ReadByte(ls);
 	}
 	for (uint i = 0; i < OLD_MAP_SIZE; i++) {
-		tile_map._m[i].m2 = ReadByte(ls);
+		tile_map._m[i].m2_ = ReadByte(ls);
 	}
 
 	if (_savegame_type != SGT_TTO) {

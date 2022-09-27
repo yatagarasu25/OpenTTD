@@ -63,7 +63,7 @@ enum IndustryGraphics {
 static inline IndustryID GetIndustryIndex(TileIndex t)
 {
 	assert(IsTileType(t, MP_INDUSTRY));
-	return tile_map.get(t).m2;
+	return tile_map.get(t).industry.id;
 }
 
 /**
@@ -75,7 +75,7 @@ static inline IndustryID GetIndustryIndex(TileIndex t)
 static inline bool IsIndustryCompleted(TileIndex t)
 {
 	assert(IsTileType(t, MP_INDUSTRY));
-	return HasBit(tile_map.get(t).m1, 7);
+	return tile_map.get(t).industry.is_completed;
 }
 
 IndustryType GetIndustryType(TileIndex tile);
@@ -88,7 +88,7 @@ IndustryType GetIndustryType(TileIndex tile);
 static inline void SetIndustryCompleted(TileIndex tile)
 {
 	assert(IsTileType(tile, MP_INDUSTRY));
-	SB(tile_map.get(tile).m1, 7, 1, 1);
+	tile_map.get(tile).industry.is_completed = 1;
 }
 
 /**
@@ -100,7 +100,7 @@ static inline void SetIndustryCompleted(TileIndex tile)
 static inline byte GetIndustryConstructionStage(TileIndex tile)
 {
 	assert(IsTileType(tile, MP_INDUSTRY));
-	return IsIndustryCompleted(tile) ? (byte)INDUSTRY_COMPLETED : GB(tile_map.get(tile).m1, 0, 2);
+	return IsIndustryCompleted(tile) ? (byte)INDUSTRY_COMPLETED : tile_map.get(tile).industry.construction_stage;
 }
 
 /**
@@ -112,7 +112,7 @@ static inline byte GetIndustryConstructionStage(TileIndex tile)
 static inline void SetIndustryConstructionStage(TileIndex tile, byte value)
 {
 	assert(IsTileType(tile, MP_INDUSTRY));
-	SB(tile_map.get(tile).m1, 0, 2, value);
+	tile_map.get(tile).industry.construction_stage = value;
 }
 
 /**
@@ -162,7 +162,7 @@ static inline void SetIndustryGfx(TileIndex t, IndustryGfx gfx)
 static inline byte GetIndustryConstructionCounter(TileIndex tile)
 {
 	assert(IsTileType(tile, MP_INDUSTRY));
-	return GB(tile_map.get(tile).m1, 2, 2);
+	return tile_map.get(tile).industry.construction_counter;
 }
 
 /**
@@ -174,7 +174,7 @@ static inline byte GetIndustryConstructionCounter(TileIndex tile)
 static inline void SetIndustryConstructionCounter(TileIndex tile, byte value)
 {
 	assert(IsTileType(tile, MP_INDUSTRY));
-	SB(tile_map.get(tile).m1, 2, 2, value);
+	tile_map.get(tile).industry.construction_counter = value;
 }
 
 /**
@@ -187,8 +187,9 @@ static inline void SetIndustryConstructionCounter(TileIndex tile, byte value)
 static inline void ResetIndustryConstructionStage(TileIndex tile)
 {
 	assert(IsTileType(tile, MP_INDUSTRY));
-	SB(tile_map.get(tile).m1, 0, 4, 0);
-	SB(tile_map.get(tile).m1, 7, 1, 0);
+	tile_map.get(tile).industry.construction_stage = 0;
+	tile_map.get(tile).industry.construction_counter = 0;
+	tile_map.get(tile).industry.is_completed = 0;
 }
 
 /**
@@ -278,8 +279,8 @@ static inline void SetIndustryTriggers(TileIndex tile, byte triggers)
 static inline void MakeIndustry(TileIndex t, IndustryID index, IndustryGfx gfx, uint8 random, WaterClass wc)
 {
 	SetTileType(t, MP_INDUSTRY);
-	tile_map.get(t).m1 = 0;
-	tile_map.get(t).m2 = index;
+	tile_map.get(t).m1_ = 0;
+	tile_map.get(t).industry.id = index;
 	SetIndustryRandomBits(t, random); // m3
 	tile_map.get(t).m4 = 0;
 	SetIndustryGfx(t, gfx); // m5, part of m6
