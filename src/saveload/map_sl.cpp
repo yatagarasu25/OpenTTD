@@ -77,7 +77,7 @@ struct MAPTChunkHandler : ChunkHandler {
 
 		for (TileIndex i = 0; i != size;) {
 			SlCopy(buf.data(), MAP_SL_BUF_SIZE, SLE_UINT8);
-			for (uint j = 0; j != MAP_SL_BUF_SIZE; j++) tile_map.raw(i++)._type = buf[j];
+			for (uint j = 0; j != MAP_SL_BUF_SIZE; j++) tile_map.raw(i++).type = buf[j];
 		}
 	}
 
@@ -88,7 +88,7 @@ struct MAPTChunkHandler : ChunkHandler {
 
 		SlSetLength(size);
 		for (TileIndex i = 0; i != size;) {
-			for (uint j = 0; j != MAP_SL_BUF_SIZE; j++) buf[j] = tile_map.raw(i++)._type;
+			for (uint j = 0; j != MAP_SL_BUF_SIZE; j++) buf[j] = tile_map.raw(i++).type;
 			SlCopy(buf.data(), MAP_SL_BUF_SIZE, SLE_UINT8);
 		}
 	}

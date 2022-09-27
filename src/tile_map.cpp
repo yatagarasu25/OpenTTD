@@ -152,33 +152,3 @@ int GetTileMaxZ(TileIndex t)
 		TileHeight(tile_map.tile(x2, y2)), // S corner
 	});
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-#include "station_map.h"
-
-
-void MakeStation(TileIndex t, Owner o, StationID sid, StationType st, byte section, WaterClass wc)
-{
-	Tile& t_ = tile_map.get(t); t_.init();
-	SetTileType(t, MP_STATION);
-	SetTileOwner(t, o);
-	SetWaterClass(t, wc);
-	SetDockingTile(t, false);
-	t_.station.id = sid;
-	t_.station.section = section;
-	SB(tile_map.get_e(t).m6, 2, 1, 0);
-	SB(tile_map.get_e(t).m6, 3, 3, st);
-	tile_map.get_e(t).m7 = 0;
-	tile_map.get_e(t).m8 = 0;
-}

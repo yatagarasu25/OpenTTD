@@ -40,175 +40,216 @@ static_assert(sizeof(TileCore) == 2);
  * Data that is stored per tile. Also used TileExtended for this.
  * Look at docs/landscape.html for the exact meaning of the members.
  */
-struct Tile : public TileCore {
+struct Tile {
+	struct Raw {
+		byte type;          ///< rainforest/desert (0..1), bridges (2..3), The type (bits 4..7)
+		byte height;        ///< The height of the northern corner.
+		uint16 m2;          ///< Primarily used for indices to towns, industries and stations
+		byte   m1;          ///< Primarily used for ownership information
+		byte   m3;          ///< General purpose
+		byte   m4;          ///< General purpose
+		byte   m5;          ///< General purpose
+	};
+
 	union {
-		struct {
-			uint16 m2;          ///< Primarily used for indices to towns, industries and stations
-			union
-			{
-				byte   m1;          ///< Primarily used for ownership information
-				struct {
-					byte owner : 5;
-					byte wc : 2;
-					byte TUNNELBRIDGE : 1;
-				};
-			};
-			byte   m3;          ///< General purpose
-			byte   m4;          ///< General purpose
-			byte   m5;          ///< General purpose
-		};
-		struct {
-			uint16 industry_id;
-			byte   m1;
-			byte   field_type : 4;
-			byte   is_snow : 1;
-			byte   m3 : 3;
-			byte   m4;          ///< General purpose
-			byte   m5;          ///< General purpose
-		} tile;
-		struct {
-			uint16 m2;
-			byte owner : 5;
-			byte wc : 2;
-			byte is_docking : 1;
-			byte   m3;          ///< General purpose
-			byte bits;          ///< General purpose
-			byte   m5;          ///< General purpose
-		} water;
-		struct {
-			byte counter : 4;
-			byte density : 2;
-			byte ground : 3;
-			byte b : 3;
-			byte type;
-			byte   m4;          ///< General purpose
-			byte   m5;          ///< General purpose
-		} tree;
-		struct {
-			uint16 id;
-			byte   m1;          ///< General purpose
-			byte   m3;          ///< General purpose
-			byte   m4;          ///< General purpose
-			byte   m5;          ///< General purpose
-		} town;
-		struct {
-			uint16 town_id;
-			byte random;
-			byte triggers : 5;
-			byte m3 : 1;
-			byte clean_house_flag : 1;
-			byte is_completed : 1;
-			union {
-				byte house_id;
-				byte old_town_id;
-			};
-			byte   m5;          ///< General purpose
-		} house;
-		struct {
-			uint16 id;
-			byte construction_stage : 2;
-			byte construction_counter : 2;
-			byte wc2 : 1;
-			byte wc : 2;
-			byte is_completed : 1;
-			byte bits;
-			byte animation_loop;
-			byte m5;
-		} industry;
-		struct {
-			uint16 m2;
-			byte owner : 5;
-			byte m1 : 3;
-			byte tram_bits : 4;
-			byte tram_owner : 4;
-			byte type : 6;
-			byte   m4 : 2;
-			byte   m5;          ///< General purpose
-		} road;
+		uint64 all;
+		Raw raw;
 		struct {
 			struct {
-				byte signal_ul : 3;
-				byte signal_ul_variant : 1;
-				byte signal_lr : 3;
-				byte signal_lr_variant : 1;
-				byte bits : 3;
-				byte m2_11 : 1;
-				byte m2_12 : 4;
-			};
-			byte m1;
-			union {
-				byte m3;
-				struct {
-					byte m3 : 4;
-					byte signal_side_lr : 2;
-					byte signal_side_ul : 2;
+				union {
+					byte _type;
+					struct {
+						byte zone : 2;
+						byte above_x : 1;
+						byte above_y : 1;
+						byte type : 4;
+					};
+					struct {
+						byte zone : 2;
+						byte above : 2;
+						byte type : 4;
+					};
 				};
-				struct {
-					byte m3 : 4;
-					byte signals_present : 4;
-				};
+				byte   height;
 			};
-			byte   ground_type : 4;
-			byte   signal_states : 4;
-			byte   m5;
-		} rail;
-		struct {
-			uint16 id;
-			byte m1;
-			byte m3 : 4;
-			byte random : 4;
-			byte spec_index;
-			byte section;
-		} station;
-		struct {
-			uint16 id;
 			union {
 				struct {
-					byte m1;
-					byte m3;
+					uint16 industry_id;
+					byte   m1;
+					byte   field_type : 4;
+					byte   is_snow : 1;
+					byte   m3 : 3;
+					byte   m4;          ///< General purpose
+					byte   m5;          ///< General purpose
+				} clear;
+				struct {
+					uint16 industry_id;
+					byte   m1;
+					byte   type : 4;
+					byte   is_snow : 1;
+					byte   fence_ne : 3;
+					byte   m4 : 2;
+					byte   fence_se : 3;
+					byte   fence_sw : 3;
+					byte   m5;          ///< General purpose
+				} field;
+				struct {
+					uint16 m2;
+					byte owner : 5;
+				} owned;
+				struct {
+					uint16 m2;
+					byte owner : 5;
+					byte wc : 2;
+					byte is_docking : 1;
+					byte   m3;          ///< General purpose
+					byte bits;          ///< General purpose
+					byte   m5;          ///< General purpose
+				} water;
+				struct {
+					byte counter : 4;
+					byte density : 2;
+					byte ground : 3;
+					byte m2 : 5;
+					byte   m1;          ///< General purpose
+					byte type;
+					byte   m4;          ///< General purpose
+					byte   m5;          ///< General purpose
+				} tree;
+				struct {
+					uint16 id;
+					byte   m1;          ///< General purpose
+					byte   m3;          ///< General purpose
+					byte   m4;          ///< General purpose
+					byte   m5;          ///< General purpose
+				} town;
+				struct {
+					uint16 town_id;
+					byte random;
+					byte triggers : 5;
+					byte m3 : 1;
+					byte clean_house_flag : 1;
+					byte is_completed : 1;
+					union {
+						byte house_id;
+						byte old_town_id;
+					};
+					byte   m5;          ///< General purpose
+				} house;
+				struct {
+					uint16 id;
+					byte construction_stage : 2;
+					byte construction_counter : 2;
+					byte wc2 : 1;
+					byte wc : 2;
+					byte is_completed : 1;
+					byte bits;
+					byte animation_loop;
+					byte m5;
+				} industry;
+				struct {
+					uint16 m2;          ///< Primarily used for indices to towns, industries and stations
+					struct {
+						byte owner : 5;
+						byte wc : 2;
+						byte TUNNELBRIDGE : 1;
+					};
+					byte   m3;          ///< General purpose
+					byte   m4;          ///< General purpose
+					byte   m5;          ///< General purpose
+				} bridge;
+				struct {
+					uint16 m2;
+					byte owner : 5;
+					byte m1 : 3;
+					byte tram_bits : 4;
+					byte tram_owner : 4;
 					byte type : 6;
 					byte   m4 : 2;
-					byte m5;
+					byte   m5;          ///< General purpose
 				} road;
 				struct {
+					struct {
+						byte signal_ul : 3;
+						byte signal_ul_variant : 1;
+						byte signal_lr : 3;
+						byte signal_lr_variant : 1;
+						byte bits : 3;
+						byte m2_11 : 1;
+						byte m2_12 : 4;
+					};
 					byte m1;
-					byte m3;
-					byte m4;
-					byte m5;
+					union {
+						byte m3;
+						struct {
+							byte m3 : 4;
+							byte signal_side_lr : 2;
+							byte signal_side_ul : 2;
+						};
+						struct {
+							byte m3 : 4;
+							byte signals_present : 4;
+						};
+					};
+					byte   ground_type : 4;
+					byte   signal_states : 4;
+					byte   m5;
 				} rail;
 				struct {
+					uint16 id;
 					byte m1;
-					byte m3;
-					byte m4;
-					byte m5;
-				} ship;
+					byte m3 : 4;
+					byte random : 4;
+					byte spec_index;
+					byte gfx;
+				} station;
+				struct {
+					uint16 id;
+					union {
+						struct {
+							byte m1;
+							byte m3;
+							byte type : 6;
+							byte   m4 : 2;
+							byte m5;
+						} road;
+						struct {
+							byte m1;
+							byte m3;
+							byte m4;
+							byte m5;
+						} rail;
+						struct {
+							byte m1;
+							byte m3;
+							byte m4;
+							byte m5;
+						} ship;
+					};
+				} depot;
+				struct {
+					uint16 index;
+					byte m1;
+					byte bits;
+					byte   m4;          ///< General purpose
+					byte   m5;          ///< General purpose
+				} object;
+				struct {
+					uint16 station_id;
+					byte m1;
+					byte m3 : 4;
+					byte m3_4 : 1;
+					byte m3_5 : 3;
+					byte tile_index;
+					byte   m5;          ///< General purpose
+				} waypoint;
 			};
-		} depot;
-		struct {
-			uint16 index;
-			byte m1;
-			byte bits;
-			byte   m4;          ///< General purpose
-			byte   m5;          ///< General purpose
-		} object;
-		struct {
-			uint16 station_id;
-			byte m1;
-			byte m3 : 4;
-			byte m3_4 : 1;
-			byte m3_5 : 3;
-			byte tile_index;
-			byte   m5;          ///< General purpose
-		} waypoint;
+		};
 	};
 
 	void init()
 	{
-		m2 = 0;
-		m1 = 0;
-		m3 = 0;
-		m4 = 0;
-		m5 = 0;
+		all = 0;
 	}
 };
 

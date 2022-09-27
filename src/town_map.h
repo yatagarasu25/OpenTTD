@@ -183,7 +183,7 @@ static inline void SetHouseCompleted(TileIndex t, bool status)
 static inline byte GetHouseBuildingStage(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	return IsHouseCompleted(t) ? (byte)TOWN_HOUSE_COMPLETED : GB(tile_map.get(t).m5, 3, 2);
+	return IsHouseCompleted(t) ? (byte)TOWN_HOUSE_COMPLETED : GB(tile_map.get(t).house.m5, 3, 2);
 }
 
 /**
@@ -195,7 +195,7 @@ static inline byte GetHouseBuildingStage(TileIndex t)
 static inline byte GetHouseConstructionTick(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	return IsHouseCompleted(t) ? 0 : GB(tile_map.get(t).m5, 0, 3);
+	return IsHouseCompleted(t) ? 0 : GB(tile_map.get(t).house.m5, 0, 3);
 }
 
 /**
@@ -208,9 +208,9 @@ static inline byte GetHouseConstructionTick(TileIndex t)
 static inline void IncHouseConstructionTick(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	AB(tile_map.get(t).m5, 0, 5, 1);
+	AB(tile_map.get(t).house.m5, 0, 5, 1);
 
-	if (GB(tile_map.get(t).m5, 3, 2) == TOWN_HOUSE_COMPLETED) {
+	if (GB(tile_map.get(t).house.m5, 3, 2) == TOWN_HOUSE_COMPLETED) {
 		/* House is now completed.
 		 * Store the year of construction as well, for newgrf house purpose */
 		SetHouseCompleted(t, true);
@@ -226,7 +226,7 @@ static inline void IncHouseConstructionTick(TileIndex t)
 static inline void ResetHouseAge(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE) && IsHouseCompleted(t));
-	tile_map.get(t).m5 = 0;
+	tile_map.get(t).house.m5 = 0;
 }
 
 /**
@@ -237,7 +237,7 @@ static inline void ResetHouseAge(TileIndex t)
 static inline void IncrementHouseAge(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	if (IsHouseCompleted(t) && tile_map.get(t).m5 < 0xFF) tile_map.get(t).m5++;
+	if (IsHouseCompleted(t) && tile_map.get(t).house.m5 < 0xFF) tile_map.get(t).house.m5++;
 }
 
 /**
@@ -249,7 +249,7 @@ static inline void IncrementHouseAge(TileIndex t)
 static inline Year GetHouseAge(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	return IsHouseCompleted(t) ? tile_map.get(t).m5 : 0;
+	return IsHouseCompleted(t) ? tile_map.get(t).house.m5 : 0;
 }
 
 /**
@@ -359,7 +359,7 @@ static inline void MakeHouseTile(TileIndex t, TownID tid, byte counter, byte sta
 	tile_map.get(t).house.town_id = tid;
 	SetHouseType(t, type);
 	SetHouseCompleted(t, stage == TOWN_HOUSE_COMPLETED);
-	tile_map.get(t).m5 = IsHouseCompleted(t) ? 0 : (stage << 3 | counter);
+	tile_map.get(t).house.m5 = IsHouseCompleted(t) ? 0 : (stage << 3 | counter);
 	SetAnimationFrame(t, 0);
 	SetHouseProcessingTime(t, HouseSpec::Get(type)->processing_time);
 }

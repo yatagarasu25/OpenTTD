@@ -64,7 +64,7 @@ struct TileMap
 		return _me[i];
 	}
 
-	Tile& raw(const TileIndex& i) { return _m[i]; }
+	Tile::Raw& raw(const TileIndex& i) { return _m[i].raw; }
 	TileExtended& raw_e(const TileIndex& i) { return _me[i]; }
 };
 

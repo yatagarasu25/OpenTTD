@@ -121,11 +121,11 @@ public:
 		Debug(misc, LANDINFOD_LEVEL, "TILE: {:#x} ({},{})", tile, TileX(tile), TileY(tile));
 		Debug(misc, LANDINFOD_LEVEL, "type   = {:#x}", tile_map.get(tile)._type);
 		Debug(misc, LANDINFOD_LEVEL, "height = {:#x}", tile_map.get(tile).height);
-		Debug(misc, LANDINFOD_LEVEL, "m1     = {:#x}", tile_map.get(tile).m1);
-		Debug(misc, LANDINFOD_LEVEL, "m2     = {:#x}", tile_map.get(tile).m2);
-		Debug(misc, LANDINFOD_LEVEL, "m3     = {:#x}", tile_map.get(tile).m3);
-		Debug(misc, LANDINFOD_LEVEL, "m4     = {:#x}", tile_map.get(tile).m4);
-		Debug(misc, LANDINFOD_LEVEL, "m5     = {:#x}", tile_map.get(tile).m5);
+		Debug(misc, LANDINFOD_LEVEL, "m1     = {:#x}", tile_map.get(tile).raw.m1);
+		Debug(misc, LANDINFOD_LEVEL, "m2     = {:#x}", tile_map.get(tile).raw.m2);
+		Debug(misc, LANDINFOD_LEVEL, "m3     = {:#x}", tile_map.get(tile).raw.m3);
+		Debug(misc, LANDINFOD_LEVEL, "m4     = {:#x}", tile_map.get(tile).raw.m4);
+		Debug(misc, LANDINFOD_LEVEL, "m5     = {:#x}", tile_map.get(tile).raw.m5);
 		Debug(misc, LANDINFOD_LEVEL, "m6     = {:#x}", tile_map.get_e(tile).m6);
 		Debug(misc, LANDINFOD_LEVEL, "m7     = {:#x}", tile_map.get_e(tile).m7);
 		Debug(misc, LANDINFOD_LEVEL, "m8     = {:#x}", tile_map.get_e(tile).m8);

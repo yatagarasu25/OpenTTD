@@ -68,7 +68,7 @@ static inline RoadStopType GetRoadStopType(TileIndex t)
 static inline StationGfx GetStationGfx(TileIndex t)
 {
 	assert(IsTileType(t, MP_STATION));
-	return tile_map.get(t).m5;
+	return tile_map.get(t).station.gfx;
 }
 
 /**
@@ -80,7 +80,7 @@ static inline StationGfx GetStationGfx(TileIndex t)
 static inline void SetStationGfx(TileIndex t, StationGfx gfx)
 {
 	assert(IsTileType(t, MP_STATION));
-	tile_map.get(t).m5 = gfx;
+	tile_map.get(t).station.gfx = gfx;
 }
 
 /**
@@ -529,7 +529,20 @@ static inline byte GetStationTileRandomBits(TileIndex t)
  * @param section the StationGfx to be used for this tile
  * @param wc The water class of the station
  */
-void MakeStation(TileIndex t, Owner o, StationID sid, StationType st, byte section, WaterClass wc = WATER_CLASS_INVALID);
+static inline void MakeStation(TileIndex t, Owner o, StationID sid, StationType st, byte section, WaterClass wc = WATER_CLASS_INVALID)
+{
+	Tile& t_ = tile_map.get(t); t_.init();
+	SetTileType(t, MP_STATION);
+	SetTileOwner(t, o);
+	SetWaterClass(t, wc);
+	SetDockingTile(t, false);
+	t_.station.id = sid;
+	t_.station.gfx = section;
+	SB(tile_map.get_e(t).m6, 2, 1, 0);
+	SB(tile_map.get_e(t).m6, 3, 3, st);
+	tile_map.get_e(t).m7 = 0;
+	tile_map.get_e(t).m8 = 0;
+}
 
 /**
  * Make the given tile a rail station tile.
