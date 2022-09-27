@@ -196,7 +196,9 @@ struct Tile {
 				byte processing : 6;
 			};
 		};
-		byte   m7;          ///< Primarily used for newgrf support
+		byte has_destination : 1;
+		byte destination : 3;
+		byte m7_17 : 4;
 		uint16 m8;          ///< General purpose
 	};
 
@@ -234,7 +236,9 @@ struct Tile {
 		byte m6_01 : 2;
 		byte type : 4;
 		byte m6_67 : 2;
-		byte m7;          ///< Primarily used for newgrf support
+		byte m7_04 : 4;
+		byte snow_or_desert : 1;
+		byte m7_57 : 3;
 		uint16 m8;          ///< General purpose
 	};
 
@@ -252,6 +256,13 @@ struct Tile {
 				byte road_bits : 4;
 				byte disalowed_direction : 2;
 				byte tile_type : 2;
+				byte m6_02 : 3;
+				byte roadside : 3;
+				byte m6_67 : 2;
+				byte road_works_counter : 4;
+				byte m7_4 : 1;
+				byte on_snow : 1;
+				byte m7_67 : 2;
 			};
 			struct {
 				byte axis : 1;
@@ -259,12 +270,12 @@ struct Tile {
 				byte reserved : 1;
 				byte barred : 1;
 				byte m5_67 : 2;
+				byte m6_02 : 3;
+				byte roadside : 3;
+				byte m6_67 : 2;
+				byte road_type;
 			} crossing;
 		};
-		byte m6_02 : 3;
-		byte roadside : 3;
-		byte m6_67 : 2;
-		byte   m7;          ///< Primarily used for newgrf support
 		uint16 m8;          ///< General purpose
 	};
 
@@ -332,9 +343,11 @@ struct Tile {
 				byte reserved : 1;
 				byte m5_5 : 1;
 				byte tile_type : 2;
-				byte   m6;          ///< General purpose
-				byte   m7;          ///< Primarily used for newgrf support
-				uint16 m8;          ///< General purpose
+				byte m6;
+				byte owner : 5;
+				byte on_snow : 1;
+				byte m7_67 : 2;
+				uint16 m8;
 			} road;
 			struct {
 				byte m1;

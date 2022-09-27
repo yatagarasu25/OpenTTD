@@ -81,7 +81,7 @@ static inline void SetHouseType(TileIndex t, HouseID house_id)
  */
 static inline bool LiftHasDestination(TileIndex t)
 {
-	return HasBit(tile_map.get(t).house.m7, 0);
+	return tile_map.get(t).house.has_destination;
 }
 
 /**
@@ -92,8 +92,8 @@ static inline bool LiftHasDestination(TileIndex t)
  */
 static inline void SetLiftDestination(TileIndex t, byte dest)
 {
-	SetBit(tile_map.get(t).house.m7, 0);
-	SB(tile_map.get(t).house.m7, 1, 3, dest);
+	tile_map.get(t).house.has_destination = 1;
+	tile_map.get(t).house.destination = dest;
 }
 
 /**
@@ -103,7 +103,7 @@ static inline void SetLiftDestination(TileIndex t, byte dest)
  */
 static inline byte GetLiftDestination(TileIndex t)
 {
-	return GB(tile_map.get(t).house.m7, 1, 3);
+	return tile_map.get(t).house.destination;
 }
 
 /**
@@ -114,7 +114,8 @@ static inline byte GetLiftDestination(TileIndex t)
  */
 static inline void HaltLift(TileIndex t)
 {
-	SB(tile_map.get(t).house.m7, 0, 4, 0);
+	tile_map.get(t).house.has_destination = 0;
+	tile_map.get(t).house.destination = 0;
 }
 
 /**

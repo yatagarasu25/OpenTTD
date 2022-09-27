@@ -234,7 +234,8 @@ static inline bool HasTileAnyRoadType(TileIndex t, RoadTypes rts)
 static inline Owner GetRoadOwner(TileIndex t, RoadTramType rtt)
 {
 	assert(MayHaveRoad(t));
-	if (rtt == RTT_ROAD) return (Owner)GB(IsNormalRoadTile(t) ? tile_map.get(t).road.owner : tile_map.get(t).road.m7, 0, 5);
+	if (rtt == RTT_ROAD)
+		return (Owner)(IsNormalRoadTile(t) ? tile_map.get(t).road.owner : tile_map.get(t).depot.road.owner);
 
 	/* Trams don't need OWNER_TOWN, and remapping OWNER_NONE
 	 * to OWNER_TOWN makes it use one bit less */
@@ -254,7 +255,7 @@ static inline void SetRoadOwner(TileIndex t, RoadTramType rtt, Owner o)
 		if (IsNormalRoadTile(t))
 			tile_map.get(t).road.owner = o;
 		else
-			SB(tile_map.get(t).road.m7, 0, 5, o);
+			tile_map.get(t).depot.road.owner = o;
 	} else {
 		tile_map.get(t).road.tram_owner = (o == OWNER_NONE ? OWNER_TOWN : o);
 	}
@@ -461,7 +462,7 @@ static inline void BarCrossing(TileIndex t)
  */
 static inline bool IsOnSnow(TileIndex t)
 {
-	return HasBit(tile_map.get(t).road.m7, 5);
+	return tile_map.get(t).road.on_snow;
 }
 
 /** Toggle the snow/desert state of a road tile. */
@@ -472,7 +473,7 @@ static inline bool IsOnSnow(TileIndex t)
  */
 static inline void ToggleSnow(TileIndex t)
 {
-	ToggleBit(tile_map.get(t).road.m7, 5);
+	tile_map.get(t).road.on_snow = ~tile_map.get(t).road.on_snow;
 }
 
 
@@ -525,9 +526,9 @@ static inline bool HasRoadWorks(TileIndex t)
  */
 static inline bool IncreaseRoadWorksCounter(TileIndex t)
 {
-	AB(tile_map.get(t).road.m7, 0, 4, 1);
+	tile_map.get(t).road.road_works_counter += 1;
 
-	return GB(tile_map.get(t).road.m7, 0, 4) == 15;
+	return tile_map.get(t).road.road_works_counter == 15;
 }
 
 /**
@@ -556,7 +557,7 @@ static inline void TerminateRoadWorks(TileIndex t)
 	assert(HasRoadWorks(t));
 	SetRoadside(t, (Roadside)(GetRoadside(t) - ROADSIDE_GRASS_ROAD_WORKS + ROADSIDE_GRASS));
 	/* Stop the counter */
-	SB(tile_map.get(t).road.m7, 0, 4, 0);
+	tile_map.get(t).road.road_works_counter = 0;
 }
 
 
@@ -665,7 +666,7 @@ static inline void MakeRoadCrossing(TileIndex t, Owner road, Owner tram, Owner r
 	t_.road.type = INVALID_ROADTYPE;
 	t_.road.crossing.axis = roaddir;
 	t_.road.tile_type = ROAD_TILE_CROSSING;
-	t_.road.m7 = road;
+	t_.road.crossing.road_type = road;
 	t_.road.m8 = INVALID_ROADTYPE << 6 | rat;
 	SetRoadTypes(t, road_rt, tram_rt);
 	SetRoadOwner(t, RTT_TRAM, tram);
@@ -686,7 +687,7 @@ static inline void MakeRoadDepot(TileIndex t, Owner owner, DepotID did, DiagDire
 	t_.depot.road.direction = dir;
 	t_.depot.road.type = INVALID_ROADTYPE;
 	t_.road.tile_type = ROAD_TILE_DEPOT;
-	t_.road.m7 = owner;
+	t_.depot.road.owner = owner;
 	t_.road.m8 = INVALID_ROADTYPE << 6;
 	SetRoadType(t, GetRoadTramType(rt), rt);
 	SetRoadOwner(t, RTT_TRAM, owner);

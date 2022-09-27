@@ -537,8 +537,6 @@ static inline void MakeStation(TileIndex t, Owner o, StationID sid, StationType 
 	t_.station.id = sid;
 	t_.station.gfx = section;
 	t_.station.type = st;
-	t_.station.m7 = 0;
-	t_.station.m8 = 0;
 }
 
 /**
