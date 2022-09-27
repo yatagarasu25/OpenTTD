@@ -391,8 +391,6 @@ static inline void MakeShore(TileIndex t)
 	SetDockingTile(t, false);
 	t_.water.is_coast = 1;
 	t_.water.type = WBL_TYPE_NORMAL;
-	SB(tile_map.get_e(t).water.m6, 2, 4, 0);
-	tile_map.get_e(t).water.m7 = 0;
 }
 
 /**
@@ -409,8 +407,6 @@ static inline void MakeWater(TileIndex t, Owner o, WaterClass wc, uint8 random_b
 	SetDockingTile(t, false);
 	t_.water.bits = random_bits;
 	t_.water.type = WBL_TYPE_NORMAL;
-	SB(tile_map.get_e(t).water.m6, 2, 4, 0);
-	tile_map.get_e(t).water.m7 = 0;
 }
 
 /**
@@ -457,13 +453,10 @@ static inline void MakeShipDepot(TileIndex t, Owner o, DepotID did, DepotPart pa
 {
 	Tile& t_ = tile_map.init(t, MP_WATER, o);
 	SetWaterClass(t, original_water_class);
-	SetDockingTile(t, false);
 	t_.depot.id = did;
 	t_.depot.ship.part = part;
 	t_.depot.ship.axis = a;
 	t_.depot.ship.type = WBL_TYPE_DEPOT;
-	SB(tile_map.get_e(t).water.m6, 2, 4, 0);
-	tile_map.get_e(t).water.m7 = 0;
 }
 
 /**
@@ -479,12 +472,9 @@ static inline void MakeLockTile(TileIndex t, Owner o, LockPart part, DiagDirecti
 {
 	Tile& t_ = tile_map.init(t, MP_WATER, o);
 	SetWaterClass(t, original_water_class);
-	SetDockingTile(t, false);
 	t_.lock.direction = dir;
 	t_.lock.part = part;
 	t_.lock.type = WBL_TYPE_LOCK;
-	SB(tile_map.get_e(t).water.m6, 2, 4, 0);
-	tile_map.get_e(t).water.m7 = 0;
 }
 
 /**

@@ -83,7 +83,7 @@ struct Tile {
 		byte density : 2;
 		byte ground_type : 3;
 		byte counter : 3;
-		byte   m6;          ///< General purpose
+		byte m6;          ///< General purpose
 		byte   m7;          ///< Primarily used for newgrf support
 		uint16 m8;          ///< General purpose
 	};
@@ -98,7 +98,9 @@ struct Tile {
 		byte fence_se : 3;
 		byte fence_sw : 3;
 		byte m5;
-		byte   m6;          ///< General purpose
+		byte m6_01 : 2;
+		byte fence_nw : 3;
+		byte m6_57 : 3;
 		byte   m7;          ///< Primarily used for newgrf support
 		uint16 m8;          ///< General purpose
 	};
@@ -184,7 +186,16 @@ struct Tile {
 			};
 			byte tick_and_stage : 5;
 		};
-		byte   m6;          ///< General purpose
+		union {
+			struct {
+				byte m6_01 : 2;
+				byte position : 6;
+			} lift;
+			struct {
+				byte m6_01 : 2;
+				byte processing : 6;
+			};
+		};
 		byte   m7;          ///< Primarily used for newgrf support
 		uint16 m8;          ///< General purpose
 	};
@@ -199,7 +210,10 @@ struct Tile {
 		byte bits;
 		byte animation_loop;
 		byte gfx;
-		byte   m6;          ///< General purpose
+		byte m6_01 : 2;
+		byte gfx_bit : 1;
+		byte triggers : 3;
+		byte m6_67 : 2;
 		byte   m7;          ///< Primarily used for newgrf support
 		uint16 m8;          ///< General purpose
 	};
@@ -210,15 +224,17 @@ struct Tile {
 		byte wc : 2;
 		byte TUNNELBRIDGE : 1;
 		byte m3_18;
-		byte type : 6;
+		byte road_type : 6;
 		byte m4_67 : 2;
 		byte direction : 2;
 		byte transport_type : 2;
 		byte reserved : 1;
 		byte m5_67 : 2;
 		byte is_bridge : 1;
-		byte   m6;          ///< General purpose
-		byte   m7;          ///< Primarily used for newgrf support
+		byte m6_01 : 2;
+		byte type : 4;
+		byte m6_67 : 2;
+		byte m7;          ///< Primarily used for newgrf support
 		uint16 m8;          ///< General purpose
 	};
 
@@ -245,7 +261,9 @@ struct Tile {
 				byte m5_67 : 2;
 			} crossing;
 		};
-		byte   m6;          ///< General purpose
+		byte m6_02 : 3;
+		byte roadside : 3;
+		byte m6_67 : 2;
 		byte   m7;          ///< Primarily used for newgrf support
 		uint16 m8;          ///< General purpose
 	};
@@ -293,7 +311,10 @@ struct Tile {
 		byte random : 4;
 		byte spec_index;
 		byte gfx;
-		byte   m6;          ///< General purpose
+		byte m6_01 : 2;
+		byte resereved : 1;
+		byte type : 3;
+		byte m6_67 : 2;
 		byte   m7;          ///< Primarily used for newgrf support
 		uint16 m8;          ///< General purpose
 	};
@@ -364,7 +385,8 @@ struct Tile {
 		byte m3_57 : 3;
 		byte tile_index;
 		byte m5;
-		byte   m6;          ///< General purpose
+		byte m6_02 : 3;
+		byte station_type : 3;
 		byte   m7;          ///< Primarily used for newgrf support
 		uint16 m8;          ///< General purpose
 	};

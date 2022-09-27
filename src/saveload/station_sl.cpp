@@ -92,7 +92,7 @@ void MoveBuoysToWaypoints()
 			for (TileIndex t : train_st) {
 				if (!IsTileType(t, MP_STATION) || GetStationIndex(t) != index) continue;
 
-				SB(tile_map.get_e(t).waypoint.m6, 3, 3, STATION_WAYPOINT);
+				tile_map.get(t).waypoint.station_type = STATION_WAYPOINT;
 				wp->rect.BeforeAddTile(t, StationRect::ADD_FORCE);
 			}
 

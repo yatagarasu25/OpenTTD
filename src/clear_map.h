@@ -219,7 +219,7 @@ static inline uint GetFence(TileIndex t, DiagDirection side)
 		case DIAGDIR_SE: return tile_map.get(t).field.fence_se;
 		case DIAGDIR_SW: return tile_map.get(t).field.fence_sw;
 		case DIAGDIR_NE: return tile_map.get(t).field.fence_ne;
-		case DIAGDIR_NW: return GB(tile_map.get_e(t).field.m6, 2, 3);
+		case DIAGDIR_NW: return tile_map.get(t).field.fence_nw;
 	}
 }
 
@@ -238,7 +238,7 @@ static inline void SetFence(TileIndex t, DiagDirection side, uint h)
 		case DIAGDIR_SE: tile_map.get(t).field.fence_se = h; break;
 		case DIAGDIR_SW: tile_map.get(t).field.fence_sw = h; break;
 		case DIAGDIR_NE: tile_map.get(t).field.fence_ne = h; break;
-		case DIAGDIR_NW: SB(tile_map.get_e(t).field.m6, 2, 3, h); break;
+		case DIAGDIR_NW: tile_map.get(t).field.fence_nw = h; break;
 	}
 }
 

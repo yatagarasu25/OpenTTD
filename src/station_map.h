@@ -44,7 +44,7 @@ static const int GFX_TRUCK_BUS_DRIVETHROUGH_OFFSET =  4; ///< The offset for the
 static inline StationType GetStationType(TileIndex t)
 {
 	assert(IsTileType(t, MP_STATION));
-	return (StationType)GB(tile_map.get_e(t).station.m6, 3, 3);
+	return (StationType)tile_map.get(t).station.type;
 }
 
 /**
@@ -393,7 +393,7 @@ static inline bool IsCompatibleTrainStationTile(TileIndex test_tile, TileIndex s
 static inline bool HasStationReservation(TileIndex t)
 {
 	assert(HasStationRail(t));
-	return HasBit(tile_map.get_e(t).station.m6, 2);
+	return tile_map.get(t).station.resereved;
 }
 
 /**
@@ -405,7 +405,7 @@ static inline bool HasStationReservation(TileIndex t)
 static inline void SetRailStationReservation(TileIndex t, bool b)
 {
 	assert(HasStationRail(t));
-	SB(tile_map.get_e(t).station.m6, 2, 1, b ? 1 : 0);
+	tile_map.get(t).station.resereved = b;
 }
 
 /**
@@ -536,8 +536,7 @@ static inline void MakeStation(TileIndex t, Owner o, StationID sid, StationType 
 	SetDockingTile(t, false);
 	t_.station.id = sid;
 	t_.station.gfx = section;
-	SB(t_.station.m6, 2, 1, 0);
-	SB(t_.station.m6, 3, 3, st);
+	t_.station.type = st;
 	t_.station.m7 = 0;
 	t_.station.m8 = 0;
 }

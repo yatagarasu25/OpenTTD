@@ -52,9 +52,6 @@ static inline void MakeRoadTunnel(TileIndex t, Owner o, DiagDirection d, RoadTyp
 	Tile& t_ = tile_map.init(t, MP_TUNNELBRIDGE, o);
 	t_.bridge.direction = d;
 	t_.bridge.transport_type = TRANSPORT_ROAD;
-	SB(t_.bridge.m6, 2, 4, 0);
-	t_.bridge.m7 = 0;
-	t_.bridge.m8 = 0;
 	SetRoadOwner(t, RTT_ROAD, o);
 	if (o != OWNER_TOWN) SetRoadOwner(t, RTT_TRAM, o);
 	SetRoadTypes(t, road_rt, tram_rt);
@@ -72,9 +69,6 @@ static inline void MakeRailTunnel(TileIndex t, Owner o, DiagDirection d, RailTyp
 	Tile& t_ = tile_map.init(t, MP_TUNNELBRIDGE, o);
 	t_.bridge.direction = d;
 	t_.bridge.transport_type = TRANSPORT_RAIL;
-	SB(t_.bridge.m6, 2, 4, 0);
-	t_.bridge.m7 = 0;
-	t_.bridge.m8 = 0;
 	SetRailType(t, r);
 	SetRoadTypes(t, INVALID_ROADTYPE, INVALID_ROADTYPE);
 }

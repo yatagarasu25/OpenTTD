@@ -115,7 +115,7 @@ static inline bool IsRailDepotTile(TileIndex t)
  */
 static inline RailType GetRailType(TileIndex t)
 {
-	return (RailType)GB(tile_map.get_e(t).rail.m8, 0, 6);
+	return (RailType)GB(tile_map.get(t).rail.m8, 0, 6);
 }
 
 /**
@@ -125,7 +125,7 @@ static inline RailType GetRailType(TileIndex t)
  */
 static inline void SetRailType(TileIndex t, RailType r)
 {
-	SB(tile_map.get_e(t).rail.m8, 0, 6, r);
+	SB(tile_map.get(t).rail.m8, 0, 6, r);
 }
 
 
@@ -528,8 +528,6 @@ static inline void MakeRailNormal(TileIndex t, Owner o, TrackBits b, RailType r)
 	SetDockingTile(t, false);
 	t_.rail.track_bits = b;
 	t_.rail.tile_type = RAIL_TILE_NORMAL;
-	SB(t_.rail.m6, 2, 4, 0);
-	t_.rail.m7 = 0;
 	t_.rail.m8 = r;
 }
 
@@ -541,8 +539,6 @@ static inline void MakeRailDepot(TileIndex t, Owner o, DepotID did, DiagDirectio
 	t_.depot.id = did;
 	t_.depot.rail.direction = d;
 	t_.depot.rail.tile_type = RAIL_TILE_DEPOT;
-	SB(t_.rail.m6, 2, 4, 0);
-	t_.rail.m7 = 0;
 	t_.rail.m8 = r;
 }
 
