@@ -47,7 +47,7 @@ static inline bool IsSnowTile(TileIndex t)
 static inline ClearGround GetRawClearGround(TileIndex t)
 {
 	assert(IsTileType(t, MP_CLEAR));
-	return (ClearGround)GB(tile_map.get(t).clear.m5, 2, 3);
+	return (ClearGround)tile_map.get(t).clear.ground_type;
 }
 
 /**
@@ -83,7 +83,7 @@ static inline bool IsClearGround(TileIndex t, ClearGround ct)
 static inline uint GetClearDensity(TileIndex t)
 {
 	assert(IsTileType(t, MP_CLEAR));
-	return GB(tile_map.get(t).clear.m5, 0, 2);
+	return tile_map.get(t).clear.density;
 }
 
 /**
@@ -95,7 +95,7 @@ static inline uint GetClearDensity(TileIndex t)
 static inline void AddClearDensity(TileIndex t, int d)
 {
 	assert(IsTileType(t, MP_CLEAR)); // XXX incomplete
-	tile_map.get(t).clear.m5 += d;
+	tile_map.get(t).clear.density += d;
 }
 
 /**
@@ -107,7 +107,7 @@ static inline void AddClearDensity(TileIndex t, int d)
 static inline void SetClearDensity(TileIndex t, uint d)
 {
 	assert(IsTileType(t, MP_CLEAR));
-	SB(tile_map.get(t).clear.m5, 0, 2, d);
+	tile_map.get(t).clear.density = d;
 }
 
 
@@ -120,7 +120,7 @@ static inline void SetClearDensity(TileIndex t, uint d)
 static inline uint GetClearCounter(TileIndex t)
 {
 	assert(IsTileType(t, MP_CLEAR));
-	return GB(tile_map.get(t).clear.m5, 5, 3);
+	return tile_map.get(t).clear.counter;
 }
 
 /**
@@ -132,7 +132,7 @@ static inline uint GetClearCounter(TileIndex t)
 static inline void AddClearCounter(TileIndex t, int c)
 {
 	assert(IsTileType(t, MP_CLEAR)); // XXX incomplete
-	tile_map.get(t).clear.m5 += c << 5;
+	tile_map.get(t).clear.counter += c;
 }
 
 /**
@@ -144,7 +144,7 @@ static inline void AddClearCounter(TileIndex t, int c)
 static inline void SetClearCounter(TileIndex t, uint c)
 {
 	assert(IsTileType(t, MP_CLEAR)); // XXX incomplete
-	SB(tile_map.get(t).clear.m5, 5, 3, c);
+	tile_map.get(t).clear.counter = c;
 }
 
 
@@ -158,7 +158,9 @@ static inline void SetClearCounter(TileIndex t, uint c)
 static inline void SetClearGroundDensity(TileIndex t, ClearGround type, uint density)
 {
 	assert(IsTileType(t, MP_CLEAR)); // XXX incomplete
-	tile_map.get(t).clear.m5 = 0 << 5 | type << 2 | density;
+	tile_map.get(t).clear.density = density;
+	tile_map.get(t).clear.ground_type = type;
+	tile_map.get(t).clear.counter = 0;
 }
 
 
@@ -261,7 +263,6 @@ static inline void MakeClear(TileIndex t, ClearGround g, uint density)
 	Tile& t_ = tile_map.get(t); t_.init();
 	SetTileType(t, MP_CLEAR);
 	SetTileOwner(t, OWNER_NONE);
-	t_.clear.m4 = 0 << 5 | 0 << 2;
 	SetClearGroundDensity(t, g, density); // Sets m5
 	tile_map.get_e(t).m6 = 0;
 	tile_map.get_e(t).m7 = 0;
@@ -282,7 +283,6 @@ static inline void MakeField(TileIndex t, uint field_type, IndustryID industry)
 	SetTileOwner(t, OWNER_NONE);
 	t_.field.industry_id = industry; // TODO ?????
 	t_.field.type = field_type;
-	t_.field.m4 = 0 << 5 | 0 << 2;
 	SetClearGroundDensity(t, CLEAR_FIELDS, 3);
 	SB(tile_map.get_e(t).m6, 2, 4, 0);
 	tile_map.get_e(t).m7 = 0;

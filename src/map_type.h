@@ -70,28 +70,32 @@ struct Tile {
 						byte type : 4;
 					};
 				};
-				byte   height;
+				byte height;
 			};
 			union {
 				struct {
 					uint16 industry_id;
-					byte   m1;
-					byte   field_type : 4;
-					byte   is_snow : 1;
-					byte   m3 : 3;
-					byte   m4;          ///< General purpose
-					byte   m5;          ///< General purpose
+					byte m1;
+					byte field_type : 4;
+					byte is_snow : 1;
+					byte m3_57 : 3;
+					byte m4_12 : 2;
+					byte fence_se : 3;
+					byte fence_sw : 3;
+					byte density : 2;
+					byte ground_type : 3;
+					byte counter : 3;
 				} clear;
 				struct {
 					uint16 industry_id;
-					byte   m1;
-					byte   type : 4;
-					byte   is_snow : 1;
-					byte   fence_ne : 3;
-					byte   m4 : 2;
-					byte   fence_se : 3;
-					byte   fence_sw : 3;
-					byte   m5;          ///< General purpose
+					byte m1;
+					byte type : 4;
+					byte is_snow : 1;
+					byte fence_ne : 3;
+					byte m4_12 : 2;
+					byte fence_se : 3;
+					byte fence_sw : 3;
+					byte m5;
 				} field;
 				struct {
 					uint16 m2;
@@ -102,39 +106,39 @@ struct Tile {
 					byte owner : 5;
 					byte wc : 2;
 					byte is_docking : 1;
-					byte   m3;          ///< General purpose
-					byte bits;          ///< General purpose
-					byte   m5;          ///< General purpose
+					byte m3;
+					byte bits;
+					byte m5;
 				} water;
 				struct {
 					byte counter : 4;
 					byte density : 2;
 					byte ground : 3;
-					byte m2 : 5;
-					byte   m1;          ///< General purpose
+					byte m2_1415 : 5;
+					byte m1;
 					byte type;
-					byte   m4;          ///< General purpose
-					byte   m5;          ///< General purpose
+					byte m4;
+					byte m5;
 				} tree;
 				struct {
 					uint16 id;
-					byte   m1;          ///< General purpose
-					byte   m3;          ///< General purpose
-					byte   m4;          ///< General purpose
-					byte   m5;          ///< General purpose
+					byte m1;
+					byte m3;
+					byte m4;
+					byte m5;
 				} town;
 				struct {
 					uint16 town_id;
 					byte random;
 					byte triggers : 5;
-					byte m3 : 1;
+					byte m3_5 : 1;
 					byte clean_house_flag : 1;
 					byte is_completed : 1;
 					union {
 						byte house_id;
 						byte old_town_id;
 					};
-					byte   m5;          ///< General purpose
+					byte m5;
 				} house;
 				struct {
 					uint16 id;
@@ -170,8 +174,8 @@ struct Tile {
 					byte tram_bits : 4;
 					byte tram_owner : 4;
 					byte type : 6;
-					byte   m4 : 2;
-					byte   m5;          ///< General purpose
+					byte m4_67 : 2;
+					byte m5;
 				} road;
 				struct {
 					struct {
@@ -181,7 +185,7 @@ struct Tile {
 						byte signal_lr_variant : 1;
 						byte bits : 3;
 						byte m2_11 : 1;
-						byte m2_12 : 4;
+						byte m2_1215 : 4;
 					};
 					byte m1;
 					union {
@@ -196,9 +200,9 @@ struct Tile {
 							byte signals_present : 4;
 						};
 					};
-					byte   ground_type : 4;
-					byte   signal_states : 4;
-					byte   m5;
+					byte ground_type : 4;
+					byte signal_states : 4;
+					byte m5;
 				} rail;
 				struct {
 					uint16 id;
@@ -236,17 +240,17 @@ struct Tile {
 					uint16 index;
 					byte m1;
 					byte bits;
-					byte   m4;          ///< General purpose
-					byte   m5;          ///< General purpose
+					byte m4;
+					byte m5;
 				} object;
 				struct {
 					uint16 station_id;
 					byte m1;
-					byte m3 : 4;
+					byte m3_03 : 4;
 					byte m3_4 : 1;
-					byte m3_5 : 3;
+					byte m3_57 : 3;
 					byte tile_index;
-					byte   m5;          ///< General purpose
+					byte m5;
 				} waypoint;
 			};
 		};
