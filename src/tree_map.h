@@ -149,7 +149,7 @@ static inline void SetTreeGroundDensity(TileIndex t, TreeGround g, uint d)
 static inline uint GetTreeCount(TileIndex t)
 {
 	assert(IsTileType(t, MP_TREES));
-	return GB(tile_map.get(t).tree.m5, 6, 2) + 1;
+	return tile_map.get(t).tree.count + 1;
 }
 
 /**
@@ -166,7 +166,7 @@ static inline uint GetTreeCount(TileIndex t)
 static inline void AddTreeCount(TileIndex t, int c)
 {
 	assert(IsTileType(t, MP_TREES)); // XXX incomplete
-	tile_map.get(t).tree.m5 += c << 6;
+	tile_map.get(t).tree.count += c;
 }
 
 /**
@@ -181,7 +181,7 @@ static inline void AddTreeCount(TileIndex t, int c)
 static inline uint GetTreeGrowth(TileIndex t)
 {
 	assert(IsTileType(t, MP_TREES));
-	return GB(tile_map.get(t).tree.m5, 0, 3);
+	return tile_map.get(t).tree.growth;
 }
 
 /**
@@ -196,7 +196,7 @@ static inline uint GetTreeGrowth(TileIndex t)
 static inline void AddTreeGrowth(TileIndex t, int a)
 {
 	assert(IsTileType(t, MP_TREES)); // XXX incomplete
-	tile_map.get(t).tree.m5 += a;
+	tile_map.get(t).tree.growth += a;
 }
 
 /**
@@ -212,7 +212,7 @@ static inline void AddTreeGrowth(TileIndex t, int a)
 static inline void SetTreeGrowth(TileIndex t, uint g)
 {
 	assert(IsTileType(t, MP_TREES)); // XXX incomplete
-	SB(tile_map.get(t).tree.m5, 0, 3, g);
+	tile_map.get(t).tree.growth = g;
 }
 
 /**
@@ -281,8 +281,8 @@ static inline void MakeTree(TileIndex t, TreeType type, uint count, uint growth,
 	t_.tree.ground = ground;
 	t_.tree.density = density;
 	t_.tree.type = type;
-	t_.tree.m4 = 0 << 5 | 0 << 2;
-	t_.tree.m5 = count << 6 | growth;
+	t_.tree.growth = growth;
+	t_.tree.count = count;
 	SB(tile_map.get_e(t).m6, 2, 4, 0);
 	tile_map.get_e(t).m7 = 0;
 }

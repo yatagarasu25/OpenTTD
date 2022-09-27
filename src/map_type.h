@@ -117,8 +117,11 @@ struct Tile {
 					byte m2_1415 : 5;
 					byte m1;
 					byte type;
-					byte m4;
-					byte m5;
+					byte m4_12 : 2;
+					byte fence_se : 3;
+					byte fence_sw : 3;
+					byte growth : 6;
+					byte count : 2;
 				} tree;
 				struct {
 					uint16 id;
