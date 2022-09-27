@@ -234,7 +234,7 @@ static inline bool HasTileAnyRoadType(TileIndex t, RoadTypes rts)
 static inline Owner GetRoadOwner(TileIndex t, RoadTramType rtt)
 {
 	assert(MayHaveRoad(t));
-	if (rtt == RTT_ROAD) return (Owner)GB(IsNormalRoadTile(t) ? tile_map.get(t).m1 : tile_map.get_e(t).m7, 0, 5);
+	if (rtt == RTT_ROAD) return (Owner)GB(IsNormalRoadTile(t) ? tile_map.get(t).owner : tile_map.get_e(t).m7, 0, 5);
 
 	/* Trams don't need OWNER_TOWN, and remapping OWNER_NONE
 	 * to OWNER_TOWN makes it use one bit less */
@@ -251,7 +251,10 @@ static inline Owner GetRoadOwner(TileIndex t, RoadTramType rtt)
 static inline void SetRoadOwner(TileIndex t, RoadTramType rtt, Owner o)
 {
 	if (rtt == RTT_ROAD) {
-		SB(IsNormalRoadTile(t) ? tile_map.get(t).m1 : tile_map.get_e(t).m7, 0, 5, o);
+		if (IsNormalRoadTile(t))
+			tile_map.get(t).owner = o;
+		else
+			SB(tile_map.get_e(t).m7, 0, 5, o);
 	} else {
 		SB(tile_map.get(t).m3, 4, 4, o == OWNER_NONE ? OWNER_TOWN : o);
 	}
@@ -636,7 +639,7 @@ static inline void MakeRoadNormal(TileIndex t, RoadBits bits, RoadType road_rt, 
 {
 	SetTileType(t, MP_ROAD);
 	SetTileOwner(t, road);
-	tile_map.get(t).m2 = town;
+	tile_map.get(t).town.id = town;
 	tile_map.get(t).m3 = (tram_rt != INVALID_ROADTYPE ? bits : 0);
 	tile_map.get(t).m5 = (road_rt != INVALID_ROADTYPE ? bits : 0) | ROAD_TILE_NORMAL << 6;
 	SB(tile_map.get_e(t).m6, 2, 4, 0);
@@ -661,7 +664,7 @@ static inline void MakeRoadCrossing(TileIndex t, Owner road, Owner tram, Owner r
 {
 	SetTileType(t, MP_ROAD);
 	SetTileOwner(t, rail);
-	tile_map.get(t).m2 = town;
+	tile_map.get(t).town.id = town;
 	tile_map.get(t).m3 = 0;
 	tile_map.get(t).m4 = INVALID_ROADTYPE;
 	tile_map.get(t).m5 = ROAD_TILE_CROSSING << 6 | roaddir;
@@ -684,7 +687,7 @@ static inline void MakeRoadDepot(TileIndex t, Owner owner, DepotID did, DiagDire
 {
 	SetTileType(t, MP_ROAD);
 	SetTileOwner(t, owner);
-	tile_map.get(t).m2 = did;
+	tile_map.get(t).depot.id = did;
 	tile_map.get(t).m3 = 0;
 	tile_map.get(t).m4 = INVALID_ROADTYPE;
 	tile_map.get(t).m5 = ROAD_TILE_DEPOT << 6 | dir;
