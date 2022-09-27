@@ -148,15 +148,20 @@ struct Tile {
 					byte m5;
 				} industry;
 				struct {
-					uint16 m2;          ///< Primarily used for indices to towns, industries and stations
+					uint16 m2;
 					struct {
 						byte owner : 5;
 						byte wc : 2;
 						byte TUNNELBRIDGE : 1;
 					};
-					byte   m3;          ///< General purpose
-					byte   m4;          ///< General purpose
-					byte   m5;          ///< General purpose
+					byte m3_18;
+					byte type : 6;
+					byte m4_67 : 2;
+					byte direction : 2;
+					byte transport_type : 2;
+					byte reserved : 1;
+					byte m5_67 : 2;
+					byte is_bridge : 1;
 				} bridge;
 				struct {
 					uint16 m2;
