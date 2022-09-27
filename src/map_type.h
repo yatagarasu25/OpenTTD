@@ -97,9 +97,9 @@ struct Tile : public TileCore {
 					byte signal_lr : 3;
 					byte signal_lr_variant : 1;
 					byte bits : 3;
-					byte b2 : 1;
 					byte m2_11 : 1;
-					byte b3 : 2;
+					byte m2_12 : 1;
+					byte b3 : 3;
 				};
 			};
 		} track;
@@ -140,6 +140,15 @@ struct Tile : public TileCore {
 			uint16 station_id;
 		} waypoint;
 	};
+
+	void init()
+	{
+		m2 = 0;
+		m1 = 0;
+		m3 = 0;
+		m4 = 0;
+		m5 = 0;
+	}
 };
 
 static_assert(sizeof(Tile) == 8);

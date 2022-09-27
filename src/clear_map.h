@@ -258,11 +258,9 @@ static inline void SetFence(TileIndex t, DiagDirection side, uint h)
  */
 static inline void MakeClear(TileIndex t, ClearGround g, uint density)
 {
+	Tile& t_ = tile_map.get(t); t_.init();
 	SetTileType(t, MP_CLEAR);
-	tile_map.get(t).m1 = 0;
 	SetTileOwner(t, OWNER_NONE);
-	tile_map.get(t).m2 = 0;
-	tile_map.get(t).m3 = 0;
 	tile_map.get(t).m4 = 0 << 5 | 0 << 2;
 	SetClearGroundDensity(t, g, density); // Sets m5
 	tile_map.get_e(t).m6 = 0;

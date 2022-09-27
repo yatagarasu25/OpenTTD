@@ -194,10 +194,10 @@ static inline Track GetRailDepotTrack(TileIndex t)
 static inline TrackBits GetRailReservationTrackBits(TileIndex t)
 {
 	assert(IsPlainRailTile(t));
-	byte track_b = GB(tile_map.get(t).m2, 8, 3);
+	byte track_b = tile_map.get(t).track.bits;
 	Track track = (Track)(track_b - 1);    // map array saves Track+1
 	if (track_b == 0) return TRACK_BIT_NONE;
-	return (TrackBits)(TrackToTrackBits(track) | (HasBit(tile_map.get(t).m2, 11) ? TrackToTrackBits(TrackToOppositeTrack(track)) : 0));
+	return (TrackBits)(TrackToTrackBits(track) | (tile_map.get(t).track.m2_11 ? TrackToTrackBits(TrackToOppositeTrack(track)) : 0));
 }
 
 /**
@@ -212,8 +212,8 @@ static inline void SetTrackReservation(TileIndex t, TrackBits b)
 	assert(b != INVALID_TRACK_BIT);
 	assert(!TracksOverlap(b));
 	Track track = RemoveFirstTrack(&b);
-	SB(tile_map.get(t).m2, 8, 3, track == INVALID_TRACK ? 0 : track + 1);
-	SB(tile_map.get(t).m2, 11, 1, (byte)(b != TRACK_BIT_NONE));
+	tile_map.get(t).track.bits = (track == INVALID_TRACK ? 0 : track + 1);
+	tile_map.get(t).track.m2_11 = (byte)(b != TRACK_BIT_NONE);
 }
 
 /**

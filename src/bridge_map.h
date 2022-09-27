@@ -117,11 +117,10 @@ static inline void SetBridgeMiddle(TileIndex t, Axis a)
  */
 static inline void MakeBridgeRamp(TileIndex t, Owner o, BridgeType bridgetype, DiagDirection d, TransportType tt)
 {
+	Tile& t_ = tile_map.get(t); t_.init();
 	SetTileType(t, MP_TUNNELBRIDGE);
 	SetTileOwner(t, o);
 	SetDockingTile(t, false);
-	tile_map.get(t).m2 = 0;
-	tile_map.get(t).m3 = 0;
 	tile_map.get(t).m4 = INVALID_ROADTYPE;
 	tile_map.get(t).m5 = 1 << 7 | tt << 2 | d;
 	SB(tile_map.get_e(t).m6, 2, 4, bridgetype);
