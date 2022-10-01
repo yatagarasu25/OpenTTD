@@ -22,8 +22,7 @@
  */
 static inline bool IsTunnel(TileIndex t)
 {
-	assert(IsTileType(t, MP_TUNNELBRIDGE));
-	return !tile_map.get(t).bridge.is_bridge;
+	return !tile_map.bridge(t).is_bridge;
 }
 
 /**
@@ -49,9 +48,9 @@ bool IsTunnelInWayDir(TileIndex tile, int z, DiagDirection dir);
  */
 static inline void MakeRoadTunnel(TileIndex t, Owner o, DiagDirection d, RoadType road_rt, RoadType tram_rt)
 {
-	Tile& t_ = tile_map.init(t, MP_TUNNELBRIDGE, o);
-	t_.bridge.direction = d;
-	t_.bridge.transport_type = TRANSPORT_ROAD;
+	auto& t_ = tile_map.init(t, MP_TUNNELBRIDGE, o).bridge();
+	t_.direction = d;
+	t_.transport_type = TRANSPORT_ROAD;
 	SetRoadOwner(t, RTT_ROAD, o);
 	if (o != OWNER_TOWN) SetRoadOwner(t, RTT_TRAM, o);
 	SetRoadTypes(t, road_rt, tram_rt);
@@ -66,9 +65,9 @@ static inline void MakeRoadTunnel(TileIndex t, Owner o, DiagDirection d, RoadTyp
  */
 static inline void MakeRailTunnel(TileIndex t, Owner o, DiagDirection d, RailType r)
 {
-	Tile& t_ = tile_map.init(t, MP_TUNNELBRIDGE, o);
-	t_.bridge.direction = d;
-	t_.bridge.transport_type = TRANSPORT_RAIL;
+	auto& t_ = tile_map.init(t, MP_TUNNELBRIDGE, o).bridge();
+	t_.direction = d;
+	t_.transport_type = TRANSPORT_RAIL;
 	SetRailType(t, r);
 	SetRoadTypes(t, INVALID_ROADTYPE, INVALID_ROADTYPE);
 }

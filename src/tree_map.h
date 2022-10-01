@@ -72,8 +72,7 @@ enum TreeGround {
  */
 static inline TreeType GetTreeType(TileIndex t)
 {
-	assert(IsTileType(t, MP_TREES));
-	return (TreeType)tile_map.get(t).tree.type;
+	return (TreeType)tile_map.tree(t).type;
 }
 
 /**
@@ -87,8 +86,7 @@ static inline TreeType GetTreeType(TileIndex t)
  */
 static inline TreeGround GetTreeGround(TileIndex t)
 {
-	assert(IsTileType(t, MP_TREES));
-	return (TreeGround)tile_map.get(t).tree.ground;
+	return (TreeGround)tile_map.tree(t).ground;
 }
 
 /**
@@ -112,8 +110,7 @@ static inline TreeGround GetTreeGround(TileIndex t)
  */
 static inline uint GetTreeDensity(TileIndex t)
 {
-	assert(IsTileType(t, MP_TREES));
-	return tile_map.get(t).tree.density;
+	return tile_map.tree(t).density;
 }
 
 /**
@@ -129,9 +126,8 @@ static inline uint GetTreeDensity(TileIndex t)
  */
 static inline void SetTreeGroundDensity(TileIndex t, TreeGround g, uint d)
 {
-	assert(IsTileType(t, MP_TREES)); // XXX incomplete
-	tile_map.get(t).tree.density = d;
-	tile_map.get(t).tree.ground = g;
+	tile_map.tree(t).density = d;
+	tile_map.tree(t).ground = g;
 	SetWaterClass(t, g == TREE_GROUND_SHORE ? WATER_CLASS_SEA : WATER_CLASS_INVALID);
 }
 
@@ -148,8 +144,7 @@ static inline void SetTreeGroundDensity(TileIndex t, TreeGround g, uint d)
  */
 static inline uint GetTreeCount(TileIndex t)
 {
-	assert(IsTileType(t, MP_TREES));
-	return tile_map.get(t).tree.count + 1;
+	return tile_map.tree(t).count + 1;
 }
 
 /**
@@ -165,8 +160,7 @@ static inline uint GetTreeCount(TileIndex t)
  */
 static inline void AddTreeCount(TileIndex t, int c)
 {
-	assert(IsTileType(t, MP_TREES)); // XXX incomplete
-	tile_map.get(t).tree.count += c;
+	tile_map.tree(t).count += c;
 }
 
 /**
@@ -180,8 +174,7 @@ static inline void AddTreeCount(TileIndex t, int c)
  */
 static inline uint GetTreeGrowth(TileIndex t)
 {
-	assert(IsTileType(t, MP_TREES));
-	return tile_map.get(t).tree.growth;
+	return tile_map.tree(t).growth;
 }
 
 /**
@@ -195,8 +188,7 @@ static inline uint GetTreeGrowth(TileIndex t)
  */
 static inline void AddTreeGrowth(TileIndex t, int a)
 {
-	assert(IsTileType(t, MP_TREES)); // XXX incomplete
-	tile_map.get(t).tree.growth += a;
+	tile_map.tree(t).growth += a;
 }
 
 /**
@@ -211,8 +203,7 @@ static inline void AddTreeGrowth(TileIndex t, int a)
  */
 static inline void SetTreeGrowth(TileIndex t, uint g)
 {
-	assert(IsTileType(t, MP_TREES)); // XXX incomplete
-	tile_map.get(t).tree.growth = g;
+	tile_map.tree(t).growth = g;
 }
 
 /**
@@ -225,8 +216,7 @@ static inline void SetTreeGrowth(TileIndex t, uint g)
  */
 static inline uint GetTreeCounter(TileIndex t)
 {
-	assert(IsTileType(t, MP_TREES));
-	return tile_map.get(t).tree.counter;
+	return tile_map.tree(t).counter;
 }
 
 /**
@@ -240,8 +230,7 @@ static inline uint GetTreeCounter(TileIndex t)
  */
 static inline void AddTreeCounter(TileIndex t, int a)
 {
-	assert(IsTileType(t, MP_TREES)); // XXX incomplete
-	tile_map.get(t).tree.counter += a;
+	tile_map.tree(t).counter += a;
 }
 
 /**
@@ -255,8 +244,7 @@ static inline void AddTreeCounter(TileIndex t, int a)
  */
 static inline void SetTreeCounter(TileIndex t, uint c)
 {
-	assert(IsTileType(t, MP_TREES)); // XXX incomplete
-	tile_map.get(t).tree.counter = c;
+	tile_map.tree(t).counter = c;
 }
 
 /**
@@ -273,15 +261,14 @@ static inline void SetTreeCounter(TileIndex t, uint c)
  */
 static inline void MakeTree(TileIndex t, TreeType type, uint count, uint growth, TreeGround ground, uint density)
 {
-	Tile& t_ = tile_map.init(t, MP_TREES);
-	SetTileOwner(t, OWNER_NONE);
-	SetWaterClass(t, ground == TREE_GROUND_SHORE ? WATER_CLASS_SEA : WATER_CLASS_INVALID);
-	t_.tree.counter = 0;
-	t_.tree.ground = ground;
-	t_.tree.density = density;
-	t_.tree.type = type;
-	t_.tree.growth = growth;
-	t_.tree.count = count;
+	auto& t_ = tile_map.init(t, MP_TREES, OWNER_NONE).tree();
+	t_.wc = ground == TREE_GROUND_SHORE ? WATER_CLASS_SEA : WATER_CLASS_INVALID;
+	t_.counter = 0;
+	t_.ground = ground;
+	t_.density = density;
+	t_.type = type;
+	t_.growth = growth;
+	t_.count = count;
 }
 
 #endif /* TREE_MAP_H */

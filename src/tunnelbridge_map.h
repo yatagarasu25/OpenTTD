@@ -25,8 +25,7 @@
  */
 static inline DiagDirection GetTunnelBridgeDirection(TileIndex t)
 {
-	assert(IsTileType(t, MP_TUNNELBRIDGE));
-	return (DiagDirection)tile_map.get(t).bridge.direction;
+	return (DiagDirection)tile_map.bridge(t).direction;
 }
 
 /**
@@ -38,8 +37,7 @@ static inline DiagDirection GetTunnelBridgeDirection(TileIndex t)
  */
 static inline TransportType GetTunnelBridgeTransportType(TileIndex t)
 {
-	assert(IsTileType(t, MP_TUNNELBRIDGE));
-	return (TransportType)tile_map.get(t).bridge.transport_type;
+	return (TransportType)tile_map.bridge(t).transport_type;
 }
 
 /**
@@ -51,8 +49,7 @@ static inline TransportType GetTunnelBridgeTransportType(TileIndex t)
  */
 static inline bool HasTunnelBridgeSnowOrDesert(TileIndex t)
 {
-	assert(IsTileType(t, MP_TUNNELBRIDGE));
-	return tile_map.get(t).bridge.snow_or_desert;
+	return tile_map.bridge(t).snow_or_desert;
 }
 
 /**
@@ -65,8 +62,7 @@ static inline bool HasTunnelBridgeSnowOrDesert(TileIndex t)
  */
 static inline void SetTunnelBridgeSnowOrDesert(TileIndex t, bool snow_or_desert)
 {
-	assert(IsTileType(t, MP_TUNNELBRIDGE));
-	tile_map.get(t).bridge.snow_or_desert = snow_or_desert;
+	tile_map.bridge(t).snow_or_desert = snow_or_desert;
 }
 
 /**
@@ -77,7 +73,6 @@ static inline void SetTunnelBridgeSnowOrDesert(TileIndex t, bool snow_or_desert)
  */
 static inline TileIndex GetOtherTunnelBridgeEnd(TileIndex t)
 {
-	assert(IsTileType(t, MP_TUNNELBRIDGE));
 	return IsTunnel(t) ? GetOtherTunnelEnd(t) : GetOtherBridgeEnd(t);
 }
 
@@ -90,9 +85,8 @@ static inline TileIndex GetOtherTunnelBridgeEnd(TileIndex t)
  */
 static inline bool HasTunnelBridgeReservation(TileIndex t)
 {
-	assert(IsTileType(t, MP_TUNNELBRIDGE));
 	assert(GetTunnelBridgeTransportType(t) == TRANSPORT_RAIL);
-	return tile_map.get(t).bridge.reserved;
+	return tile_map.bridge(t).reserved;
 }
 
 /**
@@ -103,9 +97,8 @@ static inline bool HasTunnelBridgeReservation(TileIndex t)
  */
 static inline void SetTunnelBridgeReservation(TileIndex t, bool b)
 {
-	assert(IsTileType(t, MP_TUNNELBRIDGE));
 	assert(GetTunnelBridgeTransportType(t) == TRANSPORT_RAIL);
-	tile_map.get(t).bridge.reserved = b ? 1 : 0;
+	tile_map.bridge(t).reserved = b ? 1 : 0;
 }
 
 /**

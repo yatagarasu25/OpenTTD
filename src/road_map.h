@@ -18,13 +18,6 @@
 #include "road_type.h"
 
 
-/** The different types of road tiles. */
-enum RoadTileType {
-	ROAD_TILE_NORMAL,   ///< Normal road
-	ROAD_TILE_CROSSING, ///< Level crossing
-	ROAD_TILE_DEPOT,    ///< Depot (one entrance)
-};
-
 /**
  * Test whether a tile can have road/tram types.
  * @param t Tile to query.
@@ -51,8 +44,7 @@ static inline bool MayHaveRoad(TileIndex t)
  */
 static inline RoadTileType GetRoadTileType(TileIndex t)
 {
-	assert(IsTileType(t, MP_ROAD));
-	return (RoadTileType)tile_map.get(t).road.tile_type;
+	return (RoadTileType)tile_map.road(t).tile_type;
 }
 
 /**
@@ -128,8 +120,8 @@ static inline bool IsRoadDepotTile(TileIndex t)
 static inline RoadBits GetRoadBits(TileIndex t, RoadTramType rtt)
 {
 	assert(IsNormalRoad(t));
-	if (rtt == RTT_TRAM) return (RoadBits)tile_map.get(t).road.tram_bits;
-	return (RoadBits)tile_map.get(t).road.road_bits;
+	if (rtt == RTT_TRAM) return (RoadBits)tile_map.road(t).tram_bits;
+	return (RoadBits)tile_map.road(t).road_bits;
 }
 
 /**
@@ -154,22 +146,22 @@ static inline void SetRoadBits(TileIndex t, RoadBits r, RoadTramType rtt)
 {
 	assert(IsNormalRoad(t)); // XXX incomplete
 	if (rtt == RTT_TRAM) {
-		tile_map.get(t).road.tram_bits = r;
+		tile_map.road(t).tram_bits = r;
 	} else {
-		tile_map.get(t).road.road_bits = r;
+		tile_map.road(t).road_bits = r;
 	}
 }
 
 static inline RoadType GetRoadTypeRoad(TileIndex t)
 {
 	assert(MayHaveRoad(t));
-	return (RoadType)tile_map.get(t).road.type;
+	return (RoadType)tile_map.road(t).type;
 }
 
 static inline RoadType GetRoadTypeTram(TileIndex t)
 {
 	assert(MayHaveRoad(t));
-	return (RoadType)GB(tile_map.get(t).road.m8, 6, 6);
+	return (RoadType)tile_map.road(t).road_type;
 }
 
 static inline RoadType GetRoadType(TileIndex t, RoadTramType rtt)
@@ -235,11 +227,11 @@ static inline Owner GetRoadOwner(TileIndex t, RoadTramType rtt)
 {
 	assert(MayHaveRoad(t));
 	if (rtt == RTT_ROAD)
-		return (Owner)(IsNormalRoadTile(t) ? tile_map.get(t).road.owner : tile_map.get(t).depot.road.owner);
+		return (Owner)(IsNormalRoadTile(t) ? tile_map.road(t).owner : tile_map.depot_road(t).owner);
 
 	/* Trams don't need OWNER_TOWN, and remapping OWNER_NONE
 	 * to OWNER_TOWN makes it use one bit less */
-	Owner o = (Owner)tile_map.get(t).road.tram_owner;
+	Owner o = (Owner)tile_map.road(t).tram_owner;
 	return o == OWNER_TOWN ? OWNER_NONE : o;
 }
 
@@ -253,11 +245,11 @@ static inline void SetRoadOwner(TileIndex t, RoadTramType rtt, Owner o)
 {
 	if (rtt == RTT_ROAD) {
 		if (IsNormalRoadTile(t))
-			tile_map.get(t).road.owner = o;
+			tile_map.road(t).owner = o;
 		else
-			tile_map.get(t).depot.road.owner = o;
+			tile_map.depot_road(t).owner = o;
 	} else {
-		tile_map.get(t).road.tram_owner = (o == OWNER_NONE ? OWNER_TOWN : o);
+		tile_map.road(t).tram_owner = (o == OWNER_NONE ? OWNER_TOWN : o);
 	}
 }
 
@@ -305,7 +297,7 @@ static inline bool IsValidDisallowedRoadDirections(DisallowedRoadDirections drt)
 static inline DisallowedRoadDirections GetDisallowedRoadDirections(TileIndex t)
 {
 	assert(IsNormalRoad(t));
-	return (DisallowedRoadDirections)tile_map.get(t).road.disalowed_direction;
+	return (DisallowedRoadDirections)tile_map.road(t).disalowed_direction;
 }
 
 /**
@@ -317,7 +309,7 @@ static inline void SetDisallowedRoadDirections(TileIndex t, DisallowedRoadDirect
 {
 	assert(IsNormalRoad(t));
 	assert(drd < DRD_END);
-	tile_map.get(t).road.disalowed_direction = drd;
+	tile_map.road(t).disalowed_direction = drd;
 }
 
 /**
@@ -329,7 +321,7 @@ static inline void SetDisallowedRoadDirections(TileIndex t, DisallowedRoadDirect
 static inline Axis GetCrossingRoadAxis(TileIndex t)
 {
 	assert(IsLevelCrossing(t));
-	return (Axis) tile_map.get(t).road.crossing.axis;
+	return (Axis) tile_map.road(t).crossing.axis;
 }
 
 /**
@@ -384,7 +376,7 @@ static inline TrackBits GetCrossingRailBits(TileIndex tile)
 static inline bool HasCrossingReservation(TileIndex t)
 {
 	assert(IsLevelCrossingTile(t));
-	return tile_map.get(t).road.crossing.reserved;
+	return tile_map.road(t).crossing.reserved;
 }
 
 /**
@@ -397,7 +389,7 @@ static inline bool HasCrossingReservation(TileIndex t)
 static inline void SetCrossingReservation(TileIndex t, bool b)
 {
 	assert(IsLevelCrossingTile(t));
-	tile_map.get(t).road.crossing.reserved = b;
+	tile_map.road(t).crossing.reserved = b;
 }
 
 /**
@@ -420,7 +412,7 @@ static inline TrackBits GetCrossingReservationTrackBits(TileIndex t)
 static inline bool IsCrossingBarred(TileIndex t)
 {
 	assert(IsLevelCrossing(t));
-	return tile_map.get(t).road.crossing.barred;
+	return tile_map.road(t).crossing.barred;
 }
 
 /**
@@ -432,7 +424,7 @@ static inline bool IsCrossingBarred(TileIndex t)
 static inline void SetCrossingBarred(TileIndex t, bool barred)
 {
 	assert(IsLevelCrossing(t));
-	tile_map.get(t).road.crossing.barred = barred;
+	tile_map.road(t).crossing.barred = barred;
 }
 
 /**
@@ -462,7 +454,7 @@ static inline void BarCrossing(TileIndex t)
  */
 static inline bool IsOnSnow(TileIndex t)
 {
-	return tile_map.get(t).road.on_snow;
+	return tile_map.road(t).on_snow;
 }
 
 /** Toggle the snow/desert state of a road tile. */
@@ -473,7 +465,7 @@ static inline bool IsOnSnow(TileIndex t)
  */
 static inline void ToggleSnow(TileIndex t)
 {
-	tile_map.get(t).road.on_snow = ~tile_map.get(t).road.on_snow;
+	tile_map.road(t).on_snow = ~tile_map.road(t).on_snow;
 }
 
 
@@ -496,7 +488,7 @@ enum Roadside {
  */
 static inline Roadside GetRoadside(TileIndex tile)
 {
-	return (Roadside)tile_map.get(tile).road.roadside;
+	return (Roadside)tile_map.road(tile).roadside;
 }
 
 /**
@@ -506,7 +498,7 @@ static inline Roadside GetRoadside(TileIndex tile)
  */
 static inline void SetRoadside(TileIndex tile, Roadside s)
 {
-	tile_map.get(tile).road.roadside = s;
+	tile_map.road(tile).roadside = s;
 }
 
 /**
@@ -526,9 +518,9 @@ static inline bool HasRoadWorks(TileIndex t)
  */
 static inline bool IncreaseRoadWorksCounter(TileIndex t)
 {
-	tile_map.get(t).road.road_works_counter += 1;
+	tile_map.road(t).road_works_counter += 1;
 
-	return tile_map.get(t).road.road_works_counter == 15;
+	return tile_map.road(t).road_works_counter == 15;
 }
 
 /**
@@ -557,7 +549,7 @@ static inline void TerminateRoadWorks(TileIndex t)
 	assert(HasRoadWorks(t));
 	SetRoadside(t, (Roadside)(GetRoadside(t) - ROADSIDE_GRASS_ROAD_WORKS + ROADSIDE_GRASS));
 	/* Stop the counter */
-	tile_map.get(t).road.road_works_counter = 0;
+	tile_map.road(t).road_works_counter = 0;
 }
 
 
@@ -569,7 +561,7 @@ static inline void TerminateRoadWorks(TileIndex t)
 static inline DiagDirection GetRoadDepotDirection(TileIndex t)
 {
 	assert(IsRoadDepot(t));
-	return (DiagDirection)tile_map.get(t).depot.road.direction;
+	return (DiagDirection)tile_map.depot_road(t).direction;
 }
 
 
@@ -584,7 +576,7 @@ static inline void SetRoadTypeRoad(TileIndex t, RoadType rt)
 {
 	assert(MayHaveRoad(t));
 	assert(rt == INVALID_ROADTYPE || RoadTypeIsRoad(rt));
-	tile_map.get(t).road.type = rt;
+	tile_map.road(t).type = rt;
 }
 
 /**
@@ -596,7 +588,7 @@ static inline void SetRoadTypeTram(TileIndex t, RoadType rt)
 {
 	assert(MayHaveRoad(t));
 	assert(rt == INVALID_ROADTYPE || RoadTypeIsTram(rt));
-	SB(tile_map.get(t).road.m8, 6, 6, rt);
+	tile_map.road(t).road_type = rt;
 }
 
 /**
@@ -638,11 +630,11 @@ static inline void SetRoadTypes(TileIndex t, RoadType road_rt, RoadType tram_rt)
  */
 static inline void MakeRoadNormal(TileIndex t, RoadBits bits, RoadType road_rt, RoadType tram_rt, TownID town, Owner road, Owner tram)
 {
-	Tile& t_ = tile_map.init(t, MP_ROAD, road);
-	t_.town.id = town;
-	t_.road.tram_bits = (tram_rt != INVALID_ROADTYPE ? bits : 0);
-	t_.road.road_bits = (road_rt != INVALID_ROADTYPE ? bits : 0);
-	t_.road.tile_type = ROAD_TILE_NORMAL;
+	auto& t_ = tile_map.init(t, MP_ROAD, road).road();
+	t_.town_id = town;
+	t_.tram_bits = (tram_rt != INVALID_ROADTYPE ? bits : 0);
+	t_.road_bits = (road_rt != INVALID_ROADTYPE ? bits : 0);
+	t_.tile_type = ROAD_TILE_NORMAL;
 	SetRoadTypes(t, road_rt, tram_rt);
 	SetRoadOwner(t, RTT_TRAM, tram);
 }
@@ -661,13 +653,14 @@ static inline void MakeRoadNormal(TileIndex t, RoadBits bits, RoadType road_rt, 
  */
 static inline void MakeRoadCrossing(TileIndex t, Owner road, Owner tram, Owner rail, Axis roaddir, RailType rat, RoadType road_rt, RoadType tram_rt, uint town)
 {
-	Tile& t_ = tile_map.init(t, MP_ROAD, rail);
-	t_.town.id = town;
-	t_.road.type = INVALID_ROADTYPE;
-	t_.road.crossing.axis = roaddir;
-	t_.road.tile_type = ROAD_TILE_CROSSING;
-	t_.road.crossing.road_type = road;
-	t_.road.m8 = INVALID_ROADTYPE << 6 | rat;
+	auto& t_ = tile_map.init(t, MP_ROAD, rail).road();
+	t_.town_id = town;
+	t_.type = INVALID_ROADTYPE;
+	t_.crossing.axis = roaddir;
+	t_.tile_type = ROAD_TILE_CROSSING;
+	t_.crossing.road_type = road;
+	t_.rail_type = rat;
+	t_.road_type = INVALID_ROADTYPE;
 	SetRoadTypes(t, road_rt, tram_rt);
 	SetRoadOwner(t, RTT_TRAM, tram);
 }
@@ -682,13 +675,13 @@ static inline void MakeRoadCrossing(TileIndex t, Owner road, Owner tram, Owner r
  */
 static inline void MakeRoadDepot(TileIndex t, Owner owner, DepotID did, DiagDirection dir, RoadType rt)
 {
-	Tile& t_ = tile_map.init(t, MP_ROAD, owner);
-	t_.depot.id = did;
-	t_.depot.road.direction = dir;
-	t_.depot.road.type = INVALID_ROADTYPE;
-	t_.road.tile_type = ROAD_TILE_DEPOT;
-	t_.depot.road.owner = owner;
-	t_.road.m8 = INVALID_ROADTYPE << 6;
+	auto& t_ = tile_map.init(t, MP_ROAD, owner).depot_road();
+	t_.id = did;
+	t_.direction = dir;
+	t_.type = INVALID_ROADTYPE;
+	t_.tile_type = ROAD_TILE_DEPOT;
+	t_.owner = owner;
+	t_.road_type = INVALID_ROADTYPE;
 	SetRoadType(t, GetRoadTramType(rt), rt);
 	SetRoadOwner(t, RTT_TRAM, owner);
 }

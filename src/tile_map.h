@@ -206,8 +206,7 @@ static inline TropicZone GetTropicZone(TileIndex tile)
  */
 static inline byte GetAnimationFrame(TileIndex t)
 {
-	assert(IsTileType(t, MP_HOUSE) || IsTileType(t, MP_OBJECT) || IsTileType(t, MP_INDUSTRY) ||IsTileType(t, MP_STATION));
-	return tile_map.get(t).animated.frame;
+	return tile_map.animated(t).frame;
 }
 
 /**
@@ -218,8 +217,7 @@ static inline byte GetAnimationFrame(TileIndex t)
  */
 static inline void SetAnimationFrame(TileIndex t, byte frame)
 {
-	assert(IsTileType(t, MP_HOUSE) || IsTileType(t, MP_OBJECT) || IsTileType(t, MP_INDUSTRY) ||IsTileType(t, MP_STATION));
-	tile_map.get(t).animated.frame = frame;
+	tile_map.animated(t).frame = frame;
 }
 
 Slope GetTileSlope(TileIndex tile, int *h = nullptr);

@@ -500,6 +500,7 @@ add_files(
     water_cmd.cpp
     water_cmd.h
     water_map.h
+    water_type.h
     waypoint.cpp
     waypoint_base.h
     waypoint_cmd.cpp

@@ -30,12 +30,12 @@ struct TileMap
 	uint size;      ///< The number of tiles on the map
 	uint tile_mask;
 
-	 /**
-	  * Pointer to the tile-array.
-	  *
-	  * This variable points to the tile-array which contains the tiles of
-	  * the map.
-	  */
+	/**
+	 * Pointer to the tile-array.
+	 *
+	 * This variable points to the tile-array which contains the tiles of
+	 * the map.
+	 */
 	Tile* _m = nullptr;
 
 	void Allocate();
@@ -81,22 +81,36 @@ struct TileMap
 
 	Tile::Raw& raw(const TileIndex& i) { return _m[i].raw; }
 
-	Tile::Owned& owned(const TileIndex& i)
-	{
-		return get(i).owned();
-	}
+	Tile::Owned& owned(const TileIndex& i) { return get(i).owned(); }
+	Tile::Animated& animated(const TileIndex& i) { return get(i).animated(); }
+	bool try_water_class(const TileIndex& i, Tile::WaterClass& v) { auto& t = get(i); if (t.IsWaterClass()) v = t.water_class(); return t.IsWaterClass(); }
+	Tile::WaterClass& water_class(const TileIndex& i) { return get(i).water_class(); }
+	bool try_docking(const TileIndex& i, Tile::Docking& v) { auto& t = get(i); if (t.IsDocking()) v = t.docking(); return t.IsDocking(); }
+	Tile::Docking& docking(const TileIndex& i) { return get(i).docking(); }
 
-	Tile::Clear& clear(const TileIndex& i)
-	{
-		Tile& t = get(i);
-		assert(t.type == MP_CLEAR);
-		return t.clear;
-	}
+	Tile::Clear& clear(const TileIndex& i) { return get(i).clear(); }
+	Tile::Field& field(const TileIndex& i) { return get(i).field(); }
+	Tile::Water& water(const TileIndex& i) { return get(i).water(); }
+	Tile::Lock& lock(const TileIndex& i) { return get(i).lock(); }
+	Tile::Tree& tree(const TileIndex& i) { return get(i).tree(); }
+	Tile::Town& town(const TileIndex& i) { return get(i).town(); }
+	Tile::House& house(const TileIndex& i) { return get(i).house(); }
+	Tile::Industry& industry(const TileIndex& i) { return get(i).industry(); }
+	Tile::Bridge& bridge(const TileIndex& i) { return get(i).bridge(); }
+	Tile::Road& road(const TileIndex& i) { return get(i).road(); }
+	Tile::Rail& rail(const TileIndex& i) { return get(i).rail(); }
+	Tile::Station& station(const TileIndex& i) { return get(i).station(); }
+	Tile::Depot& depot(const TileIndex& i) { return get(i).depot(); }
+	Tile::DepotRoad& depot_road(const TileIndex& i) { return get(i).depot_road(); }
+	Tile::DepotRail& depot_rail(const TileIndex& i) { return get(i).depot_rail(); }
+	Tile::DepotShip& depot_ship(const TileIndex& i) { return get(i).depot_ship(); }
+	Tile::Object& object(const TileIndex& i) { return get(i).object(); }
+	Tile::Waypoint& waypoint(const TileIndex& i) { return get(i).waypoint(); }
 };
 
 extern TileMap tile_map;
 
-/**
+	/**
  * 'Wraps' the given tile to it is within the map. It does
  * this by masking the 'high' bits of.
  * @param x the tile to 'wrap'

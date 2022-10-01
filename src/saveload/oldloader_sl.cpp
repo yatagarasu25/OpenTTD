@@ -89,10 +89,9 @@ static void FixTTDMapArray()
 			case MP_WATER:
 				/* if water class == 3, make river there */
 				if (GB(tile_map.raw(t).m3, 0, 2) == 3) {
-					Tile &t_ = tile_map.init(t, MP_WATER);
-					SetTileOwner(t, OWNER_WATER);
-					t_.water.m3 = 2; // WATER_CLASS_RIVER
-					t_.water.bits = Random();
+					auto& t_ = tile_map.init(t, MP_WATER, OWNER_WATER).water();
+					t_.m3 = 2; // WATER_CLASS_RIVER
+					t_.bits = Random();
 				}
 				break;
 
@@ -283,8 +282,8 @@ static bool FixTTOMapArray()
 				break;
 
 			case MP_WATER:
-				tile_map.get(t).water.m3 = 0;
-				tile_map.get(t).water.m2 = 0;
+				tile_map.water(t).m3 = 0;
+				tile_map.water(t).m2 = 0;
 				break;
 
 			case MP_VOID:
@@ -328,8 +327,8 @@ static bool FixTTOMapArray()
 				break;
 
 			case MP_OBJECT:
-				tile_map.get(t).object.index = 0;
-				tile_map.get(t).object.bits = 0;
+				tile_map.object(t).index = 0;
+				tile_map.object(t).bits = 0;
 				break;
 
 			default:

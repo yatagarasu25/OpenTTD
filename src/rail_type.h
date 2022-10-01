@@ -53,4 +53,12 @@ enum RailTypes : uint64 {
 };
 DECLARE_ENUM_AS_BIT_SET(RailTypes)
 
+/** Different types of Rail-related tiles */
+enum RailTileType {
+	RAIL_TILE_NORMAL = 0, ///< Normal rail tile without signals
+	RAIL_TILE_SIGNALS = 1, ///< Normal rail tile with signals
+	RAIL_TILE_WAYPOINT = 2, ///< Normal rail tile with waypoint
+	RAIL_TILE_DEPOT = 3, ///< Depot (one entrance)
+};
+
 #endif /* RAIL_TYPE_H */

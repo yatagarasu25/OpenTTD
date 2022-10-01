@@ -12,71 +12,8 @@
 
 #include "depot_type.h"
 #include "tile_map.h"
+#include "water_type.h"
 
-/**
- * Bit field layout of m5 for water tiles.
- */
-enum WaterTileTypeBitLayout {
-	WBL_TYPE_BEGIN        = 4,   ///< Start of the 'type' bitfield.
-	WBL_TYPE_COUNT        = 4,   ///< Length of the 'type' bitfield.
-
-	WBL_TYPE_NORMAL       = 0x0, ///< Clear water or coast ('type' bitfield).
-	WBL_TYPE_LOCK         = 0x1, ///< Lock ('type' bitfield).
-	WBL_TYPE_DEPOT        = 0x8, ///< Depot ('type' bitfield).
-
-	WBL_COAST_FLAG        = 0,   ///< Flag for coast.
-
-	WBL_LOCK_ORIENT_BEGIN = 0,   ///< Start of lock orientation bitfield.
-	WBL_LOCK_ORIENT_COUNT = 2,   ///< Length of lock orientation bitfield.
-	WBL_LOCK_PART_BEGIN   = 2,   ///< Start of lock part bitfield.
-	WBL_LOCK_PART_COUNT   = 2,   ///< Length of lock part bitfield.
-
-	WBL_DEPOT_PART        = 0,   ///< Depot part flag.
-	WBL_DEPOT_AXIS        = 1,   ///< Depot axis flag.
-};
-
-/** Available water tile types. */
-enum WaterTileType {
-	WATER_TILE_CLEAR, ///< Plain water.
-	WATER_TILE_COAST, ///< Coast.
-	WATER_TILE_LOCK,  ///< Water lock.
-	WATER_TILE_DEPOT, ///< Water Depot.
-};
-
-/** classes of water (for #WATER_TILE_CLEAR water tile type). */
-enum WaterClass : byte {
-	WATER_CLASS_SEA,     ///< Sea.
-	WATER_CLASS_CANAL,   ///< Canal.
-	WATER_CLASS_RIVER,   ///< River.
-	WATER_CLASS_INVALID, ///< Used for industry tiles on land (also for oilrig if newgrf says so).
-};
-/** Helper information for extract tool. */
-template <> struct EnumPropsT<WaterClass> : MakeEnumPropsT<WaterClass, byte, WATER_CLASS_SEA, WATER_CLASS_INVALID, WATER_CLASS_INVALID, 2> {};
-
-/**
- * Checks if a water class is valid.
- *
- * @param wc The value to check
- * @return true if the given value is a valid water class.
- */
-static inline bool IsValidWaterClass(WaterClass wc)
-{
-	return wc < WATER_CLASS_INVALID;
-}
-
-/** Sections of the water depot. */
-enum DepotPart {
-	DEPOT_PART_NORTH = 0, ///< Northern part of a depot.
-	DEPOT_PART_SOUTH = 1, ///< Southern part of a depot.
-	DEPOT_PART_END
-};
-
-/** Sections of the water lock. */
-enum LockPart {
-	LOCK_PART_MIDDLE = 0, ///< Middle part of a lock.
-	LOCK_PART_LOWER  = 1, ///< Lower part of a lock.
-	LOCK_PART_UPPER  = 2, ///< Upper part of a lock.
-};
 
 bool IsPossibleDockingTile(TileIndex t);
 
@@ -87,10 +24,10 @@ bool IsPossibleDockingTile(TileIndex t);
  */
 static inline WaterTileType GetWaterTileType(TileIndex t)
 {
-	assert(IsTileType(t, MP_WATER));
+	auto& t_ = tile_map.water(t);
 
-	switch (tile_map.get(t).water.type) {
-		case WBL_TYPE_NORMAL: return tile_map.get(t).water.is_coast ? WATER_TILE_COAST : WATER_TILE_CLEAR;
+	switch (t_.type) {
+		case WBL_TYPE_NORMAL: return t_.is_coast ? WATER_TILE_COAST : WATER_TILE_CLEAR;
 		case WBL_TYPE_LOCK:   return WATER_TILE_LOCK;
 		case WBL_TYPE_DEPOT:  return WATER_TILE_DEPOT;
 		default: NOT_REACHED();
@@ -116,8 +53,7 @@ static inline bool HasTileWaterClass(TileIndex t)
  */
 static inline WaterClass GetWaterClass(TileIndex t)
 {
-	assert(HasTileWaterClass(t));
-	return (WaterClass)tile_map.get(t).water.wc;
+	return (WaterClass)tile_map.water_class(t).wc;
 }
 
 /**
@@ -128,8 +64,7 @@ static inline WaterClass GetWaterClass(TileIndex t)
  */
 static inline void SetWaterClass(TileIndex t, WaterClass wc)
 {
-	assert(HasTileWaterClass(t));
-	tile_map.get(t).water.wc = wc;
+	tile_map.water_class(t).wc = wc;
 }
 
 /**
@@ -248,7 +183,7 @@ static inline bool IsShipDepotTile(TileIndex t)
 static inline Axis GetShipDepotAxis(TileIndex t)
 {
 	assert(IsShipDepotTile(t));
-	return (Axis)tile_map.get(t).depot.ship.axis;
+	return (Axis)tile_map.depot_ship(t).axis;
 }
 
 /**
@@ -260,7 +195,7 @@ static inline Axis GetShipDepotAxis(TileIndex t)
 static inline DepotPart GetShipDepotPart(TileIndex t)
 {
 	assert(IsShipDepotTile(t));
-	return (DepotPart)tile_map.get(t).depot.ship.part;
+	return (DepotPart)tile_map.depot_ship(t).part;
 }
 
 /**
@@ -318,8 +253,7 @@ static inline bool IsLock(TileIndex t)
  */
 static inline DiagDirection GetLockDirection(TileIndex t)
 {
-	assert(IsLock(t));
-	return (DiagDirection)tile_map.get(t).lock.direction;
+	return (DiagDirection)tile_map.lock(t).direction;
 }
 
 /**
@@ -330,8 +264,7 @@ static inline DiagDirection GetLockDirection(TileIndex t)
  */
 static inline byte GetLockPart(TileIndex t)
 {
-	assert(IsLock(t));
-	return tile_map.get(t).lock.part;
+	return tile_map.lock(t).part;
 }
 
 /**
@@ -342,8 +275,7 @@ static inline byte GetLockPart(TileIndex t)
  */
 static inline byte GetWaterTileRandomBits(TileIndex t)
 {
-	assert(IsTileType(t, MP_WATER));
-	return tile_map.get(t).water.bits;
+	return tile_map.water(t).bits;
 }
 
 /**
@@ -365,8 +297,7 @@ static inline bool HasTileWaterGround(TileIndex t)
  */
 static inline void SetDockingTile(TileIndex t, bool b)
 {
-	assert(IsTileType(t, MP_WATER) || IsTileType(t, MP_RAILWAY) || IsTileType(t, MP_STATION) || IsTileType(t, MP_TUNNELBRIDGE));
-	tile_map.get(t).water.is_docking = b ? 1 : 0;
+	tile_map.docking(t).is_docking = b;
 }
 
 /**
@@ -375,8 +306,8 @@ static inline void SetDockingTile(TileIndex t, bool b)
  */
 static inline bool IsDockingTile(TileIndex t)
 {
-	return (IsTileType(t, MP_WATER) || IsTileType(t, MP_RAILWAY) || IsTileType(t, MP_STATION) || IsTileType(t, MP_TUNNELBRIDGE))
-		&& tile_map.get(t).water.is_docking;
+	Tile::Docking t_;
+	return tile_map.try_docking(t, t_) && t_.is_docking;
 }
 
 
@@ -386,11 +317,10 @@ static inline bool IsDockingTile(TileIndex t)
  */
 static inline void MakeShore(TileIndex t)
 {
-	Tile& t_ = tile_map.init(t, MP_WATER, OWNER_WATER);
-	SetWaterClass(t, WATER_CLASS_SEA);
-	SetDockingTile(t, false);
-	t_.water.is_coast = 1;
-	t_.water.type = WBL_TYPE_NORMAL;
+	auto& t_ = tile_map.init(t, MP_WATER, OWNER_WATER).water();
+	t_.wc = WATER_CLASS_SEA;
+	t_.is_coast = 1;
+	t_.type = WBL_TYPE_NORMAL;
 }
 
 /**
@@ -402,11 +332,10 @@ static inline void MakeShore(TileIndex t)
  */
 static inline void MakeWater(TileIndex t, Owner o, WaterClass wc, uint8 random_bits)
 {
-	Tile& t_ = tile_map.init(t, MP_WATER, o);
-	SetWaterClass(t, wc);
-	SetDockingTile(t, false);
-	t_.water.bits = random_bits;
-	t_.water.type = WBL_TYPE_NORMAL;
+	auto& t_ = tile_map.init(t, MP_WATER, o).water();
+	t_.wc = wc;
+	t_.bits = random_bits;
+	t_.type = WBL_TYPE_NORMAL;
 }
 
 /**
@@ -451,12 +380,12 @@ static inline void MakeCanal(TileIndex t, Owner o, uint8 random_bits)
  */
 static inline void MakeShipDepot(TileIndex t, Owner o, DepotID did, DepotPart part, Axis a, WaterClass original_water_class)
 {
-	Tile& t_ = tile_map.init(t, MP_WATER, o);
-	SetWaterClass(t, original_water_class);
-	t_.depot.id = did;
-	t_.depot.ship.part = part;
-	t_.depot.ship.axis = a;
-	t_.depot.ship.type = WBL_TYPE_DEPOT;
+	auto& t_ = tile_map.init(t, MP_WATER, o).depot_ship();
+	t_.wc = original_water_class;
+	t_.id = did;
+	t_.part = part;
+	t_.axis = a;
+	t_.type = WBL_TYPE_DEPOT;
 }
 
 /**
@@ -470,11 +399,11 @@ static inline void MakeShipDepot(TileIndex t, Owner o, DepotID did, DepotPart pa
  */
 static inline void MakeLockTile(TileIndex t, Owner o, LockPart part, DiagDirection dir, WaterClass original_water_class)
 {
-	Tile& t_ = tile_map.init(t, MP_WATER, o);
-	SetWaterClass(t, original_water_class);
-	t_.lock.direction = dir;
-	t_.lock.part = part;
-	t_.lock.type = WBL_TYPE_LOCK;
+	auto& t_ = tile_map.init(t, MP_WATER, o).lock();
+	t_.wc = original_water_class;
+	t_.direction = dir;
+	t_.part = part;
+	t_.type = WBL_TYPE_LOCK;
 }
 
 /**

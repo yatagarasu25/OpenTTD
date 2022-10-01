@@ -80,4 +80,11 @@ DECLARE_ENUM_AS_BIT_SET(DisallowedRoadDirections)
 /** Helper information for extract tool. */
 template <> struct EnumPropsT<DisallowedRoadDirections> : MakeEnumPropsT<DisallowedRoadDirections, byte, DRD_NONE, DRD_END, DRD_END, 2> {};
 
+/** The different types of road tiles. */
+enum RoadTileType {
+	ROAD_TILE_NORMAL,   ///< Normal road
+	ROAD_TILE_CROSSING, ///< Level crossing
+	ROAD_TILE_DEPOT,    ///< Depot (one entrance)
+};
+
 #endif /* ROAD_TYPE_H */

@@ -164,7 +164,7 @@ static inline void SetClearGroundDensity(TileIndex t, ClearGround type, uint den
 static inline uint GetFieldType(TileIndex t)
 {
 	assert(GetClearGround(t) == CLEAR_FIELDS);
-	return tile_map.get(t).field.type;
+	return tile_map.field(t).type;
 }
 
 /**
@@ -176,7 +176,7 @@ static inline uint GetFieldType(TileIndex t)
 static inline void SetFieldType(TileIndex t, uint f)
 {
 	assert(GetClearGround(t) == CLEAR_FIELDS); // XXX incomplete
-	tile_map.get(t).field.type = f;
+	tile_map.field(t).type = f;
 }
 
 /**
@@ -188,7 +188,7 @@ static inline void SetFieldType(TileIndex t, uint f)
 static inline IndustryID GetIndustryIndexOfField(TileIndex t)
 {
 	assert(GetClearGround(t) == CLEAR_FIELDS);
-	return(IndustryID) tile_map.get(t).field.industry_id;
+	return(IndustryID) tile_map.field(t).industry_id;
 }
 
 /**
@@ -200,7 +200,7 @@ static inline IndustryID GetIndustryIndexOfField(TileIndex t)
 static inline void SetIndustryIndexOfField(TileIndex t, IndustryID i)
 {
 	assert(GetClearGround(t) == CLEAR_FIELDS);
-	tile_map.get(t).field.industry_id = i;
+	tile_map.field(t).industry_id = i;
 }
 
 
@@ -216,10 +216,10 @@ static inline uint GetFence(TileIndex t, DiagDirection side)
 	assert(IsClearGround(t, CLEAR_FIELDS));
 	switch (side) {
 		default: NOT_REACHED();
-		case DIAGDIR_SE: return tile_map.get(t).field.fence_se;
-		case DIAGDIR_SW: return tile_map.get(t).field.fence_sw;
-		case DIAGDIR_NE: return tile_map.get(t).field.fence_ne;
-		case DIAGDIR_NW: return tile_map.get(t).field.fence_nw;
+		case DIAGDIR_SE: return tile_map.field(t).fence_se;
+		case DIAGDIR_SW: return tile_map.field(t).fence_sw;
+		case DIAGDIR_NE: return tile_map.field(t).fence_ne;
+		case DIAGDIR_NW: return tile_map.field(t).fence_nw;
 	}
 }
 
@@ -235,10 +235,10 @@ static inline void SetFence(TileIndex t, DiagDirection side, uint h)
 	assert(IsClearGround(t, CLEAR_FIELDS));
 	switch (side) {
 		default: NOT_REACHED();
-		case DIAGDIR_SE: tile_map.get(t).field.fence_se = h; break;
-		case DIAGDIR_SW: tile_map.get(t).field.fence_sw = h; break;
-		case DIAGDIR_NE: tile_map.get(t).field.fence_ne = h; break;
-		case DIAGDIR_NW: tile_map.get(t).field.fence_nw = h; break;
+		case DIAGDIR_SE: tile_map.field(t).fence_se = h; break;
+		case DIAGDIR_SW: tile_map.field(t).fence_sw = h; break;
+		case DIAGDIR_NE: tile_map.field(t).fence_ne = h; break;
+		case DIAGDIR_NW: tile_map.field(t).fence_nw = h; break;
 	}
 }
 
@@ -264,10 +264,12 @@ static inline void MakeClear(TileIndex t, ClearGround g, uint density)
  */
 static inline void MakeField(TileIndex t, uint field_type, IndustryID industry)
 {
-	Tile& t_ = tile_map.init(t, MP_CLEAR, OWNER_NONE);
-	t_.field.industry_id = industry; // TODO ?????
-	t_.field.type = field_type;
-	SetClearGroundDensity(t, CLEAR_FIELDS, 3);
+	auto& t_ = tile_map.init(t, MP_CLEAR, OWNER_NONE).field();
+	t_.industry_id = industry; // TODO ?????
+	t_.type = field_type;
+	t_.density = 3;
+	t_.ground_type = CLEAR_FIELDS;
+	t_.counter = 0;
 }
 
 /**

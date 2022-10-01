@@ -10,6 +10,10 @@
 #ifndef MAP_TYPE_H
 #define MAP_TYPE_H
 
+#include "rail_type.h"
+#include "road_type.h"
+#include "water_type.h"
+
 struct TileCore {
 	union {
 		struct {
@@ -70,6 +74,19 @@ struct Tile {
 		uint16 m8;
 	};
 
+	struct WaterClass {
+		uint16 m2;
+		byte owner : 5;
+		byte wc : 2;
+	};
+
+	struct Docking {
+		uint16 m2;
+		byte owner : 5;
+		byte wc : 2;
+		byte is_docking : 1;
+	};
+
 
 	struct Clear {
 		uint16 industry_id;
@@ -83,9 +100,9 @@ struct Tile {
 		byte density : 2;
 		byte ground_type : 3;
 		byte counter : 3;
-		byte m6;          ///< General purpose
-		byte   m7;          ///< Primarily used for newgrf support
-		uint16 m8;          ///< General purpose
+		byte m6;
+		byte m7;
+		uint16 m8;
 	};
 
 	struct Field {
@@ -97,12 +114,14 @@ struct Tile {
 		byte m4_12 : 2;
 		byte fence_se : 3;
 		byte fence_sw : 3;
-		byte m5;
+		byte density : 2;
+		byte ground_type : 3;
+		byte counter : 3;
 		byte m6_01 : 2;
 		byte fence_nw : 3;
 		byte m6_57 : 3;
-		byte   m7;          ///< Primarily used for newgrf support
-		uint16 m8;          ///< General purpose
+		byte m7;
+		uint16 m8;
 	};
 
 	struct Water {
@@ -116,9 +135,19 @@ struct Tile {
 		byte m5_1 : 1;
 		byte lock : 2;
 		byte type : 4;
-		byte   m6;          ///< General purpose
-		byte   m7;          ///< Primarily used for newgrf support
-		uint16 m8;          ///< General purpose
+		byte m6;
+		byte m7;
+		uint16 m8;
+
+		inline WaterTileType GetWaterTileType()
+		{
+			switch (type) {
+				case WBL_TYPE_NORMAL: return is_coast ? WATER_TILE_COAST : WATER_TILE_CLEAR;
+				case WBL_TYPE_LOCK:   return WATER_TILE_LOCK;
+				case WBL_TYPE_DEPOT:  return WATER_TILE_DEPOT;
+				default: NOT_REACHED();
+			}
+		}
 	};
 
 	struct Lock {
@@ -131,9 +160,9 @@ struct Tile {
 		byte direction : 2;
 		byte part : 2;
 		byte type : 4;
-		byte   m6;          ///< General purpose
-		byte   m7;          ///< Primarily used for newgrf support
-		uint16 m8;          ///< General purpose
+		byte m6;
+		byte m7;
+		uint16 m8;
 	};
 
 	struct Tree {
@@ -150,9 +179,9 @@ struct Tile {
 		byte fence_sw : 3;
 		byte growth : 6;
 		byte count : 2;
-		byte   m6;          ///< General purpose
-		byte   m7;          ///< Primarily used for newgrf support
-		uint16 m8;          ///< General purpose
+		byte m6;
+		byte m7;
+		uint16 m8;
 	};
 
 	struct Town {
@@ -161,9 +190,9 @@ struct Tile {
 		byte m3;
 		byte m4;
 		byte m5;
-		byte   m6;          ///< General purpose
-		byte   m7;          ///< Primarily used for newgrf support
-		uint16 m8;          ///< General purpose
+		byte m6;
+		byte m7;
+		uint16 m8;
 	};
 
 	struct House {
@@ -199,7 +228,7 @@ struct Tile {
 		byte has_destination : 1;
 		byte destination : 3;
 		byte m7_17 : 4;
-		uint16 m8;          ///< General purpose
+		uint16 m8;
 	};
 
 	struct Industry {
@@ -216,17 +245,17 @@ struct Tile {
 		byte gfx_bit : 1;
 		byte triggers : 3;
 		byte m6_67 : 2;
-		byte   m7;          ///< Primarily used for newgrf support
-		uint16 m8;          ///< General purpose
+		byte m7;
+		uint16 m8;
 	};
 
 	struct Bridge {
 		uint16 m2;
 		byte owner : 5;
 		byte wc : 2;
-		byte TUNNELBRIDGE : 1;
+		byte is_docking : 1;
 		byte m3_18;
-		byte road_type : 6;
+		byte old_road_type : 6;
 		byte m4_67 : 2;
 		byte direction : 2;
 		byte transport_type : 2;
@@ -239,7 +268,9 @@ struct Tile {
 		byte m7_04 : 4;
 		byte snow_or_desert : 1;
 		byte m7_57 : 3;
-		uint16 m8;          ///< General purpose
+		byte rail_type : 6;
+		byte road_type : 6;
+		uint16 m8_1215 : 4;
 	};
 
 	struct Road {
@@ -276,7 +307,9 @@ struct Tile {
 				byte road_type;
 			} crossing;
 		};
-		uint16 m8;          ///< General purpose
+		byte rail_type : 6;
+		byte road_type : 6;
+		byte m8_1215 : 4;
 	};
 
 	struct Rail {
@@ -291,7 +324,7 @@ struct Tile {
 		};
 		byte owner : 5;
 		byte wc : 2;
-		byte m1_7 : 1;
+		byte is_docking : 1;
 		union {
 			byte m3;
 			struct {
@@ -308,16 +341,17 @@ struct Tile {
 		byte signal_states : 4;
 		byte track_bits : 6;
 		byte tile_type : 2;
-		byte   m6;          ///< General purpose
-		byte   m7;          ///< Primarily used for newgrf support
-		uint16 m8;          ///< General purpose
+		byte m6;
+		byte m7;
+		byte rail_type : 6;
+		uint16 m8_615 : 10;
 	};
 
 	struct Station {
 		uint16 id;
 		byte owner : 5;
 		byte wc : 2;
-		byte m1_7 : 1;
+		byte is_docking : 1;
 		byte m3 : 4;
 		byte random : 4;
 		byte spec_index;
@@ -326,55 +360,62 @@ struct Tile {
 		byte resereved : 1;
 		byte type : 3;
 		byte m6_67 : 2;
-		byte   m7;          ///< Primarily used for newgrf support
-		uint16 m8;          ///< General purpose
+		byte m7;
+		byte rail_type : 6;
+		uint16 m8_615 : 10;
 	};
 
 	struct Depot {
 		uint16 id;
-		union {
-			struct {
-				byte m1;
-				byte m3;
-				byte type : 6;
-				byte m4 : 2;
-				byte direction : 2;
-				byte m5_23 : 2;
-				byte reserved : 1;
-				byte m5_5 : 1;
-				byte tile_type : 2;
-				byte m6;
-				byte owner : 5;
-				byte on_snow : 1;
-				byte m7_67 : 2;
-				uint16 m8;
-			} road;
-			struct {
-				byte m1;
-				byte m3;
-				byte m4;
-				byte direction : 2;
-				byte m5_23 : 2;
-				byte reserved : 1;
-				byte m5_5 : 1;
-				byte tile_type : 2;
-				byte   m6;          ///< General purpose
-				byte   m7;          ///< Primarily used for newgrf support
-				uint16 m8;          ///< General purpose
-			} rail;
-			struct {
-				byte m1;
-				byte m3;
-				byte m4;
-				byte part : 1;
-				byte axis : 1;
-				byte m5_23 : 2;
-				byte type : 4;
-				byte   m6;          ///< General purpose
-				byte   m7;          ///< Primarily used for newgrf support
-				uint16 m8;          ///< General purpose
-			} ship;
-		};
+	};
+
+	struct DepotRoad : public Depot {
+		byte m1;
+		byte m3;
+		byte type : 6;
+		byte m4 : 2;
+		byte direction : 2;
+		byte m5_23 : 2;
+		byte reserved : 1;
+		byte m5_5 : 1;
+		byte tile_type : 2;
+		byte m6;
+		byte owner : 5;
+		byte on_snow : 1;
+		byte m7_67 : 2;
+		byte rail_type : 6;
+		byte road_type : 6;
+		byte m8_1215 : 4;
+	};
+
+	struct DepotRail : public Depot {
+		byte m1;
+		byte m3;
+		byte m4;
+		byte direction : 2;
+		byte m5_23 : 2;
+		byte reserved : 1;
+		byte m5_5 : 1;
+		byte tile_type : 2;
+		byte m6;
+		byte m7;
+		byte rail_type : 6;
+		byte road_type : 6;
+		byte m8_1215 : 4;
+	};
+	struct DepotShip : public Depot {
+		byte owner : 5;
+		byte wc : 2;
+		byte is_docking : 1;
+		byte m3;
+		byte m4;
+		byte part : 1;
+		byte axis : 1;
+		byte m5_23 : 2;
+		byte type : 4;
+		byte m6;
+		byte m7;
+		uint16 m8;
 	};
 
 	struct Object {
@@ -385,9 +426,9 @@ struct Tile {
 		byte bits;
 		byte m4;
 		byte index2;
-		byte   m6;          ///< General purpose
-		byte   m7;          ///< Primarily used for newgrf support
-		uint16 m8;          ///< General purpose
+		byte m6;
+		byte m7;
+		uint16 m8;
 	};
 
 	struct Waypoint {
@@ -400,8 +441,8 @@ struct Tile {
 		byte m5;
 		byte m6_02 : 3;
 		byte station_type : 3;
-		byte   m7;          ///< Primarily used for newgrf support
-		uint16 m8;          ///< General purpose
+		byte m7;
+		uint16 m8;
 	};
 
 	union {
@@ -426,34 +467,27 @@ struct Tile {
 			};
 			union {
 				Owned owned_;
-				Animated animated;
+				Animated animated_;
+				WaterClass water_class_;
+				Docking docking_;
 
-				Clear clear;
-				Field field;
-				Water water;
-				Lock lock;
-				Tree tree;
-				Town town;
-				House house;
-				Industry industry;
-				Bridge bridge;
-				Road road;
-				Rail rail;
-				Station station;
-				Depot depot;
-				Object object;
-				Waypoint waypoint;
-
-				struct {
-					uint16 _m2;          ///< Primarily used for indices to towns, industries and stations
-					byte   _m1;          ///< Primarily used for ownership information
-					byte   _m3;          ///< General purpose
-					byte   _m4;          ///< General purpose
-					byte   _m5;          ///< General purpose
-					byte   _m6;          ///< General purpose
-					byte   _m7;          ///< Primarily used for newgrf support
-					uint16 _m8;          ///< General purpose
-				};
+				Clear clear_;
+				Field field_;
+				Water water_;
+				Lock lock_;
+				Tree tree_;
+				Town town_;
+				House house_;
+				Industry industry_;
+				Bridge bridge_;
+				Road road_;
+				Rail rail_;
+				Station station_;
+				DepotRoad depot_road_;
+				DepotRail depot_rail_;
+				DepotShip depot_ship_;
+				Object object_;
+				Waypoint waypoint_;
 			};
 		};
 	};
@@ -475,6 +509,154 @@ struct Tile {
 		assert(type != MP_VOID && type != MP_HOUSE && type != MP_INDUSTRY);
 
 		return owned_;
+	}
+
+	Animated& animated()
+	{
+		assert(type == MP_HOUSE || type == MP_OBJECT || type == MP_INDUSTRY || type == MP_STATION);
+
+		return animated_;
+	}
+
+	bool IsWaterClass() const { return type == MP_WATER || type == MP_STATION || type == MP_INDUSTRY || type == MP_OBJECT || type == MP_TREES; }
+	WaterClass& water_class()
+	{
+		assert(IsWaterClass());
+
+		return water_class_;
+	}
+
+	bool IsDocking() const { return type == MP_WATER || type == MP_RAILWAY || type == MP_STATION || type == MP_TUNNELBRIDGE; }
+	Docking& docking()
+	{
+		assert(IsDocking());
+
+		return docking_;
+	}
+
+	Clear& clear()
+	{
+		assert(type == MP_CLEAR);
+
+		return clear_;
+	}
+
+	Field& field()
+	{
+		return field_;
+	}
+
+	Water& water()
+	{
+		assert(type == MP_WATER);
+
+		return water_;
+	}
+
+	bool IsLock() { return water().GetWaterTileType() == WATER_TILE_LOCK; }
+	Lock& lock()
+	{
+		assert(IsLock());
+
+		return lock_;
+	}
+
+	Tree& tree()
+	{
+		assert(type == MP_TREES);
+
+		return tree_;
+	}
+
+	Town& town()
+	{
+		assert(type == MP_HOUSE || (type == MP_ROAD && road_.tile_type != ROAD_TILE_DEPOT));
+
+		return town_;
+	}
+
+	House& house()
+	{
+		assert(type == MP_HOUSE);
+
+		return house_;
+	}
+
+	Industry& industry()
+	{
+		assert(type == MP_INDUSTRY);
+
+		return industry_;
+	}
+
+	Bridge& bridge()
+	{
+		assert(type == MP_TUNNELBRIDGE);
+
+		return bridge_;
+	}
+
+	Road& road()
+	{
+		//assert(IsTileType(t, MP_ROAD));
+		assert((type == MP_ROAD || type == MP_STATION || type == MP_TUNNELBRIDGE));
+
+		return road_;
+	}
+
+	Rail& rail()
+	{
+		//assert(IsTileType(t, MP_RAILWAY));
+		assert((type == MP_RAILWAY || type == MP_STATION || type == MP_TUNNELBRIDGE));
+
+		return rail_;
+	}
+
+	Station& station()
+	{
+		assert(type == MP_STATION);
+
+		return station_;
+	}
+
+	Depot& depot()
+	{
+		assert((type == MP_ROAD && road_.tile_type == ROAD_TILE_DEPOT)
+			|| (type == MP_RAILWAY && rail_.tile_type == RAIL_TILE_DEPOT)
+			|| (type == MP_WATER && water_.type == WBL_TYPE_DEPOT));
+
+		return depot_road_;
+	}
+
+	DepotRoad& depot_road()
+	{
+		//assert(type == MP_ROAD && road_.tile_type == ROAD_TILE_DEPOT);
+
+		return depot_road_;
+	}
+
+	DepotRail& depot_rail()
+	{
+		assert(type == MP_RAILWAY && rail_.tile_type == RAIL_TILE_DEPOT);
+
+		return depot_rail_;
+	}
+
+	DepotShip& depot_ship()
+	{
+		assert(type == MP_WATER && water_.type == WBL_TYPE_DEPOT);
+
+		return depot_ship_;
+	}
+
+	Object& object()
+	{
+		return object_;
+	}
+
+	Waypoint& waypoint()
+	{
+		return waypoint_;
 	}
 };
 

@@ -19,14 +19,6 @@
 #include "signal_type.h"
 
 
-/** Different types of Rail-related tiles */
-enum RailTileType {
-	RAIL_TILE_NORMAL   = 0, ///< Normal rail tile without signals
-	RAIL_TILE_SIGNALS  = 1, ///< Normal rail tile with signals
-	RAIL_TILE_WAYPOINT = 2, ///< Normal rail tile with waypoint
-	RAIL_TILE_DEPOT    = 3, ///< Depot (one entrance)
-};
-
 /**
  * Returns the RailTileType (normal with or without signals,
  * waypoint or depot).
@@ -37,7 +29,7 @@ enum RailTileType {
 static inline RailTileType GetRailTileType(TileIndex t)
 {
 	assert(IsTileType(t, MP_RAILWAY));
-	return (RailTileType)tile_map.get(t).rail.tile_type;
+	return (RailTileType)tile_map.rail(t).tile_type;
 }
 
 /**
@@ -83,8 +75,7 @@ static inline bool HasSignals(TileIndex t)
  */
 static inline void SetHasSignals(TileIndex tile, bool signals)
 {
-	assert(IsPlainRailTile(tile));
-	tile_map.get(tile).rail.tile_type = RAIL_TILE_SIGNALS;
+	tile_map.rail(tile).tile_type = RAIL_TILE_SIGNALS;
 }
 
 /**
@@ -115,7 +106,7 @@ static inline bool IsRailDepotTile(TileIndex t)
  */
 static inline RailType GetRailType(TileIndex t)
 {
-	return (RailType)GB(tile_map.get(t).rail.m8, 0, 6);
+	return (RailType)tile_map.rail(t).rail_type;
 }
 
 /**
@@ -125,7 +116,7 @@ static inline RailType GetRailType(TileIndex t)
  */
 static inline void SetRailType(TileIndex t, RailType r)
 {
-	SB(tile_map.get(t).rail.m8, 0, 6, r);
+	tile_map.rail(t).rail_type = r;
 }
 
 
@@ -136,8 +127,7 @@ static inline void SetRailType(TileIndex t, RailType r)
  */
 static inline TrackBits GetTrackBits(TileIndex tile)
 {
-	assert(IsPlainRailTile(tile));
-	return (TrackBits) tile_map.get(tile).rail.track_bits;
+	return (TrackBits) tile_map.rail(tile).track_bits;
 }
 
 /**
@@ -148,7 +138,7 @@ static inline TrackBits GetTrackBits(TileIndex tile)
 static inline void SetTrackBits(TileIndex tile, TrackBits b)
 {
 	assert(IsPlainRailTile(tile));
-	tile_map.get(tile).rail.track_bits = b;
+	tile_map.rail(tile).track_bits = b;
 }
 
 /**
@@ -171,7 +161,7 @@ static inline bool HasTrack(TileIndex tile, Track track)
  */
 static inline DiagDirection GetRailDepotDirection(TileIndex t)
 {
-	return (DiagDirection) tile_map.get(t).depot.rail.direction;
+	return (DiagDirection) tile_map.depot_rail(t).direction;
 }
 
 /**
@@ -194,11 +184,10 @@ static inline Track GetRailDepotTrack(TileIndex t)
  */
 static inline TrackBits GetRailReservationTrackBits(TileIndex t)
 {
-	assert(IsPlainRailTile(t));
-	byte track_b = tile_map.get(t).rail.bits;
+	byte track_b = tile_map.rail(t).bits;
 	Track track = (Track)(track_b - 1);    // map array saves Track+1
 	if (track_b == 0) return TRACK_BIT_NONE;
-	return (TrackBits)(TrackToTrackBits(track) | (tile_map.get(t).rail.m2_11 ? TrackToTrackBits(TrackToOppositeTrack(track)) : 0));
+	return (TrackBits)(TrackToTrackBits(track) | (tile_map.rail(t).m2_11 ? TrackToTrackBits(TrackToOppositeTrack(track)) : 0));
 }
 
 /**
@@ -209,12 +198,11 @@ static inline TrackBits GetRailReservationTrackBits(TileIndex t)
  */
 static inline void SetTrackReservation(TileIndex t, TrackBits b)
 {
-	assert(IsPlainRailTile(t));
 	assert(b != INVALID_TRACK_BIT);
 	assert(!TracksOverlap(b));
 	Track track = RemoveFirstTrack(&b);
-	tile_map.get(t).rail.bits = (track == INVALID_TRACK ? 0 : track + 1);
-	tile_map.get(t).rail.m2_11 = (byte)(b != TRACK_BIT_NONE);
+	tile_map.rail(t).bits = (track == INVALID_TRACK ? 0 : track + 1);
+	tile_map.rail(t).m2_11 = (byte)(b != TRACK_BIT_NONE);
 }
 
 /**
@@ -259,7 +247,7 @@ static inline void UnreserveTrack(TileIndex tile, Track t)
 static inline bool HasDepotReservation(TileIndex t)
 {
 	assert(IsRailDepot(t));
-	return tile_map.get(t).depot.rail.reserved;
+	return tile_map.depot_rail(t).reserved;
 }
 
 /**
@@ -271,7 +259,7 @@ static inline bool HasDepotReservation(TileIndex t)
 static inline void SetDepotReservation(TileIndex t, bool b)
 {
 	assert(IsRailDepot(t));
-	tile_map.get(t).depot.rail.reserved = b;
+	tile_map.depot_rail(t).reserved = b;
 }
 
 /**
@@ -296,7 +284,7 @@ static inline SignalType GetSignalType(TileIndex t, Track track)
 	assert(GetRailTileType(t) == RAIL_TILE_SIGNALS);
 	return (SignalType)
 		((track == TRACK_LOWER || track == TRACK_RIGHT)
-			? tile_map.get(t).rail.signal_lr : tile_map.get(t).rail.signal_ul);
+			? tile_map.rail(t).signal_lr : tile_map.rail(t).signal_ul);
 }
 
 static inline void SetSignalType(TileIndex t, Track track, SignalType s)
@@ -304,9 +292,9 @@ static inline void SetSignalType(TileIndex t, Track track, SignalType s)
 	assert(GetRailTileType(t) == RAIL_TILE_SIGNALS);
 
 	((track == TRACK_LOWER || track == TRACK_RIGHT)
-		? tile_map.get(t).rail.signal_lr : tile_map.get(t).rail.signal_ul) = s;
+		? tile_map.rail(t).signal_lr : tile_map.rail(t).signal_ul) = s;
 
-	if (track == INVALID_TRACK) tile_map.get(t).rail.signal_lr = s;
+	if (track == INVALID_TRACK) tile_map.rail(t).signal_lr = s;
 }
 
 static inline bool IsPresignalEntry(TileIndex t, Track track)
@@ -331,23 +319,23 @@ static inline void CycleSignalSide(TileIndex t, Track track)
 	byte pos = (track == TRACK_LOWER || track == TRACK_RIGHT) ? 4 : 6;
 
 	sig = ((track == TRACK_LOWER || track == TRACK_RIGHT)
-		? tile_map.get(t).rail.signal_side_lr : tile_map.get(t).rail.signal_side_ul);
+		? tile_map.rail(t).signal_side_lr : tile_map.rail(t).signal_side_ul);
 	if (--sig == 0) sig = IsPbsSignal(GetSignalType(t, track)) ? 2 : 3;
 	((track == TRACK_LOWER || track == TRACK_RIGHT)
-		? tile_map.get(t).rail.signal_side_lr : tile_map.get(t).rail.signal_side_ul) = sig;
+		? tile_map.rail(t).signal_side_lr : tile_map.rail(t).signal_side_ul) = sig;
 }
 
 static inline SignalVariant GetSignalVariant(TileIndex t, Track track)
 {
 	return (SignalVariant)((track == TRACK_LOWER || track == TRACK_RIGHT)
-		? tile_map.get(t).rail.signal_lr_variant : tile_map.get(t).rail.signal_ul_variant);
+		? tile_map.rail(t).signal_lr_variant : tile_map.rail(t).signal_ul_variant);
 }
 
 static inline void SetSignalVariant(TileIndex t, Track track, SignalVariant v)
 {
 	((track == TRACK_LOWER || track == TRACK_RIGHT)
-		? tile_map.get(t).rail.signal_lr_variant : tile_map.get(t).rail.signal_ul_variant) = v;
-	if (track == INVALID_TRACK) tile_map.get(t).rail.signal_lr_variant = v;
+		? tile_map.rail(t).signal_lr_variant : tile_map.rail(t).signal_ul_variant) = v;
+	if (track == INVALID_TRACK) tile_map.rail(t).signal_lr_variant = v;
 }
 
 /**
@@ -357,7 +345,7 @@ static inline void SetSignalVariant(TileIndex t, Track track, SignalVariant v)
  */
 static inline void SetSignalStates(TileIndex tile, uint state)
 {
-	tile_map.get(tile).rail.signal_states = state;
+	tile_map.rail(tile).signal_states = state;
 }
 
 /**
@@ -367,7 +355,7 @@ static inline void SetSignalStates(TileIndex tile, uint state)
  */
 static inline uint GetSignalStates(TileIndex tile)
 {
-	return tile_map.get(tile).rail.signal_states;
+	return tile_map.rail(tile).signal_states;
 }
 
 /**
@@ -388,7 +376,7 @@ static inline SignalState GetSingleSignalState(TileIndex t, byte signalbit)
  */
 static inline void SetPresentSignals(TileIndex tile, uint signals)
 {
-	tile_map.get(tile).rail.signals_present = signals;
+	tile_map.rail(tile).signals_present = signals;
 }
 
 /**
@@ -398,7 +386,7 @@ static inline void SetPresentSignals(TileIndex tile, uint signals)
  */
 static inline uint GetPresentSignals(TileIndex tile)
 {
-	return tile_map.get(tile).rail.signals_present;
+	return tile_map.rail(tile).signals_present;
 }
 
 /**
@@ -508,12 +496,12 @@ enum RailGroundType {
 
 static inline void SetRailGroundType(TileIndex t, RailGroundType rgt)
 {
-	tile_map.get(t).rail.ground_type = rgt;
+	tile_map.rail(t).ground_type = rgt;
 }
 
 static inline RailGroundType GetRailGroundType(TileIndex t)
 {
-	return (RailGroundType)tile_map.get(t).rail.ground_type;
+	return (RailGroundType)tile_map.rail(t).ground_type;
 }
 
 static inline bool IsSnowRailGround(TileIndex t)
@@ -524,22 +512,20 @@ static inline bool IsSnowRailGround(TileIndex t)
 
 static inline void MakeRailNormal(TileIndex t, Owner o, TrackBits b, RailType r)
 {
-	Tile& t_ = tile_map.init(t, MP_RAILWAY, o);
-	SetDockingTile(t, false);
-	t_.rail.track_bits = b;
-	t_.rail.tile_type = RAIL_TILE_NORMAL;
-	t_.rail.m8 = r;
+	auto& t_ = tile_map.init(t, MP_RAILWAY, o).rail();
+	t_.track_bits = b;
+	t_.tile_type = RAIL_TILE_NORMAL;
+	t_.rail_type = r;
 }
 
 
 static inline void MakeRailDepot(TileIndex t, Owner o, DepotID did, DiagDirection d, RailType r)
 {
-	Tile& t_ = tile_map.init(t, MP_RAILWAY, o);
-	SetDockingTile(t, false);
-	t_.depot.id = did;
-	t_.depot.rail.direction = d;
-	t_.depot.rail.tile_type = RAIL_TILE_DEPOT;
-	t_.rail.m8 = r;
+	auto& t_ = tile_map.init(t, MP_RAILWAY, o).depot_rail();
+	t_.id = did;
+	t_.direction = d;
+	t_.tile_type = RAIL_TILE_DEPOT;
+	t_.rail_type = r;
 }
 
 #endif /* RAIL_MAP_H */

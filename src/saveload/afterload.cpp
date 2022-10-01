@@ -476,10 +476,10 @@ static void FixOwnerOfRailTrack(TileIndex t)
 		bool hastram = HasBit(tile_map.raw(t).m7, 7);
 
 		/* MakeRoadNormal */
-		auto& t_ = tile_map.init(t, MP_ROAD, road);
-		t_.road.tram_bits = (hasroad ? bits : 0);
-		t_.road.road_bits = (hastram ? bits : 0);
-		t_.road.tile_type = ROAD_TILE_NORMAL;
+		auto& t_ = tile_map.init(t, MP_ROAD, road).road();
+		t_.tram_bits = (hasroad ? bits : 0);
+		t_.road_bits = (hastram ? bits : 0);
+		t_.tile_type = ROAD_TILE_NORMAL;
 		SetRoadOwner(t, RTT_TRAM, tram);
 		return;
 	}
@@ -965,7 +965,7 @@ bool AfterLoadGame()
 		for (TileIndex t = 0; t < map_size; t++) {
 			switch (tile_map.get(t).type) {
 				case MP_HOUSE:
-					tile_map.get(t).house.old_town_id = tile_map.get(t).house.town_id;
+					tile_map.house(t).old_town_id = tile_map.house(t).town_id;
 					SetTownIndex(t, CalcClosestTownFromTile(t)->index);
 					break;
 
@@ -1201,10 +1201,10 @@ bool AfterLoadGame()
 							TownID town = IsTileOwner(t, OWNER_TOWN) ? ClosestTownFromTile(t, UINT_MAX)->index : 0;
 
 							/* MakeRoadNormal */
-							auto& t_ = tile_map.init(t, MP_ROAD);
-							t_.road.town_id = town;
-							t_.road.road_bits = (axis == AXIS_X ? ROAD_Y : ROAD_X);
-							t_.road.tile_type = ROAD_TILE_NORMAL;
+							auto& t_ = tile_map.init(t, MP_ROAD).road();
+							t_.town_id = town;
+							t_.road_bits = (axis == AXIS_X ? ROAD_Y : ROAD_X);
+							t_.tile_type = ROAD_TILE_NORMAL;
 							SB(tile_map.raw(t).m6, 2, 4, 0);
 							tile_map.raw(t).m7 = 1 << 6;
 							SetRoadOwner(t, RTT_TRAM, OWNER_NONE);

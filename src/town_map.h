@@ -21,8 +21,7 @@
  */
 static inline TownID GetTownIndex(TileIndex t)
 {
-	assert(IsTileType(t, MP_HOUSE) || (IsTileType(t, MP_ROAD) && !IsRoadDepot(t)));
-	return tile_map.get(t).town.id;
+	return tile_map.town(t).id;
 }
 
 /**
@@ -34,7 +33,7 @@ static inline TownID GetTownIndex(TileIndex t)
 static inline void SetTownIndex(TileIndex t, TownID index)
 {
 	assert(IsTileType(t, MP_HOUSE) || (IsTileType(t, MP_ROAD) && !IsRoadDepot(t)));
-	tile_map.get(t).town.id = index;
+	tile_map.town(t).id = index;
 }
 
 /**
@@ -47,7 +46,7 @@ static inline void SetTownIndex(TileIndex t, TownID index)
 static inline HouseID GetCleanHouseType(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	return tile_map.get(t).house.house_id | (tile_map.get(t).house.clean_house_flag << 8);
+	return tile_map.house(t).house_id | (tile_map.house(t).clean_house_flag << 8);
 }
 
 /**
@@ -69,9 +68,8 @@ static inline HouseID GetHouseType(TileIndex t)
  */
 static inline void SetHouseType(TileIndex t, HouseID house_id)
 {
-	assert(IsTileType(t, MP_HOUSE));
-	tile_map.get(t).house.house_id = GB(house_id, 0, 8);
-	tile_map.get(t).house.clean_house_flag = GB(house_id, 8, 1);
+	tile_map.house(t).house_id = GB(house_id, 0, 8);
+	tile_map.house(t).clean_house_flag = GB(house_id, 8, 1);
 }
 
 /**
@@ -81,7 +79,7 @@ static inline void SetHouseType(TileIndex t, HouseID house_id)
  */
 static inline bool LiftHasDestination(TileIndex t)
 {
-	return tile_map.get(t).house.has_destination;
+	return tile_map.house(t).has_destination;
 }
 
 /**
@@ -92,8 +90,8 @@ static inline bool LiftHasDestination(TileIndex t)
  */
 static inline void SetLiftDestination(TileIndex t, byte dest)
 {
-	tile_map.get(t).house.has_destination = 1;
-	tile_map.get(t).house.destination = dest;
+	tile_map.house(t).has_destination = 1;
+	tile_map.house(t).destination = dest;
 }
 
 /**
@@ -103,7 +101,7 @@ static inline void SetLiftDestination(TileIndex t, byte dest)
  */
 static inline byte GetLiftDestination(TileIndex t)
 {
-	return tile_map.get(t).house.destination;
+	return tile_map.house(t).destination;
 }
 
 /**
@@ -114,8 +112,8 @@ static inline byte GetLiftDestination(TileIndex t)
  */
 static inline void HaltLift(TileIndex t)
 {
-	tile_map.get(t).house.has_destination = 0;
-	tile_map.get(t).house.destination = 0;
+	tile_map.house(t).has_destination = 0;
+	tile_map.house(t).destination = 0;
 }
 
 /**
@@ -125,7 +123,7 @@ static inline void HaltLift(TileIndex t)
  */
 static inline byte GetLiftPosition(TileIndex t)
 {
-	return tile_map.get(t).house.lift.position;
+	return tile_map.house(t).lift.position;
 }
 
 /**
@@ -135,7 +133,7 @@ static inline byte GetLiftPosition(TileIndex t)
  */
 static inline void SetLiftPosition(TileIndex t, byte pos)
 {
-	tile_map.get(t).house.lift.position = pos;
+	tile_map.house(t).lift.position = pos;
 }
 
 /**
@@ -146,7 +144,7 @@ static inline void SetLiftPosition(TileIndex t, byte pos)
 static inline bool IsHouseCompleted(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	return tile_map.get(t).house.is_completed;
+	return tile_map.house(t).is_completed;
 }
 
 /**
@@ -157,7 +155,7 @@ static inline bool IsHouseCompleted(TileIndex t)
 static inline void SetHouseCompleted(TileIndex t, bool status)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	tile_map.get(t).house.is_completed = !!status;
+	tile_map.house(t).is_completed = !!status;
 }
 
 /**
@@ -184,7 +182,7 @@ static inline void SetHouseCompleted(TileIndex t, bool status)
 static inline byte GetHouseBuildingStage(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	return IsHouseCompleted(t) ? (byte)TOWN_HOUSE_COMPLETED : tile_map.get(t).house.stage;
+	return IsHouseCompleted(t) ? (byte)TOWN_HOUSE_COMPLETED : tile_map.house(t).stage;
 }
 
 /**
@@ -196,7 +194,7 @@ static inline byte GetHouseBuildingStage(TileIndex t)
 static inline byte GetHouseConstructionTick(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	return IsHouseCompleted(t) ? 0 : tile_map.get(t).house.tick;
+	return IsHouseCompleted(t) ? 0 : tile_map.house(t).tick;
 }
 
 /**
@@ -209,9 +207,9 @@ static inline byte GetHouseConstructionTick(TileIndex t)
 static inline void IncHouseConstructionTick(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	tile_map.get(t).house.tick_and_stage += 1;
+	tile_map.house(t).tick_and_stage += 1;
 
-	if (tile_map.get(t).house.stage == TOWN_HOUSE_COMPLETED) {
+	if (tile_map.house(t).stage == TOWN_HOUSE_COMPLETED) {
 		/* House is now completed.
 		 * Store the year of construction as well, for newgrf house purpose */
 		SetHouseCompleted(t, true);
@@ -227,7 +225,7 @@ static inline void IncHouseConstructionTick(TileIndex t)
 static inline void ResetHouseAge(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE) && IsHouseCompleted(t));
-	tile_map.get(t).house.age = 0;
+	tile_map.house(t).age = 0;
 }
 
 /**
@@ -238,7 +236,7 @@ static inline void ResetHouseAge(TileIndex t)
 static inline void IncrementHouseAge(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	if (IsHouseCompleted(t) && tile_map.get(t).house.age < 0xFF) tile_map.get(t).house.age++;
+	if (IsHouseCompleted(t) && tile_map.house(t).age < 0xFF) tile_map.house(t).age++;
 }
 
 /**
@@ -250,7 +248,7 @@ static inline void IncrementHouseAge(TileIndex t)
 static inline Year GetHouseAge(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	return IsHouseCompleted(t) ? tile_map.get(t).house.age : 0;
+	return IsHouseCompleted(t) ? tile_map.house(t).age : 0;
 }
 
 /**
@@ -263,7 +261,7 @@ static inline Year GetHouseAge(TileIndex t)
 static inline void SetHouseRandomBits(TileIndex t, byte random)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	tile_map.get(t).house.random = random;
+	tile_map.house(t).random = random;
 }
 
 /**
@@ -276,7 +274,7 @@ static inline void SetHouseRandomBits(TileIndex t, byte random)
 static inline byte GetHouseRandomBits(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	return tile_map.get(t).house.random;
+	return tile_map.house(t).random;
 }
 
 /**
@@ -289,7 +287,7 @@ static inline byte GetHouseRandomBits(TileIndex t)
 static inline void SetHouseTriggers(TileIndex t, byte triggers)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	tile_map.get(t).house.triggers = triggers;
+	tile_map.house(t).triggers = triggers;
 }
 
 /**
@@ -302,7 +300,7 @@ static inline void SetHouseTriggers(TileIndex t, byte triggers)
 static inline byte GetHouseTriggers(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	return tile_map.get(t).house.triggers;
+	return tile_map.house(t).triggers;
 }
 
 /**
@@ -314,7 +312,7 @@ static inline byte GetHouseTriggers(TileIndex t)
 static inline byte GetHouseProcessingTime(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	return tile_map.get(t).house.processing;
+	return tile_map.house(t).processing;
 }
 
 /**
@@ -326,7 +324,7 @@ static inline byte GetHouseProcessingTime(TileIndex t)
 static inline void SetHouseProcessingTime(TileIndex t, byte time)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	tile_map.get(t).house.processing = time;
+	tile_map.house(t).processing = time;
 }
 
 /**
@@ -337,7 +335,7 @@ static inline void SetHouseProcessingTime(TileIndex t, byte time)
 static inline void DecHouseProcessingTime(TileIndex t)
 {
 	assert(IsTileType(t, MP_HOUSE));
-	tile_map.get(t).house.processing -= 1;
+	tile_map.house(t).processing -= 1;
 }
 
 /**
@@ -354,19 +352,19 @@ static inline void MakeHouseTile(TileIndex t, TownID tid, byte counter, byte sta
 {
 	assert(IsTileType(t, MP_CLEAR));
 
-	Tile& t_ = tile_map.init(t, MP_HOUSE);
-	t_.house.random = random_bits;
-	t_.house.town_id = tid;
+	auto& t_ = tile_map.init(t, MP_HOUSE).house();
+	t_.random = random_bits;
+	t_.town_id = tid;
 	SetHouseType(t, type);
-	SetHouseCompleted(t, stage == TOWN_HOUSE_COMPLETED);
-	if (IsHouseCompleted(t))
-		t_.house.age = 0;
+	t_.is_completed = stage == TOWN_HOUSE_COMPLETED;
+	if (t_.is_completed)
+		t_.age = 0;
 	else {
-		t_.house.tick = counter;
-		t_.house.stage = stage;
+		t_.tick = counter;
+		t_.stage = stage;
 	}
 	SetAnimationFrame(t, 0);
-	SetHouseProcessingTime(t, HouseSpec::Get(type)->processing_time);
+	t_.processing = HouseSpec::Get(type)->processing_time;
 }
 
 #endif /* TOWN_MAP_H */
